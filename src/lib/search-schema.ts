@@ -15,11 +15,8 @@ export const baseSearchSchema = z.object({
     .catch(defaultSort.slug),
 });
 
-// Extended search schema that allows dynamic facet parameters
-// This uses z.record to allow any string key with string values
-export const searchSchema = baseSearchSchema.and(
-  z.record(z.string(), z.string().optional()),
-);
+// Allow dynamic facet parameters without parsing known keys a second time.
+export const searchSchema = baseSearchSchema.catchall(z.string().optional());
 
 export type SearchParams = z.infer<typeof searchSchema>;
 

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { defaultSort } from "./constants";
-import { baseSearchSchema } from "./search-schema";
+import { baseSearchSchema, searchSchema } from "./search-schema";
 
 describe("storefront search parameters", () => {
   test("uses the default sort when the URL omits it", () => {
@@ -11,5 +11,22 @@ describe("storefront search parameters", () => {
     expect(baseSearchSchema.parse({ sort: "featured" }).sort).toBe(
       defaultSort.slug,
     );
+  });
+
+  test("keeps TanStack Router search validation synchronous", () => {
+    const result = searchSchema["~standard"].validate({
+      brand: "eternal-ink",
+      page: "2",
+      sort: "featured",
+    });
+
+    expect(result).not.toBeInstanceOf(Promise);
+    expect(result).toMatchObject({
+      value: {
+        brand: "eternal-ink",
+        page: "2",
+        sort: defaultSort.slug,
+      },
+    });
   });
 });
