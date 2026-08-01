@@ -28,6 +28,7 @@ const categoryPriority = [
   "Power Supplies & Cords",
   "Medical",
   "Shop Supply",
+  "Papa",
   "Sales",
 ];
 

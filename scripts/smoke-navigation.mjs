@@ -104,12 +104,15 @@ const saleorConfigurableVariantMinimum = Number(
 );
 const saleorMobileCategoryLabels = [
   "All supplies",
-  "Inks",
   "Needles",
+  "Inks",
   "Machines",
   "Tubes & Grips",
   "Power",
   "Medical",
+  "Shop Supply",
+  "Papa",
+  "Sales",
 ];
 const storefrontFailurePatterns =
   /Storefront error|Something interrupted the storefront|useSaleorCart must be used within|createServerOnlyFn\(\) functions can only be called on the server|server-only/i;

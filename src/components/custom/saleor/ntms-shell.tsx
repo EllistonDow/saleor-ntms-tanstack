@@ -20,18 +20,21 @@ import { cn } from "@/lib/utils";
 import { useSaleorCart } from "./ntms-cart-context";
 
 const ntmsPrimaryNav = [
-  { label: "Inks", slug: "ntms-91-inks" },
   { label: "Needles", slug: "ntms-289-needles" },
+  { label: "Inks", slug: "ntms-91-inks" },
   { label: "Machines", slug: "ntms-103-machines" },
   { label: "Tubes & Grips", slug: "ntms-107-tubes-and-grips" },
   { label: "Power", slug: "ntms-85-power-supplies-and-cords" },
   { label: "Medical", slug: "ntms-89-medical" },
+  { label: "Shop Supply", slug: "ntms-113-shop-supply" },
+  { label: "Papa", slug: "ntms-117-papa" },
+  { label: "Sales", slug: "ntms-452-sales" },
 ];
 
 const ntmsFooterNav = [
+  { label: "Needles", slug: "ntms-289-needles" },
   { label: "Inks", slug: "ntms-91-inks" },
   { label: "Machines", slug: "ntms-103-machines" },
-  { label: "Needles", slug: "ntms-289-needles" },
   { label: "Shop Supply", slug: "ntms-113-shop-supply" },
 ];
 
