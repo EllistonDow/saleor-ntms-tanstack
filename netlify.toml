@@ -1,3 +1,0 @@
-[build]
-  command = "vite build --mode production"
-  publish = "dist/client"

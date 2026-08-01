@@ -17,6 +17,7 @@ import {
   useSignInMutation,
 } from "@/hooks/use-account-mutations";
 import { useHydrated } from "@/hooks/use-hydrated";
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 
 const formSchema = z.object({
@@ -129,7 +130,7 @@ function ClientSignInForm() {
         });
 
         toast.success("Welcome back!");
-        router.navigate({ to: redirect || "/account" });
+        router.navigate({ to: getSafeInternalRedirect(redirect) });
       } catch (error) {
         const nextError = getSignInSubmitError(error);
         setSubmitError(nextError);

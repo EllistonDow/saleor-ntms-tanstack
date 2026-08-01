@@ -5,6 +5,7 @@ import { AuthShell } from "@/components/custom/account/auth-shell";
 import { SignInForm } from "@/components/custom/account/sign-in-form";
 import { serverEnv } from "@/env/server";
 import { createBasicMeta } from "@/lib/metadata";
+import { getSafeInternalRedirect } from "@/lib/safe-redirect";
 
 const signInSearchSchema = z.object({
   redirect: z.string().optional().catch(undefined),
@@ -28,7 +29,7 @@ export const Route = createFileRoute("/_default/sign-in")({
   }),
   beforeLoad: ({ context, search }) => {
     if (context.user) {
-      throw redirect({ to: search.redirect || "/account" });
+      throw redirect({ to: getSafeInternalRedirect(search.redirect) });
     }
   },
   component: SignInComponent,

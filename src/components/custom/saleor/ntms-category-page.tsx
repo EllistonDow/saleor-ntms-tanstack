@@ -3,6 +3,8 @@ import {
   ArrowDownAZ,
   ArrowRight,
   Boxes,
+  ChevronLeft,
+  ChevronRight,
   Layers3,
   Search,
   SearchX,
@@ -20,17 +22,27 @@ export function NtmsSaleorCategoryPageView({
   const {
     category,
     children,
+    hasNextPage,
+    hasPreviousPage,
     isCollectionOnly,
+    page: currentPage,
+    pageSize,
     products,
     sort,
+    totalPages,
     totalProducts,
   } = page;
+  const firstResult = totalProducts > 0 ? (currentPage - 1) * pageSize + 1 : 0;
+  const lastResult = totalProducts > 0 ? firstResult + products.length - 1 : 0;
 
   return (
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-[color:var(--cyber-gold)]/14">
         <div className="mx-auto max-w-screen-2xl px-4 py-4">
-          <nav className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase text-foreground/45">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase text-foreground/45"
+          >
             <Link
               to="/"
               className="shrink-0 transition hover:text-[color:var(--cyber-gold-soft)]"
@@ -49,7 +61,7 @@ export function NtmsSaleorCategoryPageView({
             <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
               {isCollectionOnly ? "Curated collection" : "Category"}
             </p>
-            <h1 className="mt-3 text-5xl font-black leading-[1.04] text-foreground">
+            <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] text-foreground sm:text-5xl">
               {category.name}
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-foreground/60">
@@ -125,7 +137,9 @@ export function NtmsSaleorCategoryPageView({
               </h2>
             </div>
             <p className="text-sm font-semibold text-foreground/50">
-              Showing {products.length.toLocaleString()} items
+              {totalProducts > 0
+                ? `Showing ${firstResult.toLocaleString()}-${lastResult.toLocaleString()} of ${totalProducts.toLocaleString()}`
+                : "No items"}
             </p>
           </div>
 
@@ -156,16 +170,27 @@ export function NtmsSaleorCategoryPageView({
           </div>
 
           {products.length > 0 ? (
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 2xl:grid-cols-4">
-              {products.map((product, index) => (
-                <SaleorProductCard
-                  enableLinks
-                  key={product.id}
-                  product={product}
-                  priority={index < 4}
-                />
-              ))}
-            </div>
+            <>
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 2xl:grid-cols-4">
+                {products.map((product, index) => (
+                  <SaleorProductCard
+                    enableLinks
+                    key={product.id}
+                    product={product}
+                    priority={index < 4}
+                  />
+                ))}
+              </div>
+              <CategoryPagination
+                collection={category.slug}
+                currentPage={currentPage}
+                hasNextPage={hasNextPage}
+                hasPreviousPage={hasPreviousPage}
+                label={category.name}
+                sort={sort}
+                totalPages={totalPages}
+              />
+            </>
           ) : (
             <div className="mt-6 border border-[color:var(--cyber-gold)]/14 bg-card p-8 text-center">
               <SearchX className="mx-auto h-8 w-8 text-[color:var(--cyber-gold-soft)]" />
@@ -215,6 +240,79 @@ function CollectionNavLink({
   );
 }
 
+function CategoryPagination({
+  collection,
+  currentPage,
+  hasNextPage,
+  hasPreviousPage,
+  label,
+  sort,
+  totalPages,
+}: {
+  collection: string;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+  label: string;
+  sort: SortFilterItem["slug"];
+  totalPages: number;
+}) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  const previousPage =
+    currentPage <= 2 ? undefined : (currentPage - 1).toString();
+  const nextPage = (currentPage + 1).toString();
+
+  return (
+    <nav
+      aria-label={`${label} pagination`}
+      className="mt-8 flex flex-col gap-3 border-y border-[color:var(--cyber-gold)]/14 py-4 sm:flex-row sm:items-center sm:justify-between"
+    >
+      <p className="text-sm font-semibold text-foreground/58">
+        Page {currentPage.toLocaleString()} of {totalPages.toLocaleString()}
+      </p>
+      <div className="grid grid-cols-2 gap-2 sm:flex">
+        {hasPreviousPage ? (
+          <Button asChild variant="outline">
+            <Link
+              to="/collections/$collection"
+              params={{ collection }}
+              search={{ page: previousPage, sort }}
+            >
+              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+              Previous
+            </Link>
+          </Button>
+        ) : (
+          <Button disabled variant="outline">
+            <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+            Previous
+          </Button>
+        )}
+        {hasNextPage ? (
+          <Button asChild>
+            <Link
+              to="/collections/$collection"
+              params={{ collection }}
+              search={{ page: nextPage, sort }}
+            >
+              Next
+              <ChevronRight aria-hidden="true" className="h-4 w-4" />
+            </Link>
+          </Button>
+        ) : (
+          <Button disabled>
+            Next
+            <ChevronRight aria-hidden="true" className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
+    </nav>
+  );
+}
+
 function CategorySortLink({
   collection,
   currentSort,
@@ -230,7 +328,7 @@ function CategorySortLink({
     <Link
       to="/collections/$collection"
       params={{ collection }}
-      search={{ sort: item.slug }}
+      search={{ page: undefined, sort: item.slug }}
       className={[
         "inline-flex h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition",
         active

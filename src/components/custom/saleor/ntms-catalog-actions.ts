@@ -27,13 +27,19 @@ export const getSaleorSearchPage = createServerFn({ method: "POST" })
   );
 
 export const getSaleorCategoryPage = createServerFn({ method: "POST" })
-  .validator((data: { collection?: string; sort?: string }) => data)
+  .validator(
+    (data: { collection?: string; page?: number | string; sort?: string }) =>
+      data,
+  )
   .handler(async ({ data }): Promise<NtmsSaleorCategoryPage | null> => {
     if (!data.collection) {
       return null;
     }
 
-    return getNtmsSaleorCategoryPage(data.collection, { sort: data.sort });
+    return getNtmsSaleorCategoryPage(data.collection, {
+      page: data.page,
+      sort: data.sort,
+    });
   });
 
 export const getSaleorProductPage = createServerFn({ method: "POST" })

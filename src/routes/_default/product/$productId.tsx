@@ -111,6 +111,7 @@ export const Route = createFileRoute("/_default/product/$productId")({
 
     if (loaderData.storefrontBackend === "saleor") {
       const { product } = loaderData.productPage;
+      const canonicalUrl = getCanonicalUrl(`/product/${product.slug}`);
 
       return {
         meta: createEcommerceMeta(
@@ -131,12 +132,16 @@ export const Route = createFileRoute("/_default/product/$productId")({
                   ? "in stock"
                   : "out of stock",
             },
+            {
+              property: "og:url",
+              content: canonicalUrl,
+            },
           ],
         ),
         links: [
           {
             rel: "canonical",
-            href: getCanonicalUrl(`/product/${product.slug}`),
+            href: canonicalUrl,
           },
         ],
       };

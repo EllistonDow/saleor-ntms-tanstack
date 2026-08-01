@@ -139,6 +139,10 @@ type NtmsSaleorCategoryPageResponse = {
     slug: string;
     products?: {
       totalCount?: number | null;
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor?: string | null;
+      };
       edges: {
         node: SaleorProductNode;
       }[];
@@ -155,12 +159,20 @@ type NtmsSaleorCategoryPageResponse = {
     slug: string;
     products?: {
       totalCount?: number | null;
+      pageInfo: {
+        hasNextPage: boolean;
+        endCursor?: string | null;
+      };
       edges: {
         node: SaleorProductNode;
       }[];
     } | null;
   } | null;
 };
+
+type NtmsSaleorCategoryProductsConnection = NonNullable<
+  NonNullable<NtmsSaleorCategoryPageResponse["category"]>["products"]
+>;
 
 type NtmsSaleorCategoryCollectionOverridesResponse = {
   collections?: {
@@ -221,6 +233,7 @@ type NtmsSaleorSearchOptions = {
 };
 
 type NtmsSaleorCategoryPageOptions = {
+  page?: NtmsSaleorPageInput;
   sort?: string;
 };
 
@@ -294,9 +307,14 @@ export type NtmsSaleorCategoryPage = {
   channel: string;
   category: NtmsSaleorCategory;
   children: NtmsSaleorCategory[];
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
   isCollectionOnly: boolean;
+  page: number;
+  pageSize: number;
   products: NtmsSaleorProduct[];
   sort: NtmsSaleorSortSlug;
+  totalPages: number;
   totalProducts: number;
 };
 
@@ -484,13 +502,21 @@ const saleorProductDetailFields = `
 `;
 
 const ntmsSaleorCategoryPageQuery = `
-  query NtmsSaleorCategoryPage($channel: String!, $slug: String!, $sortBy: ProductOrder) {
+  query NtmsSaleorCategoryPage(
+    $categoryAfter: String
+    $channel: String!
+    $collectionAfter: String
+    $first: Int!
+    $slug: String!
+    $sortBy: ProductOrder
+  ) {
     category(slug: $slug) {
       id
       name
       slug
-      products(first: 24, channel: $channel, sortBy: $sortBy) {
+      products(first: $first, after: $categoryAfter, channel: $channel, sortBy: $sortBy) {
         totalCount
+        pageInfo { hasNextPage endCursor }
         edges {
           node {
             ${saleorProductCardFields}
@@ -520,8 +546,9 @@ const ntmsSaleorCategoryPageQuery = `
       id
       name
       slug
-      products(first: 24, sortBy: $sortBy) {
+      products(first: $first, after: $collectionAfter, sortBy: $sortBy) {
         totalCount
+        pageInfo { hasNextPage endCursor }
         edges {
           node {
             ${saleorProductCardFields}
@@ -679,16 +706,71 @@ export async function getNtmsSaleorCategoryPage(
   options: NtmsSaleorCategoryPageOptions = {},
 ): Promise<NtmsSaleorCategoryPage | null> {
   const channel = getSaleorChannel();
+  const requestedPage = normalizePage(options.page);
   const sort = getSaleorSortSlug(options.sort);
-  const data = await saleorFetch<
-    NtmsSaleorCategoryPageResponse,
-    { channel: string; slug: string; sortBy: SaleorProductOrder }
-  >({
-    query: ntmsSaleorCategoryPageQuery,
-    variables: { channel, slug, sortBy: getSaleorProductOrder(sort, channel) },
-  });
+  const sortBy = getSaleorProductOrder(sort, channel);
+  let categoryAfter: string | null = null;
+  let collectionAfter: string | null = null;
+  let currentPage = 1;
+  let data: NtmsSaleorCategoryPageResponse | null = null;
 
-  if (!data.category && !data.collection) {
+  while (true) {
+    data = await saleorFetch<
+      NtmsSaleorCategoryPageResponse,
+      {
+        categoryAfter: string | null;
+        channel: string;
+        collectionAfter: string | null;
+        first: number;
+        slug: string;
+        sortBy: SaleorProductOrder;
+      }
+    >({
+      query: ntmsSaleorCategoryPageQuery,
+      variables: {
+        categoryAfter,
+        channel,
+        collectionAfter,
+        first: saleorProductsPageSize,
+        slug,
+        sortBy,
+      },
+    });
+
+    const categoryConnection: NtmsSaleorCategoryProductsConnection | null =
+      data.category?.products ?? null;
+    const collectionConnection: NtmsSaleorCategoryProductsConnection | null =
+      data.collection?.products ?? null;
+    const useCollection =
+      (collectionConnection?.totalCount ?? 0) >
+      (categoryConnection?.totalCount ?? 0);
+    const preferredConnection = useCollection
+      ? collectionConnection
+      : categoryConnection;
+
+    if (
+      currentPage >= requestedPage ||
+      !preferredConnection?.pageInfo.hasNextPage
+    ) {
+      break;
+    }
+
+    if (categoryConnection?.pageInfo.hasNextPage) {
+      categoryAfter = categoryConnection.pageInfo.endCursor ?? null;
+    }
+    if (collectionConnection?.pageInfo.hasNextPage) {
+      collectionAfter = collectionConnection.pageInfo.endCursor ?? null;
+    }
+
+    const preferredAfter = useCollection ? collectionAfter : categoryAfter;
+    if (!preferredAfter) {
+      break;
+    }
+
+    currentPage += 1;
+  }
+
+  if (!data || (!data.category && !data.collection)) {
     return null;
   }
 
@@ -742,18 +824,30 @@ export async function getNtmsSaleorCategoryPage(
     collectionTotal > categoryDirectTotal
       ? collectionProducts
       : categoryProducts;
+  const selectedConnection =
+    collectionTotal > categoryDirectTotal
+      ? data.collection?.products
+      : data.category?.products;
+  const totalProducts = Math.max(collectionTotal, categoryDirectTotal);
+  const totalPages = Math.max(
+    1,
+    Math.ceil(totalProducts / saleorProductsPageSize),
+  );
+  const page = totalProducts === 0 ? 1 : Math.min(currentPage, totalPages);
 
   return {
     channel,
     category,
     children,
+    hasNextPage: selectedConnection?.pageInfo.hasNextPage ?? false,
+    hasPreviousPage: page > 1,
     isCollectionOnly: !data.category,
+    page,
+    pageSize: saleorProductsPageSize,
     products,
     sort,
-    totalProducts:
-      collectionTotal > categoryDirectTotal
-        ? collectionTotal
-        : categoryDirectTotal,
+    totalPages,
+    totalProducts,
   };
 }
 

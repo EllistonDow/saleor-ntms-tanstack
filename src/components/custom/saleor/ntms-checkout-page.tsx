@@ -28,7 +28,6 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import type {
-  NtmsSaleorAddressInput,
   NtmsSaleorCheckout,
   NtmsSaleorOrder,
 } from "@/lib/saleor/checkout";
@@ -45,11 +44,17 @@ import {
   setSaleorCheckoutDeliveryMethod,
 } from "./ntms-cart-actions";
 import { useSaleorCart } from "./ntms-cart-context";
+import {
+  isNtmsCheckoutAddressValid,
+  type NtmsCheckoutAddressErrors,
+  type NtmsCheckoutAddressField,
+  type NtmsCheckoutAddressValues,
+  ntmsCheckoutSupportedCountries,
+  validateNtmsCheckoutAddress,
+} from "./ntms-checkout-address";
 import { getNtmsSaleorPaymentSessionKey } from "./ntms-checkout-payment-session";
 
-type CheckoutFormValues = NtmsSaleorAddressInput & {
-  email: string;
-};
+type CheckoutFormValues = NtmsCheckoutAddressValues;
 
 type CheckoutOrderPlacedHandler = (order: NtmsSaleorOrder) => Promise<void>;
 
@@ -85,6 +90,9 @@ export function NtmsSaleorCheckoutPage() {
     useSaleorCart();
   const [formValues, setFormValues] = useState<CheckoutFormValues>(() =>
     getInitialFormValues(null),
+  );
+  const [addressErrors, setAddressErrors] = useState<NtmsCheckoutAddressErrors>(
+    {},
   );
   const [selectedGatewayId, setSelectedGatewayId] = useState("");
   const addressMutation = useMutation({
@@ -215,17 +223,7 @@ export function NtmsSaleorCheckoutPage() {
     setSelectedGatewayId(defaultGateway.id);
   }, [checkout, selectedGatewayId]);
 
-  const canSubmitAddress = useMemo(
-    () =>
-      formValues.email.trim().includes("@") &&
-      formValues.firstName.trim().length > 1 &&
-      formValues.lastName.trim().length > 1 &&
-      formValues.streetAddress1.trim().length > 2 &&
-      formValues.city.trim().length > 1 &&
-      (formValues.countryArea ?? "").trim().length > 1 &&
-      formValues.postalCode.trim().length > 2,
-    [formValues],
-  );
+  const countryOptions = getCheckoutCountryOptions(formValues.country);
   const selectedGateway = checkout?.paymentGateways.find(
     (gateway) => gateway.id === selectedGatewayId,
   );
@@ -261,12 +259,34 @@ export function NtmsSaleorCheckoutPage() {
         ...current,
         [field]: event.target.value,
       }));
+      setAddressErrors((current) => {
+        if (!current[field]) return current;
+        const next = { ...current };
+        delete next[field];
+        return next;
+      });
+      if (addressMutation.isError) addressMutation.reset();
     };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (!canSubmitAddress) return;
-    await addressMutation.mutateAsync(formValues);
+    const nextErrors = validateNtmsCheckoutAddress(formValues);
+    setAddressErrors(nextErrors);
+
+    if (!isNtmsCheckoutAddressValid(nextErrors)) {
+      const firstInvalidField = Object.keys(
+        nextErrors,
+      )[0] as NtmsCheckoutAddressField;
+      requestAnimationFrame(() => {
+        const input = document.querySelector<HTMLElement>(
+          `[name="${firstInvalidField}"]`,
+        );
+        input?.focus();
+      });
+      return;
+    }
+
+    addressMutation.mutate(formValues);
   };
 
   if (isLoading && !checkout) {
@@ -385,12 +405,37 @@ export function NtmsSaleorCheckoutPage() {
             </div>
 
             <form
+              aria-busy={addressMutation.isPending}
               className="p-5"
               data-saleor-checkout-address-form
+              noValidate
               onSubmit={handleSubmit}
             >
+              {!isNtmsCheckoutAddressValid(addressErrors) ? (
+                <p
+                  className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+                  data-saleor-checkout-validation-error
+                  role="alert"
+                >
+                  Check the highlighted delivery details before continuing.
+                </p>
+              ) : null}
+              {addressMutation.error ? (
+                <p
+                  className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+                  data-saleor-checkout-address-error
+                  role="alert"
+                >
+                  {getErrorMessage(
+                    addressMutation.error,
+                    "Unable to save delivery details. Check the address and try again.",
+                  )}
+                </p>
+              ) : null}
               <FieldGroup className="grid gap-4 sm:grid-cols-2">
                 <CheckoutInput
+                  autoComplete="email"
+                  error={addressErrors.email}
                   label="Email"
                   name="email"
                   onChange={handleChange("email")}
@@ -399,12 +444,16 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.email}
                 />
                 <CheckoutInput
+                  autoComplete="tel"
+                  error={addressErrors.phone}
                   label="Phone"
                   name="phone"
                   onChange={handleChange("phone")}
                   value={formValues.phone ?? ""}
                 />
                 <CheckoutInput
+                  autoComplete="given-name"
+                  error={addressErrors.firstName}
                   label="First name"
                   name="firstName"
                   onChange={handleChange("firstName")}
@@ -412,6 +461,8 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.firstName}
                 />
                 <CheckoutInput
+                  autoComplete="family-name"
+                  error={addressErrors.lastName}
                   label="Last name"
                   name="lastName"
                   onChange={handleChange("lastName")}
@@ -419,6 +470,7 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.lastName}
                 />
                 <CheckoutInput
+                  autoComplete="organization"
                   className="sm:col-span-2"
                   label="Company"
                   name="companyName"
@@ -426,7 +478,9 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.companyName ?? ""}
                 />
                 <CheckoutInput
+                  autoComplete="address-line1"
                   className="sm:col-span-2"
+                  error={addressErrors.streetAddress1}
                   label="Street address"
                   name="streetAddress1"
                   onChange={handleChange("streetAddress1")}
@@ -434,6 +488,7 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.streetAddress1}
                 />
                 <CheckoutInput
+                  autoComplete="address-line2"
                   className="sm:col-span-2"
                   label="Apartment, suite, unit"
                   name="streetAddress2"
@@ -441,6 +496,8 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.streetAddress2 ?? ""}
                 />
                 <CheckoutInput
+                  autoComplete="address-level2"
+                  error={addressErrors.city}
                   label="City"
                   name="city"
                   onChange={handleChange("city")}
@@ -448,32 +505,57 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.city}
                 />
                 <CheckoutInput
-                  label="State"
+                  autoComplete="address-level1"
+                  error={addressErrors.countryArea}
+                  label={
+                    formValues.country === "CA"
+                      ? "Province"
+                      : "State / Province"
+                  }
                   name="countryArea"
                   onChange={handleChange("countryArea")}
-                  required
+                  required={
+                    formValues.country === "US" || formValues.country === "CA"
+                  }
                   value={formValues.countryArea ?? ""}
                 />
                 <CheckoutInput
+                  autoComplete="postal-code"
+                  error={addressErrors.postalCode}
                   label="Postal code"
                   name="postalCode"
                   onChange={handleChange("postalCode")}
                   required
                   value={formValues.postalCode}
                 />
-                <Field>
-                  <FieldLabel>
+                <Field data-invalid={Boolean(addressErrors.country)}>
+                  <FieldLabel htmlFor="country">
                     Country
                     <select
+                      aria-describedby={
+                        addressErrors.country ? "country-error" : undefined
+                      }
+                      aria-invalid={Boolean(addressErrors.country)}
+                      autoComplete="country"
                       className="mt-2 h-10 w-full rounded-md border border-[color:var(--cyber-gold)]/20 bg-background px-3 text-sm text-foreground focus:border-[color:var(--cyber-gold)]/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyber-gold)]/35"
+                      id="country"
                       name="country"
                       onChange={handleChange("country")}
+                      required
                       value={formValues.country}
                     >
-                      <option value="US">United States</option>
-                      <option value="CA">Canada</option>
+                      {countryOptions.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {country.name}
+                        </option>
+                      ))}
                     </select>
                   </FieldLabel>
+                  {addressErrors.country ? (
+                    <p className="text-sm text-destructive" id="country-error">
+                      {addressErrors.country}
+                    </p>
+                  ) : null}
                 </Field>
               </FieldGroup>
 
@@ -483,7 +565,7 @@ export function NtmsSaleorCheckoutPage() {
                 </p>
                 <Button
                   data-saleor-checkout-save-address
-                  disabled={!canSubmitAddress || addressMutation.isPending}
+                  disabled={addressMutation.isPending}
                   type="submit"
                 >
                   {addressMutation.isPending ? "Saving" : "Save details"}
@@ -495,9 +577,10 @@ export function NtmsSaleorCheckoutPage() {
 
           <DeliverySection
             checkout={checkout}
+            error={deliveryMutation.error}
             isSaving={deliveryMutation.isPending}
             onSelect={(deliveryMethodId) =>
-              deliveryMutation.mutateAsync(deliveryMethodId)
+              deliveryMutation.mutate(deliveryMethodId)
             }
           />
 
@@ -515,6 +598,7 @@ export function NtmsSaleorCheckoutPage() {
         <CheckoutSummary
           canPlaceOrder={canPlaceOrder}
           checkout={checkout}
+          error={completeMutation.error}
           isPlacingOrder={completeMutation.isPending}
           onPlaceOrder={() => completeMutation.mutate()}
           requiresPaymentPanel={requiresPaymentPanel}
@@ -526,12 +610,14 @@ export function NtmsSaleorCheckoutPage() {
 
 function DeliverySection({
   checkout,
+  error,
   isSaving,
   onSelect,
 }: {
   checkout: NtmsSaleorCheckout;
+  error: Error | null;
   isSaving: boolean;
-  onSelect: (deliveryMethodId: string) => Promise<NtmsSaleorCheckout | null>;
+  onSelect: (deliveryMethodId: string) => void;
 }) {
   return (
     <section
@@ -550,6 +636,18 @@ function DeliverySection({
         </h2>
       </div>
       <div className="space-y-3 p-5">
+        {error ? (
+          <p
+            className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+            data-saleor-checkout-shipping-error
+            role="alert"
+          >
+            {getErrorMessage(
+              error,
+              "Unable to save that shipping method. Try again.",
+            )}
+          </p>
+        ) : null}
         {checkout.shippingMethods.length > 0 ? (
           checkout.shippingMethods.map((method) => {
             const selected = checkout.selectedShippingMethod?.id === method.id;
@@ -569,6 +667,8 @@ function DeliverySection({
                 data-saleor-shipping-method-selected={
                   selected ? "true" : "false"
                 }
+                aria-pressed={selected}
+                aria-busy={isSaving && selected}
                 disabled={isSaving}
                 key={method.id}
                 onClick={() => onSelect(method.id)}
@@ -663,6 +763,7 @@ function PaymentSection({
                 data-saleor-payment-gateway-supported={
                   gateway.supported ? "true" : "false"
                 }
+                aria-pressed={selected}
                 disabled={!gateway.supported}
                 key={gateway.id}
                 onClick={() => onSelectGateway(gateway.id)}
@@ -1183,7 +1284,10 @@ function SaleorPayPalButtons({
         </div>
       ) : null}
       {paymentError ? (
-        <p className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive">
+        <p
+          className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+          role="alert"
+        >
           {paymentError}
         </p>
       ) : null}
@@ -1678,12 +1782,14 @@ function PaymentInitializationError({
 function CheckoutSummary({
   canPlaceOrder,
   checkout,
+  error,
   isPlacingOrder,
   onPlaceOrder,
   requiresPaymentPanel,
 }: {
   canPlaceOrder: boolean;
   checkout: NtmsSaleorCheckout;
+  error: Error | null;
   isPlacingOrder: boolean;
   onPlaceOrder: () => void;
   requiresPaymentPanel: boolean;
@@ -1734,6 +1840,7 @@ function CheckoutSummary({
           </p>
         </div>
         <Button
+          aria-busy={isPlacingOrder}
           className="mt-5 h-12 w-full gap-2 font-semibold"
           data-saleor-place-order-button
           disabled={!canPlaceOrder || isPlacingOrder}
@@ -1747,6 +1854,18 @@ function CheckoutSummary({
           )}
           {isPlacingOrder ? "Placing order" : "Place order"}
         </Button>
+        {error ? (
+          <p
+            className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+            data-saleor-checkout-completion-error
+            role="alert"
+          >
+            {getErrorMessage(
+              error,
+              "Unable to place the order. Review the checkout details and try again.",
+            )}
+          </p>
+        ) : null}
         {!canPlaceOrder ? (
           <p className="mt-3 text-xs leading-5 text-foreground/45">
             {requiresPaymentPanel
@@ -1830,17 +1949,31 @@ function CheckoutStepPill({
 
 function CheckoutInput({
   className,
+  error,
   label,
   ...props
 }: React.ComponentProps<typeof Input> & {
+  error?: string;
   label: string;
 }) {
+  const inputId = props.id ?? props.name;
+  const errorId = inputId ? `${inputId}-error` : undefined;
+
   return (
-    <Field className={className}>
-      <FieldLabel>
-        {label}
-        <Input className="mt-2 h-10" {...props} />
-      </FieldLabel>
+    <Field className={className} data-invalid={Boolean(error)}>
+      <FieldLabel htmlFor={inputId}>{label}</FieldLabel>
+      <Input
+        {...props}
+        aria-describedby={error ? errorId : props["aria-describedby"]}
+        aria-invalid={Boolean(error)}
+        className="mt-2 h-10"
+        id={inputId}
+      />
+      {error ? (
+        <p className="text-sm text-destructive" id={errorId}>
+          {error}
+        </p>
+      ) : null}
     </Field>
   );
 }
@@ -1878,6 +2011,26 @@ function getInitialFormValues(
     countryArea: address?.countryArea ?? "",
     phone: address?.phone ?? "",
   };
+}
+
+function getCheckoutCountryOptions(selectedCountryCode: string) {
+  if (
+    !selectedCountryCode ||
+    ntmsCheckoutSupportedCountries.some(
+      (country) => country.code === selectedCountryCode,
+    )
+  ) {
+    return ntmsCheckoutSupportedCountries;
+  }
+
+  return [
+    { code: selectedCountryCode, name: selectedCountryCode },
+    ...ntmsCheckoutSupportedCountries,
+  ];
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error && error.message ? error.message : fallback;
 }
 
 function formatSaleorMoney(price: { amount: number; currency: string }) {

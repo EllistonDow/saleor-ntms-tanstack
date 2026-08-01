@@ -247,7 +247,7 @@ export function NtmsSaleorProductPageView({
             <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
               {product.category?.name ?? "Tattoo supply"}
             </p>
-            <h1 className="mt-4 text-4xl font-black leading-[1.04] text-foreground">
+            <h1 className="mt-4 break-words text-3xl font-black leading-[1.04] text-foreground sm:text-4xl">
               {product.name}
             </h1>
 

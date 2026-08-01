@@ -42,6 +42,23 @@ export const getSearchRobotsDirective = (
   indexingEnabled = isSearchIndexingEnabled(),
 ) => (indexingEnabled ? "noindex, follow" : "noindex, nofollow");
 
+export const normalizeMetaDescription = (
+  description: string,
+  maxLength = 160,
+) => {
+  const normalized = description.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) {
+    return normalized;
+  }
+
+  const truncated = normalized.slice(0, Math.max(0, maxLength - 3));
+  const lastSpace = truncated.lastIndexOf(" ");
+  const readableCut =
+    lastSpace >= maxLength * 0.65 ? lastSpace : truncated.length;
+
+  return `${truncated.slice(0, readableCut).trimEnd()}...`;
+};
+
 /**
  * Common metadata patterns for different page types
  */
@@ -84,6 +101,7 @@ export const createBasicMeta = (
   robotsDirective?: string,
 ) => {
   const defaults = getMetaDefaults();
+  const metaDescription = normalizeMetaDescription(description);
 
   return [
     {
@@ -91,7 +109,7 @@ export const createBasicMeta = (
     },
     {
       name: "description",
-      content: description,
+      content: metaDescription,
     },
     ...(robotsDirective
       ? [
@@ -120,6 +138,7 @@ export const createEcommerceMeta = (
   }> = [],
 ) => {
   const pageTitle = createPageTitle(title);
+  const metaDescription = normalizeMetaDescription(description);
   const hasRobotsOverride = additionalMeta.some(
     (item) => item.name === "robots",
   );
@@ -130,7 +149,7 @@ export const createEcommerceMeta = (
     },
     {
       name: "description",
-      content: description,
+      content: metaDescription,
     },
     ...(hasRobotsOverride ? [] : getMetaDefaults().public),
     // Override Open Graph title and description (inherits the rest)
@@ -140,7 +159,15 @@ export const createEcommerceMeta = (
     },
     {
       property: "og:description",
-      content: description,
+      content: metaDescription,
+    },
+    {
+      name: "twitter:title",
+      content: pageTitle,
+    },
+    {
+      name: "twitter:description",
+      content: metaDescription,
     },
     // Add image if provided
     ...(imageUrl

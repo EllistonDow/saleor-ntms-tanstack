@@ -31,7 +31,10 @@ export function NtmsSaleorSearchPageView({
     <main className="min-h-screen bg-background text-foreground">
       <header className="border-b border-[color:var(--cyber-gold)]/14">
         <div className="mx-auto max-w-screen-2xl px-4 py-4">
-          <nav className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase text-foreground/45">
+          <nav
+            aria-label="Breadcrumb"
+            className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase text-foreground/45"
+          >
             <Link
               to="/"
               className="shrink-0 transition hover:text-[color:var(--cyber-gold-soft)]"
@@ -48,7 +51,7 @@ export function NtmsSaleorSearchPageView({
             <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
               Supply search
             </p>
-            <h1 className="mt-3 text-5xl font-black leading-[1.04] text-foreground">
+            <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] text-foreground sm:text-5xl">
               {hasQuery ? `Results for "${page.query}"` : "Search catalog"}
             </h1>
           </div>
@@ -63,7 +66,10 @@ export function NtmsSaleorSearchPageView({
             </label>
             <div className="flex min-w-0 gap-2">
               <div className="relative min-w-0 flex-1">
-                <Search className="-translate-y-1/2 pointer-events-none absolute left-3 top-1/2 h-4 w-4 text-foreground/38" />
+                <Search
+                  aria-hidden="true"
+                  className="-translate-y-1/2 pointer-events-none absolute left-3 top-1/2 h-4 w-4 text-foreground/38"
+                />
                 <Input
                   className="h-11 border-[color:var(--cyber-gold)]/18 bg-card pl-9"
                   defaultValue={page.query}

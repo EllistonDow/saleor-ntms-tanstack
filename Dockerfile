@@ -66,7 +66,6 @@ ENV VITE_SEARCH_INDEXING=${VITE_SEARCH_INDEXING}
 ENV VITE_APP_BUILD_VERSION=${VITE_APP_BUILD_VERSION}
 ENV APP_SERVICE_NAME=${APP_SERVICE_NAME}
 COPY --from=builder --chown=node:node /app/dist ./dist
-COPY --from=builder --chown=node:node /app/.netlify ./.netlify
 COPY --from=builder --chown=node:node /app/public ./public
 COPY --from=builder --chown=node:node /app/server.js ./server.js
 COPY --from=builder --chown=node:node /app/package.json ./package.json

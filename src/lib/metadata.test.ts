@@ -2,11 +2,13 @@ import { describe, expect, test } from "vitest";
 import {
   createBasicMeta,
   createEcommerceMeta,
+  createPageTitle,
   createStructuredData,
   getBaseUrl,
   getCanonicalUrl,
   getPublicRobotsDirective,
   getSearchRobotsDirective,
+  normalizeMetaDescription,
 } from "./metadata";
 
 describe("storefront metadata", () => {
@@ -29,6 +31,48 @@ describe("storefront metadata", () => {
         { name: "robots", content: "noindex, nofollow" },
       ]),
     ).toContainEqual({ name: "robots", content: "noindex, nofollow" });
+  });
+
+  test("emits page-specific social metadata for ecommerce pages", () => {
+    const metadata = createEcommerceMeta(
+      "Tattoo Needles",
+      "Browse professional tattoo needles.",
+      "https://cdn.example.test/needles.webp",
+      [
+        {
+          property: "og:url",
+          content: `${getBaseUrl()}/collections/needles`,
+        },
+      ],
+    );
+
+    expect(metadata).toContainEqual({
+      name: "twitter:title",
+      content: createPageTitle("Tattoo Needles"),
+    });
+    expect(metadata).toContainEqual({
+      name: "twitter:description",
+      content: "Browse professional tattoo needles.",
+    });
+    expect(metadata).toContainEqual({
+      property: "og:url",
+      content: `${getBaseUrl()}/collections/needles`,
+    });
+  });
+
+  test("keeps metadata descriptions concise and readable", () => {
+    const description = Array.from(
+      { length: 30 },
+      () => "professional tattoo supply",
+    ).join(" ");
+    const normalized = normalizeMetaDescription(description);
+
+    expect(normalized.length).toBeLessThanOrEqual(160);
+    expect(normalized.endsWith("...")).toBe(true);
+    expect(createEcommerceMeta("Long product", description)).toContainEqual({
+      name: "description",
+      content: normalized,
+    });
   });
 
   test("emits a Saleor Product aggregate offer from real variant prices", () => {

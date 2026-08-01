@@ -30,7 +30,12 @@ import {
   useCollectionProducts,
 } from "@/hooks/use-catalog-products";
 import { sorting } from "@/lib/constants";
-import { createEcommerceMeta, getCanonicalUrl } from "@/lib/metadata";
+import {
+  createEcommerceMeta,
+  createStructuredData,
+  getBaseUrl,
+  getCanonicalUrl,
+} from "@/lib/metadata";
 import { searchSchema } from "@/lib/search-schema";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 import { cn } from "@/lib/utils";
@@ -43,7 +48,7 @@ export const Route = createFileRoute(
   loader: async ({ context, params: { collection }, deps: { search } }) => {
     if (isSaleorStorefront) {
       const categoryPage = await getSaleorCategoryPage({
-        data: { collection, sort: search.sort },
+        data: { collection, page: search.page, sort: search.sort },
       });
 
       if (!categoryPage) {
@@ -99,15 +104,18 @@ export const Route = createFileRoute(
 
     if (loaderData.storefrontBackend === "saleor") {
       const { category } = loaderData.categoryPage;
+      const canonicalUrl = getCanonicalUrl(`/collections/${category.slug}`);
       return {
         meta: createEcommerceMeta(
           category.name,
           `Browse ${category.name} products from the Nuclear Tattoo Supply catalog.`,
+          category.imageUrl || undefined,
+          [{ property: "og:url", content: canonicalUrl }],
         ),
         links: [
           {
             rel: "canonical",
-            href: getCanonicalUrl(`/collections/${category.slug}`),
+            href: canonicalUrl,
           },
         ],
       };
@@ -127,6 +135,28 @@ export const Route = createFileRoute(
         },
       ],
     };
+  },
+  scripts: ({ loaderData }) => {
+    if (!loaderData) return [];
+
+    const category =
+      loaderData.storefrontBackend === "saleor"
+        ? loaderData.categoryPage.category
+        : loaderData.collection;
+    const breadcrumbJsonLd = createStructuredData.breadcrumb([
+      { name: "Home", url: getBaseUrl() },
+      {
+        name: category.name,
+        url: getCanonicalUrl(`/collections/${category.slug}`),
+      },
+    ]);
+
+    return [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify(breadcrumbJsonLd),
+      },
+    ];
   },
   pendingComponent: ProductGridSkeleton,
   errorComponent: ErrorComponent,

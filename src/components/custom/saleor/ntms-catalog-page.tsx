@@ -20,9 +20,9 @@ const categoryDisplayNames = new Map([
   ["Power Supplies & Cords", "Power"],
 ]);
 
-const categoryPriority = [
-  "Inks",
+export const categoryPriority = [
   "Needles",
+  "Inks",
   "Machines",
   "Tubes & Grips",
   "Power Supplies & Cords",
@@ -122,7 +122,7 @@ export function NtmsSaleorCatalogPage({
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-7 grid border-l border-t border-[color:var(--cyber-gold)]/14 sm:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-7 grid border-l border-t border-[color:var(--cyber-gold)]/14 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
               <SupplyIndexItem
                 key={category.id}
@@ -188,7 +188,7 @@ export function NtmsSaleorCatalogPage({
   );
 }
 
-function getHomeCategories(categories: NtmsSaleorCategory[]) {
+export function getHomeCategories(categories: NtmsSaleorCategory[]) {
   return [...categories]
     .sort((left, right) => {
       const leftIndex = categoryPriority.indexOf(left.name);
@@ -201,7 +201,7 @@ function getHomeCategories(categories: NtmsSaleorCategory[]) {
       }
       return right.productCount - left.productCount;
     })
-    .slice(0, 8);
+    .slice(0, categoryPriority.length);
 }
 
 function getCategoryDisplayName(category: NtmsSaleorCategory) {

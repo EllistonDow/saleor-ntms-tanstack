@@ -121,30 +121,24 @@ export const Route = createRootRouteWithContext<RouterContext>()({
           content: "en_US",
         },
         // Twitter Card tags
-        ...(twitterCreator && twitterSite
-          ? [
-              {
-                name: "twitter:card",
-                content: "summary_large_image",
-              },
-              {
-                name: "twitter:site",
-                content: twitterSite,
-              },
-              {
-                name: "twitter:creator",
-                content: twitterCreator,
-              },
-              {
-                name: "twitter:title",
-                content: VITE_SITE_NAME,
-              },
-              {
-                name: "twitter:description",
-                content: siteDescription,
-              },
-            ]
+        {
+          name: "twitter:card",
+          content: "summary_large_image",
+        },
+        ...(twitterSite
+          ? [{ name: "twitter:site", content: twitterSite }]
           : []),
+        ...(twitterCreator
+          ? [{ name: "twitter:creator", content: twitterCreator }]
+          : []),
+        {
+          name: "twitter:title",
+          content: VITE_SITE_NAME,
+        },
+        {
+          name: "twitter:description",
+          content: siteDescription,
+        },
         // Additional SEO meta tags
         {
           name: "theme-color",
