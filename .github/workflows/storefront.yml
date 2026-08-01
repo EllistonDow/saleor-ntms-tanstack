@@ -16,7 +16,7 @@ env:
   STOREFRONT_BACKEND: saleor
   COMPANY_NAME: Nuclear Tattoo Supply
   SITE_NAME: Nuclear Tattoo Supply
-  WEBSITE_URL: https://ntms-tanstack.kubernetes.nucleartattoosupply.com
+  WEBSITE_URL: https://saleor-ntms-tanstack.kubernetes.nucleartattoosupply.com
   APP_SERVICE_NAME: saleor-ntms-tanstack
 
 jobs:
