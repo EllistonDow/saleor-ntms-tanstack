@@ -8,7 +8,11 @@ const validSortSlugs = sorting.map((item) => item.slug) as [SortSlugs];
 // Base search schema for common search parameters
 export const baseSearchSchema = z.object({
   q: z.string().optional().catch(""),
-  sort: z.enum(validSortSlugs).optional().default(defaultSort.slug),
+  sort: z
+    .enum(validSortSlugs)
+    .optional()
+    .default(defaultSort.slug)
+    .catch(defaultSort.slug),
 });
 
 // Extended search schema that allows dynamic facet parameters
