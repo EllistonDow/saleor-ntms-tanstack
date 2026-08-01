@@ -68,5 +68,5 @@ jobs:
             VITE_APP_BUILD_VERSION=sha-${{ github.sha }}
             APP_SERVICE_NAME=${{ env.APP_SERVICE_NAME }}
           tags: |
-            ghcr.io/${{ github.repository_owner }}/saleor-ntms-tanstack:sha-${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/saleor-ntms-tanstack:main
+            ghcr.io/ellistondow/saleor-ntms-tanstack:sha-${{ github.sha }}
+            ghcr.io/ellistondow/saleor-ntms-tanstack:main
