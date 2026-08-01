@@ -88,6 +88,11 @@ function NtmsSaleorHeader() {
               to="/collections/$collection"
               params={{ collection: item.slug }}
               className="shrink-0 border-b-2 border-transparent py-3 text-xs font-bold uppercase text-foreground/64 transition hover:border-[color:var(--cyber-gold)] hover:text-foreground sm:text-sm"
+              activeProps={{
+                "aria-current": "page",
+                className:
+                  "border-[color:var(--cyber-gold)] text-[color:var(--cyber-gold-soft)]",
+              }}
             >
               {item.label}
             </Link>
@@ -221,6 +226,11 @@ function NtmsMobileNavigation() {
               params={{ collection: item.slug }}
               onClick={() => setOpen(false)}
               className="group flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 py-3 text-sm font-semibold text-foreground/70 transition hover:text-[color:var(--cyber-gold-soft)]"
+              activeProps={{
+                "aria-current": "page",
+                className:
+                  "group flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 py-3 text-sm font-semibold text-[color:var(--cyber-gold-soft)] transition",
+              }}
             >
               {item.label}
               <ArrowRight className="h-4 w-4 text-foreground/35 transition group-hover:translate-x-0.5 group-hover:text-[color:var(--cyber-gold-soft)]" />
