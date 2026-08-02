@@ -145,9 +145,17 @@ const server = createServer(async (req, res) => {
 
     const headers = toHeaders(req.headers);
     const hasBody = !["GET", "HEAD"].includes(req.method || "GET");
+    const requestAbortController = new AbortController();
+    req.once("aborted", () => requestAbortController.abort());
+    res.once("close", () => {
+      if (!res.writableEnded) {
+        requestAbortController.abort();
+      }
+    });
     const requestInit = {
       method: req.method,
       headers,
+      signal: requestAbortController.signal,
       ...(hasBody
         ? {
             body: Readable.toWeb(req),
@@ -170,7 +178,9 @@ const server = createServer(async (req, res) => {
 
     const responseStream = Readable.fromWeb(response.body);
     responseStream.on("error", (error) => {
-      console.error("SSR response stream error", error);
+      if (!requestAbortController.signal.aborted) {
+        console.error("SSR response stream error", error);
+      }
       if (!res.destroyed) {
         res.destroy(error);
       }
