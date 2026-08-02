@@ -210,6 +210,10 @@ export function NtmsSaleorCheckoutPage() {
       return;
     }
 
+    if (!selectedGatewayId) {
+      return;
+    }
+
     const currentGatewayStillAvailable = checkout.paymentGateways.some(
       (gateway) => gateway.id === selectedGatewayId && gateway.supported,
     );
@@ -217,10 +221,7 @@ export function NtmsSaleorCheckoutPage() {
       return;
     }
 
-    const defaultGateway =
-      checkout.paymentGateways.find((gateway) => gateway.supported) ??
-      checkout.paymentGateways[0];
-    setSelectedGatewayId(defaultGateway.id);
+    setSelectedGatewayId("");
   }, [checkout, selectedGatewayId]);
 
   const countryOptions = getCheckoutCountryOptions(formValues.country);
@@ -383,11 +384,7 @@ export function NtmsSaleorCheckoutPage() {
               active={Boolean(selectedGateway?.supported)}
               icon={<CreditCard className="h-4 w-4" />}
               label="Payment"
-              value={
-                selectedGateway?.supported
-                  ? "Ready"
-                  : (selectedGateway?.supportLabel ?? "Select method")
-              }
+              value={selectedGateway?.name ?? "Select method"}
             />
           </section>
 
@@ -727,9 +724,16 @@ function PaymentSection({
   selectedGateway: NtmsSaleorCheckout["paymentGateways"][number] | null;
   selectedGatewayId: string;
 }) {
+  const selectableGateways = checkout.paymentGateways.filter(
+    (gateway) => gateway.supported,
+  );
+  const blockedGatewayCount =
+    checkout.paymentGateways.length - selectableGateways.length;
+
   return (
     <section
       className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card"
+      data-saleor-blocked-payment-gateway-count={blockedGatewayCount}
       data-saleor-checkout-payment-section
     >
       <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
@@ -744,8 +748,8 @@ function PaymentSection({
         </h2>
       </div>
       <div className="space-y-3 p-5">
-        {checkout.paymentGateways.length > 0 ? (
-          checkout.paymentGateways.map((gateway) => {
+        {selectableGateways.length > 0 ? (
+          selectableGateways.map((gateway) => {
             const selected = selectedGatewayId === gateway.id;
             return (
               <button
@@ -753,7 +757,7 @@ function PaymentSection({
                   selected
                     ? "border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/10"
                     : "border-[color:var(--cyber-gold)]/12 bg-background hover:border-[color:var(--cyber-gold)]/28"
-                } ${!gateway.supported ? "cursor-not-allowed opacity-55" : ""}`}
+                }`}
                 data-saleor-payment-gateway-button
                 data-saleor-payment-gateway-id={gateway.id}
                 data-saleor-payment-gateway-kind={gateway.kind}
@@ -764,7 +768,6 @@ function PaymentSection({
                   gateway.supported ? "true" : "false"
                 }
                 aria-pressed={selected}
-                disabled={!gateway.supported}
                 key={gateway.id}
                 onClick={() => onSelectGateway(gateway.id)}
                 type="button"
@@ -786,8 +789,15 @@ function PaymentSection({
             );
           })
         ) : (
-          <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
-            Select a delivery method to continue.
+          <p
+            className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56"
+            data-saleor-payment-unavailable
+            role="status"
+          >
+            {checkout.paymentGateways.length === 0 &&
+            !checkout.selectedShippingMethod
+              ? "Save delivery details and select a shipping method to load payment options."
+              : "Online payment is not available yet. Your cart is saved; please try again later."}
           </p>
         )}
         {selectedGateway?.kind === "stripe" ? (
@@ -1268,6 +1278,9 @@ function SaleorPayPalButtons({
     <div
       className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
       data-saleor-paypal-payment-panel
+      data-saleor-paypal-payment-ready={
+        !isLoading && !paymentError ? "true" : "false"
+      }
     >
       <div className={isApproving ? "pointer-events-none opacity-50" : ""}>
         {isLoading ? (
@@ -1286,6 +1299,7 @@ function SaleorPayPalButtons({
       {paymentError ? (
         <p
           className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+          data-saleor-paypal-payment-error
           role="alert"
         >
           {paymentError}
@@ -1514,6 +1528,7 @@ function LegacyStripeCardForm({
   return (
     <form
       className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      data-saleor-legacy-stripe-payment-form
       onSubmit={handleSubmit}
     >
       <div className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-card p-3">
@@ -1688,6 +1703,7 @@ function StripeCardForm({
   return (
     <form
       className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      data-saleor-stripe-payment-form
       onSubmit={handleSubmit}
     >
       <PaymentElement options={stripePaymentElementOptions} />

@@ -15,6 +15,7 @@ import { StatusPanel } from "@/components/custom/layout/status-panel";
 import { ProductCard } from "@/components/custom/product-card";
 import { getSaleorCatalogPreview } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorCatalogPage } from "@/components/custom/saleor/ntms-catalog-page";
+import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { clientEnv } from "@/env/client";
 import {
   activeChannelQueryOptions,
@@ -95,9 +96,18 @@ export const Route = createFileRoute("/_default/")({
       },
     ];
   },
+  pendingComponent: HomePending,
   errorComponent: ErrorComponent,
   component: App,
 });
+
+function HomePending() {
+  return isSaleorStorefront ? (
+    <NtmsSaleorCatalogPending label="Loading storefront" />
+  ) : (
+    <SectionSkeleton label="Loading storefront" />
+  );
+}
 
 function App() {
   const loaderData = Route.useLoaderData();

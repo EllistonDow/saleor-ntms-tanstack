@@ -9,6 +9,10 @@ export const serverEnv = createEnv({
       .default("http://localhost:8000/graphql/"),
     SALEOR_CHANNEL: z.string().min(1).default("default-channel"),
     SALEOR_ROOT_CATEGORY_SLUG: z.string().min(1).default("__root__"),
+    SALEOR_ALLOW_UNSAFE_PAYMENT_GATEWAYS: z
+      .enum(["enabled", "disabled"])
+      .default("disabled"),
+    SALEOR_ENABLED_PAYMENT_GATEWAYS: z.string().default(""),
     VITE_WEBSITE_URL: z.string().url().optional(),
     VITE_SEARCH_INDEXING: z.enum(["enabled", "disabled"]).default("disabled"),
     SESSION_SECRET: z

@@ -247,17 +247,23 @@ function NtmsMobileNavigation() {
 
 function NtmsSearchForm() {
   return (
-    <form action="/search" className="min-w-0">
-      <div className="relative flex min-w-0 items-center">
-        <Search className="-translate-y-1/2 pointer-events-none absolute left-3 top-1/2 h-4 w-4 text-foreground/38" />
-        <input
-          className="h-11 w-full rounded-md border border-[color:var(--cyber-gold)]/18 bg-card pl-10 pr-3 text-sm font-semibold text-foreground outline-none placeholder:text-foreground/35 focus:border-[color:var(--cyber-gold)]/45 focus:ring-2 focus:ring-[color:var(--cyber-gold)]/24"
-          name="q"
-          placeholder="Search inks, needles, machines"
-          type="search"
-        />
-      </div>
-    </form>
+    <search aria-label="Site search" className="min-w-0">
+      <form action="/search" className="min-w-0">
+        <div className="relative flex min-w-0 items-center">
+          <Search
+            aria-hidden="true"
+            className="-translate-y-1/2 pointer-events-none absolute left-3 top-1/2 h-4 w-4 text-foreground/38"
+          />
+          <input
+            aria-label="Search products"
+            className="h-11 w-full rounded-md border border-[color:var(--cyber-gold)]/18 bg-card pl-10 pr-3 text-sm font-semibold text-foreground outline-none placeholder:text-foreground/35 focus:border-[color:var(--cyber-gold)]/45 focus:ring-2 focus:ring-[color:var(--cyber-gold)]/24"
+            name="q"
+            placeholder="Search inks, needles, machines"
+            type="search"
+          />
+        </div>
+      </form>
+    </search>
   );
 }
 

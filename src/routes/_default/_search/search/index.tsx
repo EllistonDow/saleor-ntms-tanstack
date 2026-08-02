@@ -12,6 +12,7 @@ import { MobileCatalogActions } from "@/components/custom/layout/search/mobile-c
 import { ResultStatus } from "@/components/custom/layout/search/result-status";
 import { StatusPanel } from "@/components/custom/layout/status-panel";
 import { getSaleorSearchPage } from "@/components/custom/saleor/ntms-catalog-actions";
+import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { NtmsSaleorSearchPageView } from "@/components/custom/saleor/ntms-search-page";
 import ProductGridSkeleton from "@/components/custom/skeletons/grid";
 import { Button } from "@/components/ui/button";
@@ -29,13 +30,18 @@ import { isSaleorStorefront } from "@/lib/storefront-mode";
 
 export const Route = createFileRoute("/_default/_search/search/")({
   validateSearch: searchSchema,
-  loaderDeps: ({ search: { page, q, sort } }) => ({ page, q, sort }),
-  loader: async ({ context, deps: { page, q, sort } }) => {
+  loaderDeps: ({ search: { after, page, q, sort } }) => ({
+    after,
+    page,
+    q,
+    sort,
+  }),
+  loader: async ({ context, deps: { after, page, q, sort } }) => {
     if (isSaleorStorefront) {
       return {
         storefrontBackend: "saleor" as const,
         searchPage: await getSaleorSearchPage({
-          data: { page, query: q, sort },
+          data: { cursor: after, page, query: q, sort },
         }),
       };
     }
@@ -92,10 +98,18 @@ export const Route = createFileRoute("/_default/_search/search/")({
       ),
     };
   },
-  pendingComponent: ProductGridSkeleton,
+  pendingComponent: SearchPending,
   errorComponent: ErrorComponent,
   component: RouteComponent,
 });
+
+function SearchPending() {
+  return isSaleorStorefront ? (
+    <NtmsSaleorCatalogPending label="Loading search results" />
+  ) : (
+    <ProductGridSkeleton />
+  );
+}
 
 function RouteComponent() {
   const loaderData = Route.useLoaderData();

@@ -174,7 +174,7 @@ export function NtmsSaleorSearchPageView({
                     enableLinks
                     key={product.id}
                     product={product}
-                    priority={index < 4}
+                    priority={index < 2}
                   />
                 ))}
               </div>
@@ -270,8 +270,10 @@ function SearchPagination({ page }: { page: NtmsSaleorSearchPage }) {
           <Button asChild variant="outline">
             <Link
               to="/search"
+              rel="prev"
               search={{
                 ...search,
+                after: undefined,
                 page: previousPage,
               }}
             >
@@ -289,8 +291,10 @@ function SearchPagination({ page }: { page: NtmsSaleorSearchPage }) {
           <Button asChild>
             <Link
               to="/search"
+              rel="next"
               search={{
                 ...search,
+                after: page.nextPageCursor || undefined,
                 page: nextPage,
               }}
             >

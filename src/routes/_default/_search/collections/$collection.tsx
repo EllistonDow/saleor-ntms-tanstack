@@ -17,6 +17,7 @@ import FilterItemDropdown from "@/components/custom/layout/search/filter/dropdow
 import { MobileCatalogActions } from "@/components/custom/layout/search/mobile-catalog-actions";
 import { StatusPanel } from "@/components/custom/layout/status-panel";
 import { getSaleorCategoryPage } from "@/components/custom/saleor/ntms-catalog-actions";
+import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { NtmsSaleorCategoryPageView } from "@/components/custom/saleor/ntms-category-page";
 import ProductGridSkeleton from "@/components/custom/skeletons/grid";
 import { Button } from "@/components/ui/button";
@@ -48,7 +49,12 @@ export const Route = createFileRoute(
   loader: async ({ context, params: { collection }, deps: { search } }) => {
     if (isSaleorStorefront) {
       const categoryPage = await getSaleorCategoryPage({
-        data: { collection, page: search.page, sort: search.sort },
+        data: {
+          collection,
+          cursor: search.after,
+          page: search.page,
+          sort: search.sort,
+        },
       });
 
       if (!categoryPage) {
@@ -158,10 +164,18 @@ export const Route = createFileRoute(
       },
     ];
   },
-  pendingComponent: ProductGridSkeleton,
+  pendingComponent: CollectionPending,
   errorComponent: ErrorComponent,
   component: RouteComponent,
 });
+
+function CollectionPending() {
+  return isSaleorStorefront ? (
+    <NtmsSaleorCatalogPending label="Loading collection" />
+  ) : (
+    <ProductGridSkeleton />
+  );
+}
 
 function RouteComponent() {
   const loaderData = Route.useLoaderData();

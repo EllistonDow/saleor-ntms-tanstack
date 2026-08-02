@@ -173,12 +173,12 @@ export function NtmsSaleorCatalogPage({
             </Link>
           </div>
           <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-            {products.map((product, index) => (
+            {products.map((product) => (
               <SaleorProductCard
                 enableLinks={enableLinks}
                 key={product.id}
                 product={product}
-                priority={index < 4}
+                priority={false}
               />
             ))}
           </div>
@@ -258,7 +258,12 @@ function HeroProductMedia({
     <img
       alt={product.imageAlt}
       className="h-full w-full object-contain p-8 opacity-55 sm:p-10 lg:p-14 lg:opacity-100"
+      decoding="async"
+      fetchPriority="high"
+      height={512}
+      loading="eager"
       src={product.imageUrl}
+      width={512}
     />
   ) : (
     <ImageFallback label={product.name} />
@@ -310,8 +315,11 @@ function SupplyIndexItem({
           <img
             alt={category.imageAlt}
             className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.04]"
+            decoding="async"
+            height={384}
             loading="lazy"
             src={category.imageUrl}
+            width={384}
           />
         ) : (
           <ImageFallback label={category.name.slice(0, 2).toUpperCase()} />
@@ -387,10 +395,12 @@ export function SaleorProductCard({
       alt={product.imageAlt}
       className="object-contain p-4"
       frame={false}
+      height={512}
       priority={priority}
       src={product.imageUrl}
       sizes="(min-width: 1280px) 25vw, (min-width: 768px) 33vw, 50vw"
-      layout="fullWidth"
+      layout="constrained"
+      width={512}
     />
   ) : (
     <ImageFallback label="Nuclear Tattoo Supply" />

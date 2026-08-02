@@ -201,10 +201,12 @@ export function NtmsSaleorProductPageView({
                     alt={selectedMedia?.alt || product.imageAlt}
                     className="object-contain p-7 sm:p-10"
                     frame={false}
+                    height={512}
                     priority
                     src={selectedImage}
                     sizes="(min-width: 1024px) 58vw, 100vw"
-                    layout="fullWidth"
+                    layout="constrained"
+                    width={512}
                   />
                 ) : (
                   <ImageFallback label={product.name} />
@@ -234,7 +236,11 @@ export function NtmsSaleorProductPageView({
                       <img
                         alt=""
                         className="h-full w-full object-contain"
+                        decoding="async"
+                        height={128}
+                        loading="lazy"
                         src={media.url}
+                        width={128}
                       />
                     </button>
                   );
@@ -493,12 +499,12 @@ export function NtmsSaleorProductPageView({
               </Link>
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              {relatedProducts.slice(0, 8).map((item, index) => (
+              {relatedProducts.slice(0, 8).map((item) => (
                 <SaleorProductCard
                   enableLinks
                   key={item.id}
                   product={item}
-                  priority={index < 4}
+                  priority={false}
                 />
               ))}
             </div>

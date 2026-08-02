@@ -207,6 +207,7 @@ export function NtmsSaleorCartDrawer() {
                           <button
                             type="button"
                             aria-label="Remove item"
+                            data-saleor-cart-remove-line
                             disabled={isMutating}
                             onClick={() => handleRemoveLine(line)}
                             className="flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/14 bg-card text-foreground/55 transition hover:border-red-300/30 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-50"

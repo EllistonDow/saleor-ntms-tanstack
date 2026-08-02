@@ -73,14 +73,25 @@ export function SaleorCartProvider({
 
   const syncCheckout = useCallback(
     (nextCheckout: NtmsSaleorCheckout | null) => {
-      if (nextCheckout) {
-        window.localStorage.setItem(saleorCheckoutStorageKey, nextCheckout.id);
-        setCheckoutId(nextCheckout.id);
-        queryClient.setQueryData(
-          [...saleorCartQueryKey, nextCheckout.id],
-          nextCheckout,
-        );
+      if (!nextCheckout) {
+        return;
       }
+
+      if (nextCheckout.lines.length === 0) {
+        window.localStorage.removeItem(saleorCheckoutStorageKey);
+        setCheckoutId(null);
+        queryClient.removeQueries({
+          queryKey: [...saleorCartQueryKey, nextCheckout.id],
+        });
+        return;
+      }
+
+      window.localStorage.setItem(saleorCheckoutStorageKey, nextCheckout.id);
+      setCheckoutId(nextCheckout.id);
+      queryClient.setQueryData(
+        [...saleorCartQueryKey, nextCheckout.id],
+        nextCheckout,
+      );
     },
     [queryClient],
   );

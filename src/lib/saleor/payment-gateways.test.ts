@@ -1,9 +1,10 @@
 import { describe, expect, test } from "vitest";
 import {
   classifyNtmsSaleorPaymentGateway,
+  getNtmsSaleorPaymentGatewayAvailability,
   getNtmsSaleorPaymentGatewayProductionBlocker,
   getNtmsSaleorPaymentGatewaySupportLabel,
-  isNtmsSaleorProductionSafePaymentGateway,
+  isNtmsSaleorProductionCapablePaymentGateway,
   SALEOR_ADYEN_GATEWAY_ID,
   SALEOR_DUMMY_PAYMENT_APP_GATEWAY_ID,
   SALEOR_LEGACY_DUMMY_GATEWAY_ID,
@@ -24,15 +25,27 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "legacy-dummy",
       productionCandidate: false,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor legacy dummy payment plugin is test-only and must not be enabled for production checkout.",
-      supported: true,
+      wired: true,
     });
-    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Available");
+    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Integrated");
     expect(getNtmsSaleorPaymentGatewayProductionBlocker(gateway)).toMatch(
       /test-only/,
     );
+    expect(getNtmsSaleorPaymentGatewayAvailability(gateway)).toEqual({
+      supported: false,
+      supportLabel: "Test only",
+    });
+    expect(
+      getNtmsSaleorPaymentGatewayAvailability(gateway, {
+        allowUnsafeGateways: true,
+      }),
+    ).toEqual({
+      supported: true,
+      supportLabel: "Test only",
+    });
   });
 
   test("supports the Saleor dummy payment app test flow", () => {
@@ -44,14 +57,14 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "payment-app-dummy",
       productionCandidate: false,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor dummy payment app is test-only and must not be enabled for production checkout.",
-      supported: true,
+      wired: true,
     });
   });
 
-  test("detects current and legacy Stripe IDs as supported production gateways", () => {
+  test("detects current Stripe app IDs as production-capable integrations", () => {
     const stripeGateway = {
       id: SALEOR_STRIPE_GATEWAY_ID,
       name: "Stripe",
@@ -64,24 +77,26 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(stripeGateway)).toEqual({
       kind: "stripe",
       productionCandidate: true,
-      productionSafe: true,
+      productionCapable: true,
       productionBlocker: null,
-      supported: true,
+      wired: true,
     });
     expect(getNtmsSaleorPaymentGatewaySupportLabel(stripeGateway)).toBe(
-      "Available",
+      "Integrated",
     );
     expect(classifyNtmsSaleorPaymentGateway(legacyStripeGateway)).toEqual({
       kind: "stripe",
       productionCandidate: true,
-      productionSafe: true,
+      productionCapable: true,
       productionBlocker: null,
-      supported: true,
+      wired: true,
     });
-    expect(isNtmsSaleorProductionSafePaymentGateway(stripeGateway)).toBe(true);
+    expect(isNtmsSaleorProductionCapablePaymentGateway(stripeGateway)).toBe(
+      true,
+    );
   });
 
-  test("detects the NTMS PayPal app as a supported production gateway", () => {
+  test("detects the NTMS PayPal app as a production-capable integration", () => {
     const gateway = {
       id: SALEOR_PAYPAL_GATEWAY_ID,
       name: "PayPal",
@@ -90,12 +105,12 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "paypal",
       productionCandidate: true,
-      productionSafe: true,
+      productionCapable: true,
       productionBlocker: null,
-      supported: true,
+      wired: true,
     });
-    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Available");
-    expect(isNtmsSaleorProductionSafePaymentGateway(gateway)).toBe(true);
+    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Integrated");
+    expect(isNtmsSaleorProductionCapablePaymentGateway(gateway)).toBe(true);
   });
 
   test("detects Adyen as a production gateway pending client UI", () => {
@@ -107,10 +122,10 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(adyenGateway)).toEqual({
       kind: "adyen",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Adyen is detected, but this storefront does not have a wired Adyen payment component yet.",
-      supported: false,
+      wired: false,
     });
   });
 
@@ -123,13 +138,33 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "legacy-stripe",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor legacy Stripe plugin uses the deprecated checkout payment flow; use the Stripe Payment App before production checkout.",
-      supported: true,
+      wired: true,
     });
-    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Available");
-    expect(isNtmsSaleorProductionSafePaymentGateway(gateway)).toBe(false);
+    expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe("Integrated");
+    expect(isNtmsSaleorProductionCapablePaymentGateway(gateway)).toBe(false);
+    expect(getNtmsSaleorPaymentGatewayAvailability(gateway)).toEqual({
+      supported: false,
+      supportLabel: "Upgrade required",
+    });
+  });
+
+  test("requires an explicit allowlist before enabling production-capable apps", () => {
+    const gateway = {
+      id: SALEOR_STRIPE_GATEWAY_ID,
+      name: "Stripe",
+    };
+    expect(getNtmsSaleorPaymentGatewayAvailability(gateway)).toEqual({
+      supported: false,
+      supportLabel: "Not enabled",
+    });
+    expect(
+      getNtmsSaleorPaymentGatewayAvailability(gateway, {
+        enabledProductionGatewayIds: new Set([SALEOR_STRIPE_GATEWAY_ID]),
+      }),
+    ).toEqual({ supported: true, supportLabel: "Available" });
   });
 
   test("detects the historical Mirumee Stripe plugin as legacy Stripe", () => {
@@ -141,12 +176,12 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "legacy-stripe",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor legacy Stripe plugin uses the deprecated checkout payment flow; use the Stripe Payment App before production checkout.",
-      supported: true,
+      wired: true,
     });
-    expect(isNtmsSaleorProductionSafePaymentGateway(gateway)).toBe(false);
+    expect(isNtmsSaleorProductionCapablePaymentGateway(gateway)).toBe(false);
   });
 
   test("marks unknown Saleor payment apps as production candidates without enabling them", () => {
@@ -158,10 +193,10 @@ describe("Saleor payment gateway classification", () => {
     expect(classifyNtmsSaleorPaymentGateway(gateway)).toEqual({
       kind: "unsupported-app",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "This payment app is not approved or wired in the Nuclear Tattoo Supply storefront.",
-      supported: false,
+      wired: false,
     });
     expect(getNtmsSaleorPaymentGatewaySupportLabel(gateway)).toBe(
       "Unsupported app",

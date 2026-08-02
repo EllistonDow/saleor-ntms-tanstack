@@ -174,6 +174,15 @@ type NtmsSaleorCategoryProductsConnection = NonNullable<
   NonNullable<NtmsSaleorCategoryPageResponse["category"]>["products"]
 >;
 
+type NtmsSaleorCategoryProductsPageResponse = {
+  category?: {
+    products?: NtmsSaleorCategoryProductsConnection | null;
+  } | null;
+  collection?: {
+    products?: NtmsSaleorCategoryProductsConnection | null;
+  } | null;
+};
+
 type NtmsSaleorCategoryCollectionOverridesResponse = {
   collections?: {
     edges: {
@@ -227,12 +236,14 @@ type NtmsSaleorSortSlug = SortFilterItem["slug"];
 type NtmsSaleorPageInput = number | string | null | undefined;
 
 type NtmsSaleorSearchOptions = {
+  cursor?: string;
   page?: NtmsSaleorPageInput;
   query?: string;
   sort?: string;
 };
 
 type NtmsSaleorCategoryPageOptions = {
+  cursor?: string;
   page?: NtmsSaleorPageInput;
   sort?: string;
 };
@@ -310,6 +321,7 @@ export type NtmsSaleorCategoryPage = {
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   isCollectionOnly: boolean;
+  nextPageCursor: string | null;
   page: number;
   pageSize: number;
   products: NtmsSaleorProduct[];
@@ -333,6 +345,7 @@ export type NtmsSaleorSearchPage = {
   channel: string;
   hasNextPage: boolean;
   hasPreviousPage: boolean;
+  nextPageCursor: string | null;
   page: number;
   pageSize: number;
   query: string;
@@ -559,6 +572,41 @@ const ntmsSaleorCategoryPageQuery = `
   }
 `;
 
+const ntmsSaleorCategoryProductsPageQuery = `
+  query NtmsSaleorCategoryProductsPage(
+    $after: String!
+    $channel: String!
+    $first: Int!
+    $includeCategory: Boolean!
+    $includeCollection: Boolean!
+    $slug: String!
+    $sortBy: ProductOrder
+  ) {
+    category(slug: $slug) @include(if: $includeCategory) {
+      products(first: $first, after: $after, channel: $channel, sortBy: $sortBy) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
+        edges {
+          node {
+            ${saleorProductCardFields}
+          }
+        }
+      }
+    }
+    collection(slug: $slug, channel: $channel) @include(if: $includeCollection) {
+      products(first: $first, after: $after, sortBy: $sortBy) {
+        totalCount
+        pageInfo { hasNextPage endCursor }
+        edges {
+          node {
+            ${saleorProductCardFields}
+          }
+        }
+      }
+    }
+  }
+`;
+
 const ntmsSaleorCategoryCollectionOverridesQuery = `
   query NtmsSaleorCategoryCollectionOverrides($channel: String!, $slugs: [String!]!) {
     collections(
@@ -706,72 +754,91 @@ export async function getNtmsSaleorCategoryPage(
   options: NtmsSaleorCategoryPageOptions = {},
 ): Promise<NtmsSaleorCategoryPage | null> {
   const channel = getSaleorChannel();
+  const requestedCursor = normalizeSaleorCursor(options.cursor);
   const requestedPage = normalizePage(options.page);
   const sort = getSaleorSortSlug(options.sort);
   const sortBy = getSaleorProductOrder(sort, channel);
-  let categoryAfter: string | null = null;
-  let collectionAfter: string | null = null;
   let currentPage = 1;
-  let data: NtmsSaleorCategoryPageResponse | null = null;
-
-  while (true) {
-    data = await saleorFetch<
-      NtmsSaleorCategoryPageResponse,
-      {
-        categoryAfter: string | null;
-        channel: string;
-        collectionAfter: string | null;
-        first: number;
-        slug: string;
-        sortBy: SaleorProductOrder;
-      }
-    >({
-      query: ntmsSaleorCategoryPageQuery,
-      variables: {
-        categoryAfter,
-        channel,
-        collectionAfter,
-        first: saleorProductsPageSize,
-        slug,
-        sortBy,
-      },
-    });
-
-    const categoryConnection: NtmsSaleorCategoryProductsConnection | null =
-      data.category?.products ?? null;
-    const collectionConnection: NtmsSaleorCategoryProductsConnection | null =
-      data.collection?.products ?? null;
-    const useCollection =
-      (collectionConnection?.totalCount ?? 0) >
-      (categoryConnection?.totalCount ?? 0);
-    const preferredConnection = useCollection
-      ? collectionConnection
-      : categoryConnection;
-
-    if (
-      currentPage >= requestedPage ||
-      !preferredConnection?.pageInfo.hasNextPage
-    ) {
-      break;
+  const data = await saleorFetch<
+    NtmsSaleorCategoryPageResponse,
+    {
+      categoryAfter: null;
+      channel: string;
+      collectionAfter: null;
+      first: number;
+      slug: string;
+      sortBy: SaleorProductOrder;
     }
+  >({
+    query: ntmsSaleorCategoryPageQuery,
+    variables: {
+      categoryAfter: null,
+      channel,
+      collectionAfter: null,
+      first: saleorProductsPageSize,
+      slug,
+      sortBy,
+    },
+  });
 
-    if (categoryConnection?.pageInfo.hasNextPage) {
-      categoryAfter = categoryConnection.pageInfo.endCursor ?? null;
-    }
-    if (collectionConnection?.pageInfo.hasNextPage) {
-      collectionAfter = collectionConnection.pageInfo.endCursor ?? null;
-    }
-
-    const preferredAfter = useCollection ? collectionAfter : categoryAfter;
-    if (!preferredAfter) {
-      break;
-    }
-
-    currentPage += 1;
+  if (!data.category && !data.collection) {
+    return null;
   }
 
-  if (!data || (!data.category && !data.collection)) {
-    return null;
+  const initialCategoryConnection = data.category?.products ?? null;
+  const initialCollectionConnection = data.collection?.products ?? null;
+  const useCollection =
+    (initialCollectionConnection?.totalCount ?? 0) >
+    (initialCategoryConnection?.totalCount ?? 0);
+  let selectedConnection = useCollection
+    ? initialCollectionConnection
+    : initialCategoryConnection;
+
+  if (requestedPage > 1 && requestedCursor) {
+    try {
+      selectedConnection = await getNtmsSaleorCategoryProductsPage({
+        after: requestedCursor,
+        channel,
+        slug,
+        sortBy,
+        useCollection,
+      });
+      if (selectedConnection) {
+        currentPage = requestedPage;
+      }
+    } catch (error) {
+      console.warn(
+        "Unable to use the supplied Saleor category cursor; falling back to page traversal.",
+        error instanceof Error ? error.message : error,
+      );
+      selectedConnection = useCollection
+        ? initialCollectionConnection
+        : initialCategoryConnection;
+    }
+  }
+
+  while (
+    currentPage < requestedPage &&
+    selectedConnection?.pageInfo.hasNextPage
+  ) {
+    const after = selectedConnection.pageInfo.endCursor;
+    if (!after) {
+      break;
+    }
+
+    const nextConnection = await getNtmsSaleorCategoryProductsPage({
+      after,
+      channel,
+      slug,
+      sortBy,
+      useCollection,
+    });
+    if (!nextConnection) {
+      break;
+    }
+
+    selectedConnection = nextConnection;
+    currentPage += 1;
   }
 
   const collectionOverride = data.collection
@@ -815,19 +882,9 @@ export async function getNtmsSaleorCategoryPage(
     .sort((left, right) => right.productCount - left.productCount);
   const categoryDirectTotal = data.category?.products?.totalCount ?? 0;
   const collectionTotal = collectionOverride?.productCount ?? 0;
-  const collectionProducts =
-    data.collection?.products?.edges.map((edge) => mapProduct(edge.node)) ?? [];
-  const categoryProducts = (data.category?.products?.edges ?? []).map((edge) =>
+  const products = (selectedConnection?.edges ?? []).map((edge) =>
     mapProduct(edge.node),
   );
-  const products =
-    collectionTotal > categoryDirectTotal
-      ? collectionProducts
-      : categoryProducts;
-  const selectedConnection =
-    collectionTotal > categoryDirectTotal
-      ? data.collection?.products
-      : data.category?.products;
   const totalProducts = Math.max(collectionTotal, categoryDirectTotal);
   const totalPages = Math.max(
     1,
@@ -842,6 +899,9 @@ export async function getNtmsSaleorCategoryPage(
     hasNextPage: selectedConnection?.pageInfo.hasNextPage ?? false,
     hasPreviousPage: page > 1,
     isCollectionOnly: !data.category,
+    nextPageCursor: selectedConnection?.pageInfo.hasNextPage
+      ? (selectedConnection.pageInfo.endCursor ?? null)
+      : null,
     page,
     pageSize: saleorProductsPageSize,
     products,
@@ -849,6 +909,48 @@ export async function getNtmsSaleorCategoryPage(
     totalPages,
     totalProducts,
   };
+}
+
+async function getNtmsSaleorCategoryProductsPage({
+  after,
+  channel,
+  slug,
+  sortBy,
+  useCollection,
+}: {
+  after: string;
+  channel: string;
+  slug: string;
+  sortBy: SaleorProductOrder;
+  useCollection: boolean;
+}) {
+  const data = await saleorFetch<
+    NtmsSaleorCategoryProductsPageResponse,
+    {
+      after: string;
+      channel: string;
+      first: number;
+      includeCategory: boolean;
+      includeCollection: boolean;
+      slug: string;
+      sortBy: SaleorProductOrder;
+    }
+  >({
+    query: ntmsSaleorCategoryProductsPageQuery,
+    variables: {
+      after,
+      channel,
+      first: saleorProductsPageSize,
+      includeCategory: !useCollection,
+      includeCollection: useCollection,
+      slug,
+      sortBy,
+    },
+  });
+
+  return useCollection
+    ? (data.collection?.products ?? null)
+    : (data.category?.products ?? null);
 }
 
 export async function getNtmsSaleorProductPage(
@@ -892,6 +994,7 @@ export async function getNtmsSaleorSearchPage(
   const channel = getSaleorChannel();
   const searchOptions =
     typeof options === "string" ? { query: options } : (options ?? {});
+  const requestedCursor = normalizeSaleorCursor(searchOptions.cursor);
   const searchQuery = normalizeSearchQuery(searchOptions.query);
   const requestedPage = normalizePage(searchOptions.page);
   const sort = getSaleorSortSlug(searchOptions.sort);
@@ -901,8 +1004,8 @@ export async function getNtmsSaleorSearchPage(
   let totalProducts = 0;
   let after: string | null = null;
 
-  while (true) {
-    const data: NtmsSaleorProductsConnectionResponse = await saleorFetch<
+  const fetchConnection = async (cursor: string | null) => {
+    const data = await saleorFetch<
       NtmsSaleorProductsConnectionResponse,
       {
         after: string | null;
@@ -914,7 +1017,7 @@ export async function getNtmsSaleorSearchPage(
     >({
       query: ntmsSaleorProductsConnectionQuery,
       variables: {
-        after,
+        after: cursor,
         channel,
         first: saleorProductsPageSize,
         search: searchQuery || null,
@@ -922,22 +1025,44 @@ export async function getNtmsSaleorSearchPage(
       },
     });
 
-    connection = data.products;
-    if (!connection) {
-      break;
-    }
+    return data.products ?? null;
+  };
 
-    totalProducts = connection.totalCount ?? totalProducts;
-    if (currentPage >= requestedPage || !connection.pageInfo.hasNextPage) {
-      break;
+  if (requestedPage > 1 && requestedCursor) {
+    try {
+      connection = await fetchConnection(requestedCursor);
+      if (connection) {
+        currentPage = requestedPage;
+        totalProducts = connection.totalCount ?? 0;
+      }
+    } catch (error) {
+      console.warn(
+        "Unable to use the supplied Saleor search cursor; falling back to page traversal.",
+        error instanceof Error ? error.message : error,
+      );
+      connection = null;
     }
+  }
 
-    after = connection.pageInfo.endCursor ?? null;
-    if (!after) {
-      break;
+  if (!connection) {
+    while (true) {
+      connection = await fetchConnection(after);
+      if (!connection) {
+        break;
+      }
+
+      totalProducts = connection.totalCount ?? totalProducts;
+      if (currentPage >= requestedPage || !connection.pageInfo.hasNextPage) {
+        break;
+      }
+
+      after = connection.pageInfo.endCursor ?? null;
+      if (!after) {
+        break;
+      }
+
+      currentPage += 1;
     }
-
-    currentPage += 1;
   }
 
   const products = (connection?.edges ?? []).map((edge) =>
@@ -953,6 +1078,9 @@ export async function getNtmsSaleorSearchPage(
     channel,
     hasNextPage: connection?.pageInfo.hasNextPage ?? false,
     hasPreviousPage: page > 1,
+    nextPageCursor: connection?.pageInfo.hasNextPage
+      ? (connection.pageInfo.endCursor ?? null)
+      : null,
     page,
     pageSize: saleorProductsPageSize,
     query: searchQuery,
@@ -1181,7 +1309,7 @@ function stripHtml(value: string) {
 }
 
 function normalizeSearchQuery(query: string | undefined) {
-  return (query ?? "").trim();
+  return (query ?? "").trim().slice(0, 200);
 }
 
 function normalizePage(page: NtmsSaleorPageInput) {
@@ -1193,6 +1321,19 @@ function normalizePage(page: NtmsSaleorPageInput) {
   }
 
   return Math.min(Math.floor(pageNumber), saleorMaxPage);
+}
+
+function normalizeSaleorCursor(cursor: string | undefined) {
+  const normalized = cursor?.trim();
+  if (
+    !normalized ||
+    normalized.length > 1024 ||
+    !/^[A-Za-z0-9+/=_-]+$/.test(normalized)
+  ) {
+    return undefined;
+  }
+
+  return normalized;
 }
 
 function getSaleorSortSlug(sort: string | undefined): NtmsSaleorSortSlug {

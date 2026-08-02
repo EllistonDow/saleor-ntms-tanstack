@@ -19,7 +19,12 @@ export const getSaleorCatalogPreview = createServerFn({ method: "POST" })
 
 export const getSaleorSearchPage = createServerFn({ method: "POST" })
   .validator(
-    (data: { page?: number | string; query?: string; sort?: string }) => data,
+    (data: {
+      cursor?: string;
+      page?: number | string;
+      query?: string;
+      sort?: string;
+    }) => data,
   )
   .handler(
     async ({ data }): Promise<NtmsSaleorSearchPage> =>
@@ -28,8 +33,12 @@ export const getSaleorSearchPage = createServerFn({ method: "POST" })
 
 export const getSaleorCategoryPage = createServerFn({ method: "POST" })
   .validator(
-    (data: { collection?: string; page?: number | string; sort?: string }) =>
-      data,
+    (data: {
+      collection?: string;
+      cursor?: string;
+      page?: number | string;
+      sort?: string;
+    }) => data,
   )
   .handler(async ({ data }): Promise<NtmsSaleorCategoryPage | null> => {
     if (!data.collection) {
@@ -37,6 +46,7 @@ export const getSaleorCategoryPage = createServerFn({ method: "POST" })
     }
 
     return getNtmsSaleorCategoryPage(data.collection, {
+      cursor: data.cursor,
       page: data.page,
       sort: data.sort,
     });

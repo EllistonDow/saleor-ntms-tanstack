@@ -13,6 +13,13 @@ describe("storefront search parameters", () => {
     );
   });
 
+  test("trims and bounds public search queries", () => {
+    expect(baseSearchSchema.parse({ q: "  tattoo ink  " }).q).toBe(
+      "tattoo ink",
+    );
+    expect(baseSearchSchema.parse({ q: "x".repeat(500) }).q).toHaveLength(200);
+  });
+
   test("keeps TanStack Router search validation synchronous", () => {
     const result = searchSchema["~standard"].validate({
       brand: "eternal-ink",

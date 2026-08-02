@@ -1,7 +1,7 @@
 import clsx from "clsx";
 
 // Base skeleton styling that can be reused across components
-export const skeletonBase = "animate-pulse rounded";
+export const skeletonBase = "animate-pulse rounded motion-reduce:animate-none";
 export const skeletonBackground = "bg-neutral-400 dark:bg-neutral-700";
 export const skeletonActiveBackground = "bg-neutral-800 dark:bg-neutral-300";
 

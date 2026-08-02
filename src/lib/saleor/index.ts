@@ -23,6 +23,19 @@ export const getSaleorRootCategorySlug = createServerOnlyFn(
   () => serverEnv.SALEOR_ROOT_CATEGORY_SLUG,
 );
 
+export const getSaleorAllowUnsafePaymentGateways = createServerOnlyFn(
+  () => serverEnv.SALEOR_ALLOW_UNSAFE_PAYMENT_GATEWAYS === "enabled",
+);
+
+export const getSaleorEnabledPaymentGatewayIds = createServerOnlyFn(
+  () =>
+    new Set(
+      serverEnv.SALEOR_ENABLED_PAYMENT_GATEWAYS.split(",")
+        .map((gatewayId) => gatewayId.trim())
+        .filter(Boolean),
+    ),
+);
+
 export class SaleorFetchError extends Error {
   status: number;
 

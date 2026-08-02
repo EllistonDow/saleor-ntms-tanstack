@@ -25,6 +25,7 @@ export function NtmsSaleorCategoryPageView({
     hasNextPage,
     hasPreviousPage,
     isCollectionOnly,
+    nextPageCursor,
     page: currentPage,
     pageSize,
     products,
@@ -120,7 +121,11 @@ export function NtmsSaleorCategoryPageView({
               <img
                 alt={category.imageAlt}
                 className="aspect-square h-auto w-full object-contain p-5"
+                decoding="async"
+                height={384}
+                loading="lazy"
                 src={category.imageUrl}
+                width={384}
               />
             </div>
           ) : null}
@@ -177,7 +182,7 @@ export function NtmsSaleorCategoryPageView({
                     enableLinks
                     key={product.id}
                     product={product}
-                    priority={index < 4}
+                    priority={index < 2}
                   />
                 ))}
               </div>
@@ -187,6 +192,7 @@ export function NtmsSaleorCategoryPageView({
                 hasNextPage={hasNextPage}
                 hasPreviousPage={hasPreviousPage}
                 label={category.name}
+                nextPageCursor={nextPageCursor}
                 sort={sort}
                 totalPages={totalPages}
               />
@@ -246,6 +252,7 @@ function CategoryPagination({
   hasNextPage,
   hasPreviousPage,
   label,
+  nextPageCursor,
   sort,
   totalPages,
 }: {
@@ -254,6 +261,7 @@ function CategoryPagination({
   hasNextPage: boolean;
   hasPreviousPage: boolean;
   label: string;
+  nextPageCursor: string | null;
   sort: SortFilterItem["slug"];
   totalPages: number;
 }) {
@@ -279,7 +287,8 @@ function CategoryPagination({
             <Link
               to="/collections/$collection"
               params={{ collection }}
-              search={{ page: previousPage, sort }}
+              rel="prev"
+              search={{ after: undefined, page: previousPage, sort }}
             >
               <ChevronLeft aria-hidden="true" className="h-4 w-4" />
               Previous
@@ -296,7 +305,12 @@ function CategoryPagination({
             <Link
               to="/collections/$collection"
               params={{ collection }}
-              search={{ page: nextPage, sort }}
+              rel="next"
+              search={{
+                after: nextPageCursor || undefined,
+                page: nextPage,
+                sort,
+              }}
             >
               Next
               <ChevronRight aria-hidden="true" className="h-4 w-4" />
@@ -328,7 +342,7 @@ function CategorySortLink({
     <Link
       to="/collections/$collection"
       params={{ collection }}
-      search={{ page: undefined, sort: item.slug }}
+      search={{ after: undefined, page: undefined, sort: item.slug }}
       className={[
         "inline-flex h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition",
         active

@@ -26,14 +26,24 @@ export type NtmsSaleorPaymentGatewayKind =
 export type NtmsSaleorPaymentGatewayClassification = {
   kind: NtmsSaleorPaymentGatewayKind;
   productionCandidate: boolean;
-  productionSafe: boolean;
+  productionCapable: boolean;
   productionBlocker: string | null;
-  supported: boolean;
+  wired: boolean;
 };
 
 export type NtmsSaleorPaymentGatewayLike = {
   id: string;
   name: string;
+};
+
+export type NtmsSaleorPaymentGatewayAvailability = {
+  supported: boolean;
+  supportLabel: string;
+};
+
+export type NtmsSaleorPaymentGatewayAvailabilityOptions = {
+  allowUnsafeGateways?: boolean;
+  enabledProductionGatewayIds?: ReadonlySet<string>;
 };
 
 export function classifyNtmsSaleorPaymentGateway(
@@ -43,10 +53,10 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "payment-app-dummy",
       productionCandidate: false,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor dummy payment app is test-only and must not be enabled for production checkout.",
-      supported: true,
+      wired: true,
     };
   }
 
@@ -58,10 +68,10 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "legacy-dummy",
       productionCandidate: false,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor legacy dummy payment plugin is test-only and must not be enabled for production checkout.",
-      supported: true,
+      wired: true,
     };
   }
 
@@ -72,9 +82,9 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "stripe",
       productionCandidate: true,
-      productionSafe: true,
+      productionCapable: true,
       productionBlocker: null,
-      supported: true,
+      wired: true,
     };
   }
 
@@ -82,9 +92,9 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "paypal",
       productionCandidate: true,
-      productionSafe: true,
+      productionCapable: true,
       productionBlocker: null,
-      supported: true,
+      wired: true,
     };
   }
 
@@ -95,10 +105,10 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "legacy-stripe",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Saleor legacy Stripe plugin uses the deprecated checkout payment flow; use the Stripe Payment App before production checkout.",
-      supported: true,
+      wired: true,
     };
   }
 
@@ -106,10 +116,10 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "adyen",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "Adyen is detected, but this storefront does not have a wired Adyen payment component yet.",
-      supported: false,
+      wired: false,
     };
   }
 
@@ -120,20 +130,20 @@ export function classifyNtmsSaleorPaymentGateway(
     return {
       kind: "unsupported-app",
       productionCandidate: true,
-      productionSafe: false,
+      productionCapable: false,
       productionBlocker:
         "This payment app is not approved or wired in the Nuclear Tattoo Supply storefront.",
-      supported: false,
+      wired: false,
     };
   }
 
   return {
     kind: "unknown",
     productionCandidate: false,
-    productionSafe: false,
+    productionCapable: false,
     productionBlocker:
       "Unknown Saleor payment gateway is not approved for production checkout.",
-    supported: false,
+    wired: false,
   };
 }
 
@@ -150,10 +160,10 @@ export function isNtmsSaleorProductionPaymentGateway(
   return classifyNtmsSaleorPaymentGateway(gateway).productionCandidate;
 }
 
-export function isNtmsSaleorProductionSafePaymentGateway(
+export function isNtmsSaleorProductionCapablePaymentGateway(
   gateway: NtmsSaleorPaymentGatewayLike,
 ) {
-  return classifyNtmsSaleorPaymentGateway(gateway).productionSafe;
+  return classifyNtmsSaleorPaymentGateway(gateway).productionCapable;
 }
 
 export function getNtmsSaleorPaymentGatewayProductionBlocker(
@@ -165,14 +175,10 @@ export function getNtmsSaleorPaymentGatewayProductionBlocker(
 export function getNtmsSaleorPaymentGatewaySupportLabel(
   gateway: NtmsSaleorPaymentGatewayLike,
 ) {
-  const { kind, supported } = classifyNtmsSaleorPaymentGateway(gateway);
+  const { kind, wired } = classifyNtmsSaleorPaymentGateway(gateway);
 
-  if (supported) {
-    return "Available";
-  }
-
-  if (kind === "stripe" || kind === "legacy-stripe") {
-    return "Available";
+  if (wired) {
+    return "Integrated";
   }
 
   if (kind === "adyen") {
@@ -184,4 +190,47 @@ export function getNtmsSaleorPaymentGatewaySupportLabel(
   }
 
   return "Unavailable";
+}
+
+export function getNtmsSaleorPaymentGatewayAvailability(
+  gateway: NtmsSaleorPaymentGatewayLike,
+  {
+    allowUnsafeGateways = false,
+    enabledProductionGatewayIds = new Set(),
+  }: NtmsSaleorPaymentGatewayAvailabilityOptions = {},
+): NtmsSaleorPaymentGatewayAvailability {
+  const classification = classifyNtmsSaleorPaymentGateway(gateway);
+  const productionEnabled =
+    classification.productionCapable &&
+    enabledProductionGatewayIds.has(gateway.id);
+
+  if (productionEnabled && classification.wired) {
+    return {
+      supported: true,
+      supportLabel: "Available",
+    };
+  }
+
+  if (
+    classification.kind === "legacy-dummy" ||
+    classification.kind === "payment-app-dummy"
+  ) {
+    return {
+      supported: allowUnsafeGateways && classification.wired,
+      supportLabel: "Test only",
+    };
+  }
+
+  if (classification.kind === "legacy-stripe") {
+    return { supported: false, supportLabel: "Upgrade required" };
+  }
+
+  if (classification.productionCapable) {
+    return { supported: false, supportLabel: "Not enabled" };
+  }
+
+  return {
+    supported: false,
+    supportLabel: getNtmsSaleorPaymentGatewaySupportLabel(gateway),
+  };
 }

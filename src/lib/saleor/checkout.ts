@@ -1,7 +1,12 @@
-import { getSaleorChannel, saleorFetch } from "@/lib/saleor";
+import {
+  getSaleorAllowUnsafePaymentGateways,
+  getSaleorChannel,
+  getSaleorEnabledPaymentGatewayIds,
+  saleorFetch,
+} from "@/lib/saleor";
 import {
   classifyNtmsSaleorPaymentGateway,
-  getNtmsSaleorPaymentGatewaySupportLabel,
+  getNtmsSaleorPaymentGatewayAvailability,
   isNtmsSaleorDummyPaymentGateway,
   type NtmsSaleorPaymentGatewayConfig,
   type NtmsSaleorPaymentGatewayKind,
@@ -285,7 +290,7 @@ export type NtmsSaleorPaymentGateway = {
   config: NtmsSaleorPaymentGatewayConfig[];
   kind: NtmsSaleorPaymentGatewayKind;
   productionCandidate: boolean;
-  productionSafe: boolean;
+  productionCapable: boolean;
   productionBlocker: string | null;
   supported: boolean;
   supportLabel: string;
@@ -1066,7 +1071,7 @@ export async function initializeNtmsSaleorLegacyStripePayment({
   const gateway = checkout.paymentGateways.find(
     (paymentGateway) => paymentGateway.id === gatewayId,
   );
-  if (gateway?.kind !== "legacy-stripe") {
+  if (gateway?.kind !== "legacy-stripe" || !gateway.supported) {
     throw new Error("Stripe is not available for this checkout");
   }
 
@@ -1355,7 +1360,7 @@ function findStripeGateway(
   const gateway = checkout.paymentGateways.find(
     (paymentGateway) => paymentGateway.id === gatewayId,
   );
-  if (gateway?.kind !== "stripe") {
+  if (gateway?.kind !== "stripe" || !gateway.supported) {
     throw new Error("Stripe is not available for this checkout");
   }
 
@@ -1369,7 +1374,7 @@ function findPayPalGateway(
   const gateway = checkout.paymentGateways.find(
     (paymentGateway) => paymentGateway.id === gatewayId,
   );
-  if (gateway?.kind !== "paypal") {
+  if (gateway?.kind !== "paypal" || !gateway.supported) {
     throw new Error("PayPal is not available for this checkout");
   }
 
@@ -1539,6 +1544,10 @@ function mapPaymentGateway(
   gateway: SaleorPaymentGatewayNode,
 ): NtmsSaleorPaymentGateway {
   const classification = classifyNtmsSaleorPaymentGateway(gateway);
+  const availability = getNtmsSaleorPaymentGatewayAvailability(gateway, {
+    allowUnsafeGateways: getSaleorAllowUnsafePaymentGateways(),
+    enabledProductionGatewayIds: getSaleorEnabledPaymentGatewayIds(),
+  });
 
   return {
     id: gateway.id,
@@ -1547,10 +1556,10 @@ function mapPaymentGateway(
     config: gateway.config ?? [],
     kind: classification.kind,
     productionCandidate: classification.productionCandidate,
-    productionSafe: classification.productionSafe,
+    productionCapable: classification.productionCapable,
     productionBlocker: classification.productionBlocker,
-    supported: classification.supported,
-    supportLabel: getNtmsSaleorPaymentGatewaySupportLabel(gateway),
+    supported: availability.supported,
+    supportLabel: availability.supportLabel,
   };
 }
 

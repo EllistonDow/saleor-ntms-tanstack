@@ -7,7 +7,11 @@ const validSortSlugs = sorting.map((item) => item.slug) as [SortSlugs];
 
 // Base search schema for common search parameters
 export const baseSearchSchema = z.object({
-  q: z.string().optional().catch(""),
+  q: z
+    .string()
+    .transform((value) => value.trim().slice(0, 200))
+    .optional()
+    .catch(""),
   sort: z
     .enum(validSortSlugs)
     .optional()

@@ -194,3 +194,29 @@ const server = createServer(async (req, res) => {
 server.listen(port, "0.0.0.0", () => {
   console.log(`Storefront server listening on http://0.0.0.0:${port}`);
 });
+
+let shutdownStarted = false;
+
+function shutdown(signal) {
+  if (shutdownStarted) return;
+  shutdownStarted = true;
+  console.log(`Storefront received ${signal}; draining connections`);
+
+  const forceCloseTimer = setTimeout(() => {
+    console.error("Storefront graceful shutdown timed out");
+    server.closeAllConnections();
+    process.exitCode = 1;
+  }, 20_000);
+  forceCloseTimer.unref();
+
+  server.close((error) => {
+    clearTimeout(forceCloseTimer);
+    if (error) {
+      console.error("Storefront shutdown error", error);
+      process.exitCode = 1;
+    }
+  });
+}
+
+process.on("SIGTERM", () => shutdown("SIGTERM"));
+process.on("SIGINT", () => shutdown("SIGINT"));
