@@ -1851,7 +1851,14 @@ function CheckoutSummary({
         <div className="mb-5">
           <NtmsSaleorPromoCode />
         </div>
-        <SummaryRow label="Subtotal" price={checkout.subtotalPrice} />
+        <SummaryRow label="Subtotal" price={checkout.originalSubtotalPrice} />
+        {checkout.automaticDiscountPrice.amount > 0 ? (
+          <SummaryRow
+            discount
+            label="Automatic quantity discount"
+            price={checkout.automaticDiscountPrice}
+          />
+        ) : null}
         {checkout.discountPrice.amount > 0 ? (
           <SummaryRow
             discount

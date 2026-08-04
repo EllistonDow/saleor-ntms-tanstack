@@ -1,3 +1,4 @@
+import { serverEnv } from "@/env/server";
 import {
   getSaleorAllowUnsafePaymentGateways,
   getSaleorChannel,
@@ -359,11 +360,28 @@ export type NtmsSaleorCheckout = {
   shippingPrice: SaleorMoney;
   discountPrice: SaleorMoney;
   discountName: string;
+  automaticDiscountPrice: SaleorMoney;
+  automaticDiscountNames: string[];
+  originalSubtotalPrice: SaleorMoney;
   voucherCode: string;
   selectedShippingMethod: NtmsSaleorShippingMethod | null;
   shippingMethods: NtmsSaleorShippingMethod[];
   paymentGateways: NtmsSaleorPaymentGateway[];
   lines: NtmsSaleorCartLine[];
+};
+
+type NtmsPricingCalculation = {
+  originalSubtotal: number;
+  pricedSubtotal: number;
+  discountTotal: number;
+  appliedRules: { name: string; sourceRuleId: number }[];
+};
+
+type NtmsPricingResponse = {
+  ok: boolean;
+  changed: boolean;
+  currency: string;
+  calculation: NtmsPricingCalculation;
 };
 
 export type NtmsSaleorOrderLine = {
@@ -709,6 +727,19 @@ const transactionProcessMutation = `
 export async function getNtmsSaleorCheckout(
   checkoutId: string,
 ): Promise<NtmsSaleorCheckout | null> {
+  let checkout = await loadNtmsSaleorCheckout(checkoutId);
+  if (!checkout) return null;
+  const pricing = await repriceNtmsSaleorCheckout(checkoutId);
+  if (pricing?.changed) {
+    checkout = await loadNtmsSaleorCheckout(checkoutId);
+    if (!checkout) return null;
+  }
+  return pricing ? applyNtmsAutomaticPricing(checkout, pricing) : checkout;
+}
+
+async function loadNtmsSaleorCheckout(
+  checkoutId: string,
+): Promise<NtmsSaleorCheckout | null> {
   const data = await saleorFetch<SaleorCheckoutQueryResponse, { id: string }>({
     query: checkoutQuery,
     variables: { id: checkoutId },
@@ -759,7 +790,8 @@ export async function addNtmsSaleorCheckoutLine({
       },
     });
 
-    return checkoutFromPayload(data.checkoutCreate);
+    const checkout = checkoutFromPayload(data.checkoutCreate);
+    return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
   }
 
   const data = await saleorFetch<
@@ -773,7 +805,8 @@ export async function addNtmsSaleorCheckoutLine({
     },
   });
 
-  return checkoutFromPayload(data.checkoutLinesAdd);
+  const checkout = checkoutFromPayload(data.checkoutLinesAdd);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function updateNtmsSaleorCheckoutLine({
@@ -803,7 +836,8 @@ export async function updateNtmsSaleorCheckoutLine({
     },
   });
 
-  return checkoutFromPayload(data.checkoutLinesUpdate);
+  const checkout = checkoutFromPayload(data.checkoutLinesUpdate);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function removeNtmsSaleorCheckoutLine({
@@ -824,7 +858,8 @@ export async function removeNtmsSaleorCheckoutLine({
     },
   });
 
-  return checkoutFromPayload(data.checkoutLinesDelete);
+  const checkout = checkoutFromPayload(data.checkoutLinesDelete);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function updateNtmsSaleorCheckoutContactAndAddress({
@@ -864,7 +899,10 @@ export async function updateNtmsSaleorCheckoutContactAndAddress({
     variables: { billingAddress: cleanAddressInput(address), id: checkoutId },
   });
 
-  return checkoutFromPayload(billingData.checkoutBillingAddressUpdate);
+  const checkout = checkoutFromPayload(
+    billingData.checkoutBillingAddressUpdate,
+  );
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function updateNtmsSaleorCheckoutDeliveryMethod({
@@ -882,7 +920,8 @@ export async function updateNtmsSaleorCheckoutDeliveryMethod({
     variables: { deliveryMethodId, id: checkoutId },
   });
 
-  return checkoutFromPayload(data.checkoutDeliveryMethodUpdate);
+  const checkout = checkoutFromPayload(data.checkoutDeliveryMethodUpdate);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function addNtmsSaleorCheckoutPromoCode({
@@ -901,7 +940,8 @@ export async function addNtmsSaleorCheckoutPromoCode({
     query: checkoutAddPromoCodeMutation,
     variables: { id: checkoutId, promoCode: code },
   });
-  return checkoutFromPayload(data.checkoutAddPromoCode);
+  const checkout = checkoutFromPayload(data.checkoutAddPromoCode);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function removeNtmsSaleorCheckoutPromoCode({
@@ -920,7 +960,8 @@ export async function removeNtmsSaleorCheckoutPromoCode({
     query: checkoutRemovePromoCodeMutation,
     variables: { id: checkoutId, promoCode: code },
   });
-  return checkoutFromPayload(data.checkoutRemovePromoCode);
+  const checkout = checkoutFromPayload(data.checkoutRemovePromoCode);
+  return requireRepricedCheckout(await getNtmsSaleorCheckout(checkout.id));
 }
 
 export async function initializeNtmsSaleorPaymentGatewayConfigs({
@@ -1350,6 +1391,12 @@ function mapCheckout(checkout: SaleorCheckoutNode): NtmsSaleorCheckout {
         currency: checkout.totalPrice.gross.currency,
       } satisfies SaleorMoney),
     discountName: checkout.discountName ?? "",
+    automaticDiscountPrice: {
+      amount: 0,
+      currency: checkout.totalPrice.gross.currency,
+    },
+    automaticDiscountNames: [],
+    originalSubtotalPrice: checkout.subtotalPrice.gross,
     voucherCode: checkout.voucherCode ?? "",
     selectedShippingMethod: checkout.delivery?.shippingMethod
       ? mapShippingMethod(checkout.delivery.shippingMethod)
@@ -1376,6 +1423,64 @@ function mapCheckout(checkout: SaleorCheckoutNode): NtmsSaleorCheckout {
       quantityAvailable: line.variant.quantityAvailable ?? null,
     })),
   };
+}
+
+async function repriceNtmsSaleorCheckout(
+  checkoutId: string,
+): Promise<NtmsPricingResponse | null> {
+  const url = serverEnv.NTMS_SALEOR_PRICING_URL;
+  const secret = serverEnv.NTMS_SALEOR_PRICING_SECRET;
+  if (!url && !secret) return null;
+  if (!url || !secret) {
+    throw new Error("Automatic checkout pricing is not fully configured");
+  }
+
+  const response = await fetch(
+    `${url.replace(/\/$/, "")}/api/pricing/checkout/reprice`,
+    {
+      method: "POST",
+      headers: {
+        accept: "application/json",
+        "content-type": "application/json",
+        "x-provider-app-secret": secret,
+      },
+      body: JSON.stringify({ checkoutId }),
+      signal: AbortSignal.timeout(8_000),
+    },
+  );
+  const payload = (await response
+    .json()
+    .catch(() => null)) as NtmsPricingResponse | null;
+  if (!response.ok || !payload?.ok || !payload.calculation) {
+    throw new Error(`Automatic checkout pricing failed (${response.status})`);
+  }
+  return payload;
+}
+
+function applyNtmsAutomaticPricing(
+  checkout: NtmsSaleorCheckout,
+  pricing: NtmsPricingResponse,
+): NtmsSaleorCheckout {
+  const currency = pricing.currency || checkout.subtotalPrice.currency;
+  return {
+    ...checkout,
+    automaticDiscountPrice: {
+      amount: pricing.calculation.discountTotal,
+      currency,
+    },
+    automaticDiscountNames: pricing.calculation.appliedRules.map(
+      (rule) => rule.name,
+    ),
+    originalSubtotalPrice: {
+      amount: pricing.calculation.originalSubtotal,
+      currency,
+    },
+  };
+}
+
+function requireRepricedCheckout(checkout: NtmsSaleorCheckout | null) {
+  if (!checkout) throw new Error("Saleor checkout no longer exists");
+  return checkout;
 }
 
 async function initializeNtmsSaleorPaymentAppTransaction({

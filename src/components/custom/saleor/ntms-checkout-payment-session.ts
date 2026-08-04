@@ -12,6 +12,7 @@ export function getNtmsSaleorPaymentSessionKey(
     billingAddress: checkout.billingAddress,
     checkoutId: checkout.id,
     discountPrice: checkout.discountPrice,
+    automaticDiscountPrice: checkout.automaticDiscountPrice,
     email: checkout.email,
     gatewayId,
     lines: checkout.lines.map((line) => ({

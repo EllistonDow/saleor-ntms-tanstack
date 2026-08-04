@@ -13,6 +13,8 @@ export const serverEnv = createEnv({
       .enum(["enabled", "disabled"])
       .default("disabled"),
     SALEOR_ENABLED_PAYMENT_GATEWAYS: z.string().default(""),
+    NTMS_SALEOR_PRICING_URL: z.url("Must be a valid URL").optional(),
+    NTMS_SALEOR_PRICING_SECRET: z.string().min(32).optional(),
     VITE_WEBSITE_URL: z.string().url().optional(),
     VITE_SEARCH_INDEXING: z.enum(["enabled", "disabled"]).default("disabled"),
     SESSION_SECRET: z

@@ -228,7 +228,17 @@ export function NtmsSaleorCartDrawer() {
             </div>
 
             <div className="border-y border-[color:var(--cyber-gold)]/14 py-4 text-sm text-foreground/60">
-              <SummaryRow label="Subtotal" price={checkout.subtotalPrice} />
+              <SummaryRow
+                label="Subtotal"
+                price={checkout.originalSubtotalPrice}
+              />
+              {checkout.automaticDiscountPrice.amount > 0 ? (
+                <SummaryRow
+                  discount
+                  label="Automatic quantity discount"
+                  price={checkout.automaticDiscountPrice}
+                />
+              ) : null}
               {checkout.discountPrice.amount > 0 ? (
                 <SummaryRow
                   discount
