@@ -375,6 +375,7 @@ type NtmsPricingCalculation = {
   pricedSubtotal: number;
   discountTotal: number;
   appliedRules: { name: string; sourceRuleId: number }[];
+  lines: { id: string; total: number; unitPrice: number }[];
 };
 
 type NtmsPricingResponse = {
@@ -382,6 +383,15 @@ type NtmsPricingResponse = {
   changed: boolean;
   currency: string;
   calculation: NtmsPricingCalculation;
+  checkout?: {
+    subtotalPrice?: SaleorTaxedMoney | null;
+    totalPrice?: SaleorTaxedMoney | null;
+    lines?: {
+      id: string;
+      unitPrice?: SaleorTaxedMoney | null;
+      totalPrice?: SaleorTaxedMoney | null;
+    }[];
+  } | null;
 };
 
 export type NtmsSaleorOrderLine = {
@@ -727,13 +737,9 @@ const transactionProcessMutation = `
 export async function getNtmsSaleorCheckout(
   checkoutId: string,
 ): Promise<NtmsSaleorCheckout | null> {
-  let checkout = await loadNtmsSaleorCheckout(checkoutId);
+  const checkout = await loadNtmsSaleorCheckout(checkoutId);
   if (!checkout) return null;
   const pricing = await repriceNtmsSaleorCheckout(checkoutId);
-  if (pricing?.changed) {
-    checkout = await loadNtmsSaleorCheckout(checkoutId);
-    if (!checkout) return null;
-  }
   return pricing ? applyNtmsAutomaticPricing(checkout, pricing) : checkout;
 }
 
@@ -1462,8 +1468,30 @@ function applyNtmsAutomaticPricing(
   pricing: NtmsPricingResponse,
 ): NtmsSaleorCheckout {
   const currency = pricing.currency || checkout.subtotalPrice.currency;
+  const calculationLines = new Map(
+    pricing.calculation.lines?.map((line) => [line.id, line]) ?? [],
+  );
+  const checkoutLines = new Map(
+    pricing.checkout?.lines?.map((line) => [line.id, line]) ?? [],
+  );
+  const pricedSubtotal =
+    pricing.checkout?.subtotalPrice?.gross ??
+    ({
+      amount: pricing.calculation.pricedSubtotal,
+      currency,
+    } satisfies SaleorMoney);
+  const totalPrice =
+    pricing.checkout?.totalPrice?.gross ??
+    ({
+      amount:
+        checkout.totalPrice.amount -
+        (checkout.subtotalPrice.amount - pricing.calculation.pricedSubtotal),
+      currency,
+    } satisfies SaleorMoney);
   return {
     ...checkout,
+    subtotalPrice: pricedSubtotal,
+    totalPrice,
     automaticDiscountPrice: {
       amount: pricing.calculation.discountTotal,
       currency,
@@ -1475,6 +1503,23 @@ function applyNtmsAutomaticPricing(
       amount: pricing.calculation.originalSubtotal,
       currency,
     },
+    lines: checkout.lines.map((line) => {
+      const calculated = calculationLines.get(line.id);
+      const authoritative = checkoutLines.get(line.id);
+      return {
+        ...line,
+        unitPrice:
+          authoritative?.unitPrice?.gross ??
+          (calculated
+            ? { amount: calculated.unitPrice, currency }
+            : line.unitPrice),
+        totalPrice:
+          authoritative?.totalPrice?.gross ??
+          (calculated
+            ? { amount: calculated.total, currency }
+            : line.totalPrice),
+      };
+    }),
   };
 }
 
