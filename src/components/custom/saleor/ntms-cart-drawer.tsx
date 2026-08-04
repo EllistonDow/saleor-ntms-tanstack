@@ -19,6 +19,7 @@ import {
 import type { NtmsSaleorCartLine } from "@/lib/saleor/checkout";
 import { cn } from "@/lib/utils";
 import { useSaleorCart } from "./ntms-cart-context";
+import { NtmsSaleorPromoCode } from "./ntms-promo-code";
 
 export function NtmsSaleorCartDrawer() {
   const {
@@ -222,8 +223,19 @@ export function NtmsSaleorCartDrawer() {
               ))}
             </ul>
 
+            <div className="border-t border-[color:var(--cyber-gold)]/14 py-4">
+              <NtmsSaleorPromoCode />
+            </div>
+
             <div className="border-y border-[color:var(--cyber-gold)]/14 py-4 text-sm text-foreground/60">
               <SummaryRow label="Subtotal" price={checkout.subtotalPrice} />
+              {checkout.discountPrice.amount > 0 ? (
+                <SummaryRow
+                  discount
+                  label={checkout.discountName || "Discount"}
+                  price={checkout.discountPrice}
+                />
+              ) : null}
               <SummaryRow label="Shipping" price={checkout.shippingPrice} />
               <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/12 pt-3">
                 <p className="font-medium text-foreground">Total</p>
@@ -293,16 +305,24 @@ function QuantityButton({
 }
 
 function SummaryRow({
+  discount = false,
   label,
   price,
 }: {
+  discount?: boolean;
   label: string;
   price: { amount: number; currency: string };
 }) {
   return (
     <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-2 last:mb-0">
       <p>{label}</p>
-      <p className="text-right font-medium text-foreground">
+      <p
+        className={cn(
+          "text-right font-medium text-foreground",
+          discount && "text-emerald-300",
+        )}
+      >
+        {discount ? "-" : ""}
         {formatSaleorMoney(price)}
       </p>
     </div>

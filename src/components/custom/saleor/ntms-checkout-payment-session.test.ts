@@ -18,6 +18,8 @@ const baseCheckout = {
     streetAddress2: "",
   },
   email: "avery@example.com",
+  discountName: "",
+  discountPrice: { amount: 0, currency: "USD" },
   id: "checkout-1",
   lines: [
     {
@@ -65,6 +67,7 @@ const baseCheckout = {
   subtotalPrice: { amount: 40, currency: "USD" },
   token: "checkout-token",
   totalPrice: { amount: 48, currency: "USD" },
+  voucherCode: "",
 } satisfies NtmsSaleorCheckout;
 
 describe("getNtmsSaleorPaymentSessionKey", () => {
@@ -108,6 +111,13 @@ describe("getNtmsSaleorPaymentSessionKey", () => {
         streetAddress1: "200 State Street",
       },
     };
+    const promoChanged = {
+      ...baseCheckout,
+      discountName: "Studio promotion",
+      discountPrice: { amount: 5, currency: "USD" },
+      totalPrice: { amount: 43, currency: "USD" },
+      voucherCode: "STUDIO5",
+    };
 
     expect(
       getNtmsSaleorPaymentSessionKey(
@@ -126,6 +136,9 @@ describe("getNtmsSaleorPaymentSessionKey", () => {
         addressChanged,
         "saleor.app.payment.stripe",
       ),
+    ).not.toBe(initialKey);
+    expect(
+      getNtmsSaleorPaymentSessionKey(promoChanged, "saleor.app.payment.stripe"),
     ).not.toBe(initialKey);
     expect(
       getNtmsSaleorPaymentSessionKey(baseCheckout, "saleor.app.paypal"),

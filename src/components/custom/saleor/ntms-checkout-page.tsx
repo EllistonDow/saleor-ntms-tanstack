@@ -53,6 +53,7 @@ import {
   validateNtmsCheckoutAddress,
 } from "./ntms-checkout-address";
 import { getNtmsSaleorPaymentSessionKey } from "./ntms-checkout-payment-session";
+import { NtmsSaleorPromoCode } from "./ntms-promo-code";
 
 type CheckoutFormValues = NtmsCheckoutAddressValues;
 
@@ -1847,7 +1848,17 @@ function CheckoutSummary({
         ))}
       </ul>
       <div className="border-t border-[color:var(--cyber-gold)]/10 p-5">
+        <div className="mb-5">
+          <NtmsSaleorPromoCode />
+        </div>
         <SummaryRow label="Subtotal" price={checkout.subtotalPrice} />
+        {checkout.discountPrice.amount > 0 ? (
+          <SummaryRow
+            discount
+            label={checkout.discountName || "Discount"}
+            price={checkout.discountPrice}
+          />
+        ) : null}
         <SummaryRow label="Shipping" price={checkout.shippingPrice} />
         <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-3">
           <p className="font-semibold">Total</p>
@@ -1995,16 +2006,21 @@ function CheckoutInput({
 }
 
 function SummaryRow({
+  discount = false,
   label,
   price,
 }: {
+  discount?: boolean;
   label: string;
   price: { amount: number; currency: string };
 }) {
   return (
     <div className="mb-2 flex items-center justify-between text-sm text-foreground/58">
       <p>{label}</p>
-      <p>{formatSaleorMoney(price)}</p>
+      <p className={discount ? "font-semibold text-emerald-300" : undefined}>
+        {discount ? "-" : ""}
+        {formatSaleorMoney(price)}
+      </p>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import {
   addNtmsSaleorCheckoutLine,
+  addNtmsSaleorCheckoutPromoCode,
   completeNtmsSaleorCheckout,
   createNtmsSaleorStripePaymentIntent,
   getNtmsSaleorCheckout,
@@ -18,6 +19,7 @@ import {
   processNtmsSaleorPayPalPayment,
   processNtmsSaleorStripePayment,
   removeNtmsSaleorCheckoutLine,
+  removeNtmsSaleorCheckoutPromoCode,
   updateNtmsSaleorCheckoutContactAndAddress,
   updateNtmsSaleorCheckoutDeliveryMethod,
   updateNtmsSaleorCheckoutLine,
@@ -200,6 +202,59 @@ export const removeSaleorCartLine = createServerFn({ method: "POST" })
       return {
         success: false,
         error: formatSaleorCartActionError(error, "Unable to remove item"),
+      };
+    }
+  });
+
+export const addSaleorCheckoutPromoCode = createServerFn({ method: "POST" })
+  .validator(
+    (data: { checkoutId?: string | null; promoCode?: string | null }) => data,
+  )
+  .handler(async ({ data }): Promise<SaleorCartActionResult> => {
+    if (!data.checkoutId || !data.promoCode?.trim()) {
+      return { success: false, error: "Enter a promo code" };
+    }
+
+    try {
+      return {
+        success: true,
+        checkout: await addNtmsSaleorCheckoutPromoCode({
+          checkoutId: data.checkoutId,
+          promoCode: data.promoCode,
+        }),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: formatSaleorCartActionError(error, "Unable to apply promo code"),
+      };
+    }
+  });
+
+export const removeSaleorCheckoutPromoCode = createServerFn({ method: "POST" })
+  .validator(
+    (data: { checkoutId?: string | null; promoCode?: string | null }) => data,
+  )
+  .handler(async ({ data }): Promise<SaleorCartActionResult> => {
+    if (!data.checkoutId || !data.promoCode?.trim()) {
+      return { success: false, error: "Checkout does not have a promo code" };
+    }
+
+    try {
+      return {
+        success: true,
+        checkout: await removeNtmsSaleorCheckoutPromoCode({
+          checkoutId: data.checkoutId,
+          promoCode: data.promoCode,
+        }),
+      };
+    } catch (error) {
+      return {
+        success: false,
+        error: formatSaleorCartActionError(
+          error,
+          "Unable to remove promo code",
+        ),
       };
     }
   });

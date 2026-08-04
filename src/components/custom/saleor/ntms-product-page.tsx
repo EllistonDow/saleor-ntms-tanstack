@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import {
   ArrowRight,
+  BadgePercent,
   Boxes,
   ChevronRight,
   Layers3,
@@ -93,6 +94,11 @@ export function NtmsSaleorProductPageView({
     activeGallery[0];
   const selectedImage = selectedMedia?.url || primaryImage;
   const selectedPrice = selectedVariant?.price ?? product.price;
+  const selectedPriorPrice = selectedVariant?.priorPrice ?? product.priorPrice;
+  const selectedDiscountPercent = saleorDiscountPercent(
+    selectedPrice,
+    selectedPriorPrice,
+  );
   const selectedSku = selectedVariant?.sku || product.sku || "Pending";
   const selectedQuantity =
     selectedVariant?.quantityAvailable ?? product.quantityAvailable;
@@ -265,6 +271,17 @@ export function NtmsSaleorProductPageView({
                 <p className="mt-1 text-3xl font-semibold text-[color:var(--cyber-gold-soft)]">
                   {selectedPrice ? formatSaleorMoney(selectedPrice) : "Pending"}
                 </p>
+                {selectedDiscountPercent && selectedPriorPrice ? (
+                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                    <p className="text-sm text-foreground/42 line-through">
+                      {formatSaleorMoney(selectedPriorPrice)}
+                    </p>
+                    <p className="inline-flex items-center gap-1 text-xs font-bold uppercase text-emerald-300">
+                      <BadgePercent className="h-3.5 w-3.5" />
+                      Save {selectedDiscountPercent}%
+                    </p>
+                  </div>
+                ) : null}
               </div>
               <div className="text-right">
                 <p className="text-[10px] font-bold uppercase text-foreground/42">
@@ -351,6 +368,12 @@ export function NtmsSaleorProductPageView({
                     {visibleVariants.map((variant) => {
                       const active = variant.id === selectedVariant?.id;
                       const variantPrice = variant.price ?? product.price;
+                      const variantPriorPrice =
+                        variant.priorPrice ?? product.priorPrice;
+                      const variantDiscountPercent = saleorDiscountPercent(
+                        variantPrice,
+                        variantPriorPrice,
+                      );
 
                       return (
                         <label
@@ -385,6 +408,11 @@ export function NtmsSaleorProductPageView({
                                 ? formatSaleorMoney(variantPrice)
                                 : "Pending"}
                             </span>
+                            {variantDiscountPercent && variantPriorPrice ? (
+                              <span className="mt-1 block text-xs text-foreground/42 line-through">
+                                {formatSaleorMoney(variantPriorPrice)}
+                              </span>
+                            ) : null}
                             <span className="mt-1 block text-xs text-foreground/48">
                               {variant.quantityAvailable &&
                               variant.quantityAvailable > 0
@@ -554,6 +582,17 @@ function formatSaleorMoney(price: { amount: number; currency: string }) {
     style: "currency",
     currency: price.currency,
   }).format(price.amount);
+}
+
+function saleorDiscountPercent(
+  price: { amount: number } | null,
+  priorPrice: { amount: number } | null,
+) {
+  if (!price || !priorPrice || priorPrice.amount <= price.amount) return null;
+  return Math.max(
+    1,
+    Math.round(((priorPrice.amount - price.amount) / priorPrice.amount) * 100),
+  );
 }
 
 function getAvailableQuantity(quantity: number | null | undefined) {

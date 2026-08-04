@@ -10,8 +10,10 @@ import {
 import type { NtmsSaleorCheckout } from "@/lib/saleor/checkout";
 import {
   addSaleorCartLine,
+  addSaleorCheckoutPromoCode,
   getSaleorCart,
   removeSaleorCartLine,
+  removeSaleorCheckoutPromoCode,
   updateSaleorCartLine,
 } from "./ntms-cart-actions";
 
@@ -19,6 +21,7 @@ const saleorCheckoutStorageKey = "ntms-saleor-checkout-id";
 const saleorCartQueryKey = ["saleor", "cart"] as const;
 
 type SaleorCartContextType = {
+  addPromoCode: (promoCode: string) => Promise<void>;
   addLine: (input: { quantity?: number; variantId: string }) => Promise<void>;
   checkout: NtmsSaleorCheckout | null;
   clearCartSession: () => void;
@@ -28,6 +31,7 @@ type SaleorCartContextType = {
   isMutating: boolean;
   openCart: () => void;
   removeLine: (lineId: string) => Promise<void>;
+  removePromoCode: () => Promise<void>;
   syncCheckout: (checkout: NtmsSaleorCheckout | null) => void;
   updateLine: (input: { lineId: string; quantity: number }) => Promise<void>;
 };
@@ -147,6 +151,28 @@ export function SaleorCartProvider({
     onSuccess: syncCheckout,
   });
 
+  const addPromoCodeMutation = useMutation({
+    mutationFn: async (promoCode: string) => {
+      const result = await addSaleorCheckoutPromoCode({
+        data: { checkoutId, promoCode },
+      });
+      if (!result.success) throw new Error(result.error);
+      return result.checkout;
+    },
+    onSuccess: syncCheckout,
+  });
+
+  const removePromoCodeMutation = useMutation({
+    mutationFn: async () => {
+      const result = await removeSaleorCheckoutPromoCode({
+        data: { checkoutId, promoCode: checkout?.voucherCode },
+      });
+      if (!result.success) throw new Error(result.error);
+      return result.checkout;
+    },
+    onSuccess: syncCheckout,
+  });
+
   const clearCartSession = useCallback(() => {
     window.localStorage.removeItem(saleorCheckoutStorageKey);
     setCheckoutId(null);
@@ -155,6 +181,9 @@ export function SaleorCartProvider({
 
   const value = useMemo<SaleorCartContextType>(
     () => ({
+      addPromoCode: async (promoCode) => {
+        await addPromoCodeMutation.mutateAsync(promoCode);
+      },
       addLine: async (input) => {
         await addLineMutation.mutateAsync(input);
       },
@@ -165,11 +194,16 @@ export function SaleorCartProvider({
       isLoading: checkoutQuery.isFetching,
       isMutating:
         addLineMutation.isPending ||
+        addPromoCodeMutation.isPending ||
+        removePromoCodeMutation.isPending ||
         updateLineMutation.isPending ||
         removeLineMutation.isPending,
       openCart: () => setIsCartOpen(true),
       removeLine: async (lineId) => {
         await removeLineMutation.mutateAsync(lineId);
+      },
+      removePromoCode: async () => {
+        await removePromoCodeMutation.mutateAsync();
       },
       syncCheckout,
       updateLine: async (input) => {
@@ -178,11 +212,13 @@ export function SaleorCartProvider({
     }),
     [
       addLineMutation,
+      addPromoCodeMutation,
       checkout,
       checkoutQuery.isFetching,
       clearCartSession,
       isCartOpen,
       removeLineMutation,
+      removePromoCodeMutation,
       syncCheckout,
       updateLineMutation,
     ],

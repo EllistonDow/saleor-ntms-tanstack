@@ -21,6 +21,7 @@ function variant(
     name: id,
     sku: id,
     price: null,
+    priorPrice: null,
     quantityAvailable,
     attributes: [
       {

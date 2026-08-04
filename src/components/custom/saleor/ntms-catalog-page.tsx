@@ -3,6 +3,7 @@ import {
   ArrowDownRight,
   ArrowRight,
   BadgeCheck,
+  BadgePercent,
   Boxes,
   Search,
 } from "lucide-react";
@@ -450,7 +451,11 @@ export function SaleorProductCard({
         </p>
         <div className="mt-auto border-t border-[color:var(--cyber-gold)]/12 pt-3">
           <div className="flex items-end justify-between gap-2">
-            <PriceLabel compact price={product.price} />
+            <PriceLabel
+              compact
+              price={product.price}
+              priorPrice={product.priorPrice}
+            />
             <StockBadge quantityAvailable={product.quantityAvailable} />
           </div>
           {requiresVariantSelection ? (
@@ -507,17 +512,45 @@ function StockBadge({
 function PriceLabel({
   compact = false,
   price,
+  priorPrice,
 }: {
   compact?: boolean;
   price: { amount: number; currency: string } | null;
+  priorPrice: { amount: number; currency: string } | null;
 }) {
+  const discountPercent = saleorDiscountPercent(price, priorPrice);
+
   return (
     <div className="min-w-0">
       {!compact ? <p className="text-xs text-foreground/48">Price</p> : null}
-      <p className="mt-1 text-base font-semibold leading-none text-[color:var(--cyber-gold-soft)]">
-        {price ? formatSaleorMoney(price) : "Price pending"}
-      </p>
+      <div className="mt-1 flex min-h-5 flex-wrap items-center gap-x-2 gap-y-1">
+        <p className="text-base font-semibold leading-none text-[color:var(--cyber-gold-soft)]">
+          {price ? formatSaleorMoney(price) : "Price pending"}
+        </p>
+        {discountPercent && priorPrice ? (
+          <p className="text-xs text-foreground/42 line-through">
+            {formatSaleorMoney(priorPrice)}
+          </p>
+        ) : null}
+      </div>
+      {discountPercent ? (
+        <p className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase text-emerald-300">
+          <BadgePercent className="h-3.5 w-3.5" />
+          Save {discountPercent}%
+        </p>
+      ) : null}
     </div>
+  );
+}
+
+function saleorDiscountPercent(
+  price: { amount: number } | null,
+  priorPrice: { amount: number } | null,
+) {
+  if (!price || !priorPrice || priorPrice.amount <= price.amount) return null;
+  return Math.max(
+    1,
+    Math.round(((priorPrice.amount - price.amount) / priorPrice.amount) * 100),
   );
 }
 

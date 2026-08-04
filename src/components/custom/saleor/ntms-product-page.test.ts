@@ -10,6 +10,7 @@ const variants = Array.from({ length: 99 }, (_, index) => ({
   id: `variant-${index + 1}`,
   name: `Papa Cartridge ${index + 1}`,
   price: null,
+  priorPrice: null,
   quantityAvailable: 50,
   attributes: [],
   sku: `C${String(index + 1).padStart(4, "0")}RL`,

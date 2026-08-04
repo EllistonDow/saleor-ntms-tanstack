@@ -76,6 +76,11 @@ type SaleorProductNode = {
         gross?: SaleorMoney | null;
       } | null;
     } | null;
+    priceRangePrior?: {
+      start?: {
+        gross?: SaleorMoney | null;
+      } | null;
+    } | null;
   } | null;
   variants?: {
     id: string;
@@ -84,6 +89,9 @@ type SaleorProductNode = {
     quantityAvailable?: number | null;
     pricing?: {
       price?: {
+        gross?: SaleorMoney | null;
+      } | null;
+      pricePrior?: {
         gross?: SaleorMoney | null;
       } | null;
     } | null;
@@ -273,6 +281,7 @@ export type NtmsSaleorProduct = {
   imageAlt: string;
   categoryName: string;
   price: SaleorMoney | null;
+  priorPrice: SaleorMoney | null;
   sku: string;
   quantityAvailable: number | null;
 };
@@ -299,6 +308,7 @@ export type NtmsSaleorProductVariant = {
   name: string;
   sku: string;
   price: SaleorMoney | null;
+  priorPrice: SaleorMoney | null;
   quantityAvailable: number | null;
   attributes: NtmsSaleorVariantAttribute[];
   media?: NtmsSaleorProductMedia[];
@@ -427,7 +437,10 @@ const ntmsSaleorCatalogQuery = `
           slug
           thumbnail(size: 512, format: WEBP) { url alt }
           category { name slug }
-          pricing { priceRange { start { gross { amount currency } } } }
+          pricing {
+            priceRange { start { gross { amount currency } } }
+            priceRangePrior { start { gross { amount currency } } }
+          }
           variants { id sku quantityAvailable }
         }
       }
@@ -486,7 +499,10 @@ const saleorProductBaseFields = `
     slug
     products(first: 0, channel: $channel) { totalCount }
   }
-  pricing { priceRange { start { gross { amount currency } } } }
+  pricing {
+    priceRange { start { gross { amount currency } } }
+    priceRangePrior { start { gross { amount currency } } }
+  }
 `;
 
 const saleorProductVariantFields = `
@@ -494,7 +510,10 @@ const saleorProductVariantFields = `
   name
   sku
   quantityAvailable
-  pricing { price { gross { amount currency } } }
+  pricing {
+    price { gross { amount currency } }
+    pricePrior { gross { amount currency } }
+  }
 `;
 
 const saleorProductCardFields = `
@@ -1216,6 +1235,7 @@ function mapProduct(product: SaleorProductNode): NtmsSaleorProduct {
     imageAlt: product.thumbnail?.alt || product.name,
     categoryName: product.category?.name ?? "Tattoo supply",
     price: product.pricing?.priceRange?.start?.gross ?? null,
+    priorPrice: product.pricing?.priceRangePrior?.start?.gross ?? null,
     sku: firstVariant?.sku ?? "",
     quantityAvailable: firstVariant?.quantityAvailable ?? null,
   };
@@ -1251,6 +1271,7 @@ function mapProductVariants(
     name: variant.name || product.name,
     sku: variant.sku ?? "",
     price: variant.pricing?.price?.gross ?? null,
+    priorPrice: variant.pricing?.pricePrior?.gross ?? null,
     quantityAvailable: variant.quantityAvailable ?? null,
     media: (variant.media ?? [])
       .filter((media) => media.type === "IMAGE" && media.url)

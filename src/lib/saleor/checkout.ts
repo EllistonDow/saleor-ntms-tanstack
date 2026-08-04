@@ -93,6 +93,9 @@ type SaleorCheckoutNode = {
   subtotalPrice: SaleorTaxedMoney;
   totalPrice: SaleorTaxedMoney;
   shippingPrice: SaleorTaxedMoney;
+  discount?: SaleorMoney | null;
+  discountName?: string | null;
+  voucherCode?: string | null;
   delivery?: {
     id: string;
     shippingMethod?: SaleorShippingMethodNode | null;
@@ -236,6 +239,14 @@ type SaleorCheckoutDeliveryMethodUpdateResponse = {
   checkoutDeliveryMethodUpdate: SaleorCheckoutPayload;
 };
 
+type SaleorCheckoutAddPromoCodeResponse = {
+  checkoutAddPromoCode: SaleorCheckoutPayload;
+};
+
+type SaleorCheckoutRemovePromoCodeResponse = {
+  checkoutRemovePromoCode: SaleorCheckoutPayload;
+};
+
 type SaleorCheckoutPaymentCreateResponse = {
   checkoutPaymentCreate: SaleorPaymentPayload;
 };
@@ -346,6 +357,9 @@ export type NtmsSaleorCheckout = {
   subtotalPrice: SaleorMoney;
   totalPrice: SaleorMoney;
   shippingPrice: SaleorMoney;
+  discountPrice: SaleorMoney;
+  discountName: string;
+  voucherCode: string;
   selectedShippingMethod: NtmsSaleorShippingMethod | null;
   shippingMethods: NtmsSaleorShippingMethod[];
   paymentGateways: NtmsSaleorPaymentGateway[];
@@ -413,6 +427,9 @@ const checkoutFields = `
   subtotalPrice { gross { amount currency } }
   totalPrice { gross { amount currency } }
   shippingPrice { gross { amount currency } }
+  discount { amount currency }
+  discountName
+  voucherCode
   delivery {
     id
     shippingMethod {
@@ -580,6 +597,28 @@ const checkoutBillingAddressUpdateMutation = `
 const checkoutDeliveryMethodUpdateMutation = `
   mutation NtmsSaleorCheckoutDeliveryMethodUpdate($id: ID!, $deliveryMethodId: ID!) {
     checkoutDeliveryMethodUpdate(id: $id, deliveryMethodId: $deliveryMethodId) {
+      checkout {
+        ${checkoutFields}
+      }
+      errors { field message code }
+    }
+  }
+`;
+
+const checkoutAddPromoCodeMutation = `
+  mutation NtmsSaleorCheckoutAddPromoCode($id: ID!, $promoCode: String!) {
+    checkoutAddPromoCode(id: $id, promoCode: $promoCode) {
+      checkout {
+        ${checkoutFields}
+      }
+      errors { field message code }
+    }
+  }
+`;
+
+const checkoutRemovePromoCodeMutation = `
+  mutation NtmsSaleorCheckoutRemovePromoCode($id: ID!, $promoCode: String!) {
+    checkoutRemovePromoCode(id: $id, promoCode: $promoCode) {
       checkout {
         ${checkoutFields}
       }
@@ -844,6 +883,44 @@ export async function updateNtmsSaleorCheckoutDeliveryMethod({
   });
 
   return checkoutFromPayload(data.checkoutDeliveryMethodUpdate);
+}
+
+export async function addNtmsSaleorCheckoutPromoCode({
+  checkoutId,
+  promoCode,
+}: {
+  checkoutId: string;
+  promoCode: string;
+}): Promise<NtmsSaleorCheckout> {
+  const code = promoCode.trim();
+  if (!code) throw new Error("Enter a promo code");
+  const data = await saleorFetch<
+    SaleorCheckoutAddPromoCodeResponse,
+    { id: string; promoCode: string }
+  >({
+    query: checkoutAddPromoCodeMutation,
+    variables: { id: checkoutId, promoCode: code },
+  });
+  return checkoutFromPayload(data.checkoutAddPromoCode);
+}
+
+export async function removeNtmsSaleorCheckoutPromoCode({
+  checkoutId,
+  promoCode,
+}: {
+  checkoutId: string;
+  promoCode: string;
+}): Promise<NtmsSaleorCheckout> {
+  const code = promoCode.trim();
+  if (!code) throw new Error("Checkout does not have a promo code");
+  const data = await saleorFetch<
+    SaleorCheckoutRemovePromoCodeResponse,
+    { id: string; promoCode: string }
+  >({
+    query: checkoutRemovePromoCodeMutation,
+    variables: { id: checkoutId, promoCode: code },
+  });
+  return checkoutFromPayload(data.checkoutRemovePromoCode);
 }
 
 export async function initializeNtmsSaleorPaymentGatewayConfigs({
@@ -1266,6 +1343,14 @@ function mapCheckout(checkout: SaleorCheckoutNode): NtmsSaleorCheckout {
     subtotalPrice: checkout.subtotalPrice.gross,
     totalPrice: checkout.totalPrice.gross,
     shippingPrice: checkout.shippingPrice.gross,
+    discountPrice:
+      checkout.discount ??
+      ({
+        amount: 0,
+        currency: checkout.totalPrice.gross.currency,
+      } satisfies SaleorMoney),
+    discountName: checkout.discountName ?? "",
+    voucherCode: checkout.voucherCode ?? "",
     selectedShippingMethod: checkout.delivery?.shippingMethod
       ? mapShippingMethod(checkout.delivery.shippingMethod)
       : null,

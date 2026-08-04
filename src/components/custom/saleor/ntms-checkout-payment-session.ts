@@ -11,6 +11,7 @@ export function getNtmsSaleorPaymentSessionKey(
   return JSON.stringify({
     billingAddress: checkout.billingAddress,
     checkoutId: checkout.id,
+    discountPrice: checkout.discountPrice,
     email: checkout.email,
     gatewayId,
     lines: checkout.lines.map((line) => ({
@@ -22,5 +23,6 @@ export function getNtmsSaleorPaymentSessionKey(
     selectedShippingMethodId: checkout.selectedShippingMethod?.id ?? null,
     shippingAddress: checkout.shippingAddress,
     totalPrice: checkout.totalPrice,
+    voucherCode: checkout.voucherCode,
   });
 }
