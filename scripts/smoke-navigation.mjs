@@ -103,12 +103,11 @@ const saleorConfigurableVariantMinimum = Number(
   process.env.SALEOR_CONFIGURABLE_VARIANT_MINIMUM ?? 99,
 );
 const saleorMobileCategoryLabels = [
-  "All supplies",
-  "Needles",
   "Inks",
+  "Needles",
   "Machines",
   "Tubes & Grips",
-  "Power",
+  "Power Supplies & Cords",
   "Medical",
   "Shop Supply",
   "Papa",

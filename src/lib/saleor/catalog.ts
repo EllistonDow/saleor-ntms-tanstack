@@ -210,6 +210,14 @@ type NtmsSaleorProductPageResponse = {
   product?: SaleorProductNode | null;
 };
 
+type NtmsSaleorNavigationCategoriesResponse = {
+  categories?: {
+    edges: {
+      node: SaleorCategoryNode;
+    }[];
+  } | null;
+};
+
 type NtmsSaleorProductsConnectionResponse = {
   products?: {
     totalCount?: number | null;
@@ -484,6 +492,21 @@ const ntmsSaleorCatalogQuery = `
               }
             }
           }
+        }
+      }
+    }
+  }
+`;
+
+const ntmsSaleorNavigationCategoriesQuery = `
+  query NtmsSaleorNavigationCategories($channel: String!) {
+    categories(first: 48, level: 0) {
+      edges {
+        node {
+          id
+          name
+          slug
+          products(first: 0, channel: $channel) { totalCount }
         }
       }
     }
@@ -770,6 +793,23 @@ export async function getNtmsSaleorCatalogPreview(): Promise<NtmsSaleorCatalogPr
     products: (data.products?.edges ?? []).map((edge) => mapProduct(edge.node)),
     totalProducts: data.products?.totalCount ?? 0,
   };
+}
+
+export async function getNtmsSaleorNavigationCategories(): Promise<
+  NtmsSaleorCategory[]
+> {
+  const channel = getSaleorChannel();
+  const data = await saleorFetch<
+    NtmsSaleorNavigationCategoriesResponse,
+    { channel: string }
+  >({
+    query: ntmsSaleorNavigationCategoriesQuery,
+    variables: { channel },
+  });
+
+  return (data.categories?.edges ?? [])
+    .map((edge) => mapCategory(edge.node))
+    .filter((category) => category.slug !== "default-category");
 }
 
 export async function getNtmsSaleorCategoryPage(

@@ -2,6 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import {
   getNtmsSaleorCatalogPreview,
   getNtmsSaleorCategoryPage,
+  getNtmsSaleorNavigationCategories,
   getNtmsSaleorProductPage,
   getNtmsSaleorSearchPage,
   type NtmsSaleorCatalogPreview,
@@ -16,6 +17,10 @@ export const getSaleorCatalogPreview = createServerFn({ method: "POST" })
     async (): Promise<NtmsSaleorCatalogPreview> =>
       getNtmsSaleorCatalogPreview(),
   );
+
+export const getSaleorNavigationCategories = createServerFn({ method: "POST" })
+  .validator(() => ({}))
+  .handler(async () => getNtmsSaleorNavigationCategories());
 
 export const getSaleorSearchPage = createServerFn({ method: "POST" })
   .validator(

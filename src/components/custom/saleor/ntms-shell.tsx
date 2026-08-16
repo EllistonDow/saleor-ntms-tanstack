@@ -16,30 +16,71 @@ import {
   SheetDescription,
   SheetTitle,
 } from "@/components/ui/sheet";
+import type { NtmsSaleorCategory } from "@/lib/saleor/catalog";
 import { cn } from "@/lib/utils";
 import { useSaleorCart } from "./ntms-cart-context";
 
-const ntmsPrimaryNav = [
-  { label: "Needles", slug: "ntms-289-needles" },
+type NtmsNavigationCategory = Pick<NtmsSaleorCategory, "name" | "slug">;
+
+const ntmsNavigationFallback = [
   { label: "Inks", slug: "ntms-91-inks" },
+  { label: "Needles", slug: "ntms-289-needles" },
   { label: "Machines", slug: "ntms-103-machines" },
   { label: "Tubes & Grips", slug: "ntms-107-tubes-and-grips" },
-  { label: "Power", slug: "ntms-85-power-supplies-and-cords" },
+  {
+    label: "Power Supplies & Cords",
+    slug: "ntms-85-power-supplies-and-cords",
+  },
   { label: "Medical", slug: "ntms-89-medical" },
   { label: "Shop Supply", slug: "ntms-113-shop-supply" },
   { label: "Papa", slug: "ntms-117-papa" },
   { label: "Sales", slug: "ntms-452-sales" },
-];
+] as const;
 
-const ntmsFooterNav = [
-  { label: "Needles", slug: "ntms-289-needles" },
-  { label: "Inks", slug: "ntms-91-inks" },
-  { label: "Machines", slug: "ntms-103-machines" },
-  { label: "Shop Supply", slug: "ntms-113-shop-supply" },
-];
+const ntmsFooterCategorySlugs = [
+  "ntms-91-inks",
+  "ntms-103-machines",
+  "ntms-289-needles",
+  "ntms-113-shop-supply",
+] as const;
 
-export function NtmsSaleorShell({ children }: { children: React.ReactNode }) {
+export function getNtmsSaleorNavigationCategories(
+  categories: NtmsNavigationCategory[],
+) {
+  const categoriesBySlug = new Map(
+    categories.map((category) => [category.slug, category]),
+  );
+
+  return ntmsNavigationFallback.map((fallback) => {
+    const category = categoriesBySlug.get(fallback.slug);
+    return category
+      ? { label: category.name, slug: category.slug }
+      : { ...fallback };
+  });
+}
+
+function getNtmsSaleorFooterCategories(
+  navigationCategories: ReturnType<typeof getNtmsSaleorNavigationCategories>,
+) {
+  const categoriesBySlug = new Map(
+    navigationCategories.map((category) => [category.slug, category]),
+  );
+
+  return ntmsFooterCategorySlugs.flatMap((slug) => {
+    const category = categoriesBySlug.get(slug);
+    return category ? [category] : [];
+  });
+}
+
+export function NtmsSaleorShell({
+  categories,
+  children,
+}: {
+  categories: NtmsNavigationCategory[];
+  children: React.ReactNode;
+}) {
   const matchRoute = useMatchRoute();
+  const navigationCategories = getNtmsSaleorNavigationCategories(categories);
   const isCheckout =
     Boolean(matchRoute({ to: "/checkout" })) ||
     Boolean(matchRoute({ to: "/checkout/$step" })) ||
@@ -51,14 +92,20 @@ export function NtmsSaleorShell({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <NtmsSaleorHeader />
+      <NtmsSaleorHeader categories={navigationCategories} />
       {children}
-      <NtmsSaleorFooter />
+      <NtmsSaleorFooter
+        categories={getNtmsSaleorFooterCategories(navigationCategories)}
+      />
     </div>
   );
 }
 
-function NtmsSaleorHeader() {
+function NtmsSaleorHeader({
+  categories,
+}: {
+  categories: ReturnType<typeof getNtmsSaleorNavigationCategories>;
+}) {
   return (
     <header className="sticky top-0 z-40 border-b border-[color:var(--cyber-gold)]/14 bg-background">
       <div className="mx-auto max-w-screen-2xl px-4 py-3">
@@ -67,7 +114,7 @@ function NtmsSaleorHeader() {
           <div className="order-3 col-span-2 lg:order-2 lg:col-span-1">
             <NtmsSearchForm />
           </div>
-          <NtmsHeaderActions />
+          <NtmsHeaderActions categories={categories} />
         </div>
       </div>
 
@@ -76,13 +123,7 @@ function NtmsSaleorHeader() {
         className="hidden border-t border-[color:var(--cyber-gold)]/10 lg:block"
       >
         <div className="mx-auto flex max-w-screen-2xl gap-5 overflow-x-auto px-4">
-          <Link
-            to="/search"
-            className="shrink-0 border-b-2 border-transparent py-3 text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)] transition hover:border-[color:var(--cyber-gold)]"
-          >
-            All supplies
-          </Link>
-          {ntmsPrimaryNav.map((item) => (
+          {categories.map((item) => (
             <Link
               key={item.slug}
               to="/collections/$collection"
@@ -124,13 +165,17 @@ function NtmsLogo() {
 const ntmsHeaderIconButtonClass =
   "relative flex h-10 w-10 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/22 bg-background text-foreground transition hover:border-[color:var(--cyber-gold)]/60 hover:text-[color:var(--cyber-gold-soft)]";
 
-function NtmsHeaderActions() {
+function NtmsHeaderActions({
+  categories,
+}: {
+  categories: ReturnType<typeof getNtmsSaleorNavigationCategories>;
+}) {
   const { checkout, isLoading, openCart } = useSaleorCart();
   const quantity = checkout?.quantity ?? 0;
 
   return (
     <div className="order-2 flex shrink-0 items-center justify-end gap-2 lg:order-3">
-      <NtmsMobileNavigation />
+      <NtmsMobileNavigation categories={categories} />
       <span className="hidden sm:contents">
         <ThemeToggle />
       </span>
@@ -171,7 +216,11 @@ function NtmsHeaderActions() {
   );
 }
 
-function NtmsMobileNavigation() {
+function NtmsMobileNavigation({
+  categories,
+}: {
+  categories: ReturnType<typeof getNtmsSaleorNavigationCategories>;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -211,15 +260,7 @@ function NtmsMobileNavigation() {
           aria-label="Mobile categories"
           className="mt-5 flex flex-1 flex-col gap-1 overflow-y-auto"
         >
-          <Link
-            to="/search"
-            onClick={() => setOpen(false)}
-            className="group flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 py-3 text-sm font-bold uppercase text-[color:var(--cyber-gold-soft)]"
-          >
-            All supplies
-            <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
-          </Link>
-          {ntmsPrimaryNav.map((item) => (
+          {categories.map((item) => (
             <Link
               key={item.slug}
               to="/collections/$collection"
@@ -267,7 +308,11 @@ function NtmsSearchForm() {
   );
 }
 
-function NtmsSaleorFooter() {
+function NtmsSaleorFooter({
+  categories,
+}: {
+  categories: ReturnType<typeof getNtmsSaleorNavigationCategories>;
+}) {
   const year = new Date().getFullYear();
 
   return (
@@ -298,7 +343,7 @@ function NtmsSaleorFooter() {
             Shop
           </p>
           <ul className="mt-4 grid gap-2 text-sm font-semibold">
-            {ntmsFooterNav.map((item) => (
+            {categories.map((item) => (
               <li key={item.slug}>
                 <Link
                   to="/collections/$collection"

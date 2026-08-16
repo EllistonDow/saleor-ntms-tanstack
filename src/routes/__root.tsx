@@ -9,6 +9,7 @@ import { ChannelProvider } from "@/components/custom/cart/channel-context";
 import ErrorComponent from "@/components/custom/errors/error";
 import { SaleorCartProvider } from "@/components/custom/saleor/ntms-cart-context";
 import { NtmsSaleorCartDrawer } from "@/components/custom/saleor/ntms-cart-drawer";
+import { getSaleorNavigationCategories } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorShell } from "@/components/custom/saleor/ntms-shell";
 import { ThemeProvider } from "@/components/custom/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
@@ -182,7 +183,14 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   },
   loader: async ({ context }) => {
     if (isSaleorStorefront) {
-      return { activeOrder: null, activeChannel: undefined };
+      // Navigation must not make the storefront unavailable if Saleor is slow.
+      const saleorNavigationCategories =
+        await getSaleorNavigationCategories().catch(() => []);
+      return {
+        activeOrder: null,
+        activeChannel: undefined,
+        saleorNavigationCategories,
+      };
     }
 
     const hasSession = await hasPocSessionCookie();
@@ -192,7 +200,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         : Promise.resolve(null),
       context.queryClient.ensureQueryData(activeChannelQueryOptions()),
     ]);
-    return { activeOrder, activeChannel };
+    return { activeOrder, activeChannel, saleorNavigationCategories: [] };
   },
   scripts: () => {
     const { VITE_SITE_NAME, VITE_COMPANY_NAME } = clientEnv;
@@ -242,14 +250,15 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 });
 
 function RootLayout() {
-  const { activeOrder, activeChannel } = Route.useLoaderData();
+  const { activeOrder, activeChannel, saleorNavigationCategories } =
+    Route.useLoaderData();
   const { hasSession } = Route.useRouteContext();
 
   if (isSaleorStorefront) {
     return (
       <ThemeProvider>
         <SaleorCartProvider>
-          <NtmsSaleorShell>
+          <NtmsSaleorShell categories={saleorNavigationCategories}>
             <Outlet />
             <NtmsSaleorCartDrawer />
             <Toaster />
