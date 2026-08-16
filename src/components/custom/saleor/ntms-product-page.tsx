@@ -1,16 +1,29 @@
 import { Link } from "@tanstack/react-router";
 import {
+  ArrowLeft,
   ArrowRight,
   BadgePercent,
   Boxes,
+  Check,
+  ChevronLeft,
   ChevronRight,
+  Expand,
   Layers3,
   Minus,
+  PackageCheck,
   Plus,
   Search,
+  ShieldCheck,
+  Truck,
 } from "lucide-react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { GridTileImage } from "@/components/custom/grid/tile";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import type {
   NtmsSaleorProductPage,
   NtmsSaleorProductVariant,
@@ -81,7 +94,10 @@ export function NtmsSaleorProductPageView({
     () => initialVariant?.id ?? product.variantId,
   );
   const [quantity, setQuantity] = useState(1);
+  const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+  const [showMobileBuyBar, setShowMobileBuyBar] = useState(false);
   const [variantSearchQuery, setVariantSearchQuery] = useState("");
+  const primaryPurchaseRef = useRef<HTMLDivElement>(null);
   const selectedVariant =
     product.variants.find((variant) => variant.id === selectedVariantId) ??
     product.variants[0];
@@ -93,6 +109,10 @@ export function NtmsSaleorProductPageView({
     activeGallery.find((media) => media.url === selectedMediaUrl) ??
     activeGallery[0];
   const selectedImage = selectedMedia?.url || primaryImage;
+  const selectedMediaIndex = Math.max(
+    0,
+    activeGallery.findIndex((media) => media.url === selectedImage),
+  );
   const selectedPrice = selectedVariant?.price ?? product.price;
   const selectedPriorPrice = selectedVariant?.priorPrice ?? product.priorPrice;
   const selectedDiscountPercent = saleorDiscountPercent(
@@ -144,6 +164,26 @@ export function NtmsSaleorProductPageView({
     );
   }, [defaultMediaUrl, initialVariantSku, product.variants, selectedVariantId]);
 
+  useEffect(() => {
+    const updateMobileBuyBar = () => {
+      const purchaseSection = primaryPurchaseRef.current;
+      setShowMobileBuyBar(
+        Boolean(
+          purchaseSection && purchaseSection.getBoundingClientRect().bottom < 0,
+        ),
+      );
+    };
+
+    updateMobileBuyBar();
+    window.addEventListener("scroll", updateMobileBuyBar, { passive: true });
+    window.addEventListener("resize", updateMobileBuyBar);
+
+    return () => {
+      window.removeEventListener("scroll", updateMobileBuyBar);
+      window.removeEventListener("resize", updateMobileBuyBar);
+    };
+  }, []);
+
   const selectVariant = (variantId: string) => {
     const nextVariant = product.variants.find(
       (variant) => variant.id === variantId,
@@ -165,6 +205,14 @@ export function NtmsSaleorProductPageView({
     if (!Number.isFinite(nextQuantity)) return;
 
     setQuantity(Math.min(Math.max(1, Math.floor(nextQuantity)), maxQuantity));
+  };
+
+  const showAdjacentMedia = (direction: -1 | 1) => {
+    if (activeGallery.length < 2) return;
+    const nextIndex =
+      (selectedMediaIndex + direction + activeGallery.length) %
+      activeGallery.length;
+    setSelectedMediaUrl(activeGallery[nextIndex]?.url ?? selectedMediaUrl);
   };
 
   return (
@@ -198,42 +246,66 @@ export function NtmsSaleorProductPageView({
           </span>
         </nav>
 
-        <section className="grid gap-8 py-8 lg:grid-cols-[minmax(0,1.14fr)_minmax(360px,0.7fr)] lg:items-start lg:gap-12">
-          <div className="min-w-0">
-            <div className="overflow-hidden border border-[color:var(--cyber-gold)]/18 bg-white">
-              <div className="aspect-square bg-white">
+        <section className="grid gap-8 py-7 lg:grid-cols-[minmax(0,1fr)_minmax(400px,0.72fr)] lg:items-start lg:gap-10 xl:gap-14">
+          <div className="min-w-0 lg:sticky lg:top-24">
+            <div className="relative overflow-hidden rounded-md border border-white/10 bg-white shadow-[0_24px_70px_rgba(0,0,0,.22)]">
+              <button
+                aria-label="Open image viewer"
+                className="group relative block aspect-square w-full cursor-zoom-in bg-white text-left"
+                disabled={!selectedImage}
+                onClick={() => setIsGalleryOpen(true)}
+                type="button"
+              >
                 {selectedImage ? (
                   <GridTileImage
                     alt={selectedMedia?.alt || product.imageAlt}
-                    className="object-contain p-7 sm:p-10"
+                    className="object-contain p-6 sm:p-10 xl:p-12"
                     frame={false}
-                    height={512}
+                    isInteractive={false}
                     priority
                     src={selectedImage}
                     sizes="(min-width: 1024px) 58vw, 100vw"
-                    layout="constrained"
-                    width={512}
+                    layout="fullWidth"
                   />
                 ) : (
                   <ImageFallback label={product.name} />
                 )}
-              </div>
+                {selectedImage ? (
+                  <span className="absolute right-3 bottom-3 inline-flex h-10 w-10 items-center justify-center rounded-md border border-black/10 bg-white/92 text-black/65 shadow-md transition group-hover:text-black">
+                    <Expand className="h-4 w-4" />
+                  </span>
+                ) : null}
+              </button>
+
+              {activeGallery.length > 1 ? (
+                <>
+                  <GalleryNavigationButton
+                    direction="previous"
+                    onClick={() => showAdjacentMedia(-1)}
+                  />
+                  <GalleryNavigationButton
+                    direction="next"
+                    onClick={() => showAdjacentMedia(1)}
+                  />
+                </>
+              ) : null}
             </div>
 
             {activeGallery.length > 1 ? (
-              <div className="mt-3 grid grid-cols-5 border-l border-t border-[color:var(--cyber-gold)]/14 sm:grid-cols-6">
-                {activeGallery.slice(0, 6).map((media) => {
+              <fieldset className="mt-3 flex w-full min-w-0 max-w-full gap-2 overflow-x-auto pb-1">
+                <legend className="sr-only">Product images</legend>
+                {activeGallery.map((media, index) => {
                   const active = media.url === selectedImage;
 
                   return (
                     <button
-                      aria-label={`Show ${media.alt || product.name}`}
+                      aria-label={`Show image ${index + 1} of ${activeGallery.length}`}
                       aria-pressed={active}
                       className={[
-                        "aspect-square border-b border-r border-[color:var(--cyber-gold)]/14 bg-white p-2 transition focus-visible:ring-inset",
+                        "h-[72px] w-[72px] shrink-0 rounded-md border bg-white p-1.5 transition focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]/50",
                         active
-                          ? "ring-2 ring-inset ring-[color:var(--cyber-gold)]"
-                          : "hover:bg-[color:var(--cyber-gold)]/8",
+                          ? "border-[color:var(--cyber-gold)] shadow-[0_0_0_1px_var(--cyber-gold)]"
+                          : "border-white/12 opacity-72 hover:opacity-100",
                       ].join(" ")}
                       key={media.url}
                       onClick={() => setSelectedMediaUrl(media.url)}
@@ -243,32 +315,40 @@ export function NtmsSaleorProductPageView({
                         alt=""
                         className="h-full w-full object-contain"
                         decoding="async"
-                        height={128}
+                        height={64}
                         loading="lazy"
                         src={media.url}
-                        width={128}
+                        width={64}
                       />
                     </button>
                   );
                 })}
-              </div>
+              </fieldset>
             ) : null}
           </div>
 
-          <aside className="min-w-0 border border-[color:var(--cyber-gold)]/18 bg-card p-5 lg:sticky lg:top-24 sm:p-6">
-            <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-              {product.category?.name ?? "Tattoo supply"}
-            </p>
-            <h1 className="mt-4 break-words text-3xl font-black leading-[1.04] text-foreground sm:text-4xl">
+          <aside className="min-w-0 lg:border-l lg:border-[color:var(--cyber-gold)]/14 lg:pl-10 xl:pl-14">
+            {product.category ? (
+              <Link
+                className="inline-flex items-center gap-2 text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)] transition hover:text-foreground"
+                params={{ collection: product.category.slug }}
+                to="/collections/$collection"
+              >
+                <ArrowLeft className="h-3.5 w-3.5" />
+                {product.category.name}
+              </Link>
+            ) : (
+              <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
+                Tattoo supply
+              </p>
+            )}
+            <h1 className="mt-4 break-words text-3xl font-black leading-[1.08] text-foreground sm:text-4xl">
               {product.name}
             </h1>
 
-            <div className="mt-6 flex items-end justify-between gap-4 border-y border-[color:var(--cyber-gold)]/14 py-5">
+            <div className="mt-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-3 border-b border-[color:var(--cyber-gold)]/14 pb-6">
               <div>
-                <p className="text-[10px] font-bold uppercase text-foreground/42">
-                  Price
-                </p>
-                <p className="mt-1 text-3xl font-semibold text-[color:var(--cyber-gold-soft)]">
+                <p className="text-3xl font-semibold text-[color:var(--cyber-gold-soft)]">
                   {selectedPrice ? formatSaleorMoney(selectedPrice) : "Pending"}
                 </p>
                 {selectedDiscountPercent && selectedPriorPrice ? (
@@ -283,19 +363,22 @@ export function NtmsSaleorProductPageView({
                   </div>
                 ) : null}
               </div>
-              <div className="text-right">
-                <p className="text-[10px] font-bold uppercase text-foreground/42">
-                  Stock
-                </p>
-                <p className="mt-1 text-sm font-semibold text-foreground/74">
-                  {selectedQuantity && selectedQuantity > 0
-                    ? `${selectedQuantity} available`
-                    : "Check stock"}
-                </p>
-              </div>
+              <p
+                className={[
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold",
+                  canAdd
+                    ? "border-emerald-400/20 bg-emerald-400/8 text-emerald-300"
+                    : "border-amber-300/20 bg-amber-300/8 text-amber-200",
+                ].join(" ")}
+              >
+                {canAdd ? <Check className="h-3.5 w-3.5" /> : null}
+                {canAdd
+                  ? `${availableQuantity} in stock`
+                  : "Check availability"}
+              </p>
             </div>
 
-            <div className="grid divide-y divide-[color:var(--cyber-gold)]/14 border-b border-[color:var(--cyber-gold)]/14 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+            <div className="grid grid-cols-2 divide-x divide-[color:var(--cyber-gold)]/14 border-b border-[color:var(--cyber-gold)]/14">
               <ProductSignal
                 icon={<Boxes className="h-4 w-4" />}
                 label="SKU"
@@ -303,7 +386,7 @@ export function NtmsSaleorProductPageView({
               />
               <ProductSignal
                 icon={<Layers3 className="h-4 w-4" />}
-                label="Variants"
+                label="Options"
                 value={
                   <span data-saleor-variant-count>
                     {product.variants.length.toLocaleString()}
@@ -313,9 +396,9 @@ export function NtmsSaleorProductPageView({
             </div>
 
             {product.variants.length > 1 ? (
-              <fieldset className="mt-6">
-                <legend className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-                  Choose variant
+              <fieldset className="mt-7 rounded-md border border-[color:var(--cyber-gold)]/14 bg-card/46 p-4 sm:p-5">
+                <legend className="px-2 text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
+                  Configure product
                 </legend>
                 {hasAttributeSelector && selectedVariant ? (
                   <div className="mt-4">
@@ -328,9 +411,10 @@ export function NtmsSaleorProductPageView({
                     {selectedConfiguration.length > 0 ? (
                       <p
                         aria-live="polite"
-                        className="mt-4 border-l-2 border-[color:var(--cyber-gold)]/55 pl-3 text-sm leading-6 text-foreground/68"
+                        className="mt-4 flex items-start gap-2 border-t border-[color:var(--cyber-gold)]/12 pt-4 text-sm leading-6 text-foreground/68"
                         data-saleor-selected-configuration
                       >
+                        <Check className="mt-1 h-3.5 w-3.5 shrink-0 text-[color:var(--cyber-gold-soft)]" />
                         {selectedConfiguration.join(" / ")}
                       </p>
                     ) : null}
@@ -360,7 +444,7 @@ export function NtmsSaleorProductPageView({
                 {!hasAttributeSelector ? (
                   <div
                     className={[
-                      "mt-3 border-l border-t border-[color:var(--cyber-gold)]/14",
+                      "mt-3 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/14",
                       hasVariantSearch ? "max-h-96 overflow-y-auto" : "",
                     ].join(" ")}
                     data-saleor-variant-options
@@ -378,7 +462,7 @@ export function NtmsSaleorProductPageView({
                       return (
                         <label
                           className={[
-                            "grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-r border-[color:var(--cyber-gold)]/14 p-3 text-left transition",
+                            "grid w-full cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-3 border-b border-[color:var(--cyber-gold)]/14 p-3 text-left transition last:border-b-0",
                             active
                               ? "bg-[color:var(--cyber-gold)]/12"
                               : "hover:bg-background",
@@ -424,7 +508,7 @@ export function NtmsSaleorProductPageView({
                       );
                     })}
                     {visibleVariants.length === 0 ? (
-                      <p className="border-b border-r border-[color:var(--cyber-gold)]/14 px-3 py-5 text-sm text-foreground/52">
+                      <p className="px-3 py-5 text-sm text-foreground/52">
                         No matching variants
                       </p>
                     ) : null}
@@ -433,7 +517,7 @@ export function NtmsSaleorProductPageView({
               </fieldset>
             ) : null}
 
-            <div className="mt-6 flex items-center justify-between gap-4 border-y border-[color:var(--cyber-gold)]/14 py-4">
+            <div className="mt-7 flex items-center justify-between gap-4 border-y border-[color:var(--cyber-gold)]/14 py-4">
               <div>
                 <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
                   Quantity
@@ -444,68 +528,70 @@ export function NtmsSaleorProductPageView({
                     : "Check stock"}
                 </p>
               </div>
-              <div className="flex h-10 shrink-0 items-center border border-[color:var(--cyber-gold)]/20 bg-background">
-                <button
-                  aria-label="Decrease quantity"
-                  className="grid h-full w-10 place-items-center border-r border-[color:var(--cyber-gold)]/20 text-foreground/65 transition hover:bg-[color:var(--cyber-gold)]/10 hover:text-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-35"
-                  data-saleor-decrease-quantity
-                  disabled={!canAdd || quantity <= 1}
-                  onClick={() => updateQuantity(quantity - 1)}
-                  type="button"
-                >
-                  <Minus className="h-4 w-4" />
-                </button>
-                <input
-                  aria-label="Quantity"
-                  className="h-full w-12 border-0 bg-transparent px-1 text-center text-sm font-semibold text-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)] disabled:text-foreground/40"
-                  data-saleor-product-quantity
-                  disabled={!canAdd}
-                  inputMode="numeric"
-                  max={maxQuantity}
-                  min={1}
-                  onChange={(event) =>
-                    updateQuantity(event.currentTarget.valueAsNumber)
-                  }
-                  step={1}
-                  type="number"
-                  value={quantity}
-                />
-                <button
-                  aria-label="Increase quantity"
-                  className="grid h-full w-10 place-items-center border-l border-[color:var(--cyber-gold)]/20 text-foreground/65 transition hover:bg-[color:var(--cyber-gold)]/10 hover:text-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-35"
-                  data-saleor-increase-quantity
-                  disabled={!canAdd || quantity >= maxQuantity}
-                  onClick={() => updateQuantity(quantity + 1)}
-                  type="button"
-                >
-                  <Plus className="h-4 w-4" />
-                </button>
-              </div>
+              <QuantityControl
+                canAdd={canAdd}
+                maxQuantity={maxQuantity}
+                quantity={quantity}
+                updateQuantity={updateQuantity}
+              />
             </div>
 
-            <NtmsSaleorAddToCartButton
-              className="mt-6"
-              disabled={!canAdd}
-              label="Add to cart"
-              quantity={quantity}
-              size="full"
-              variantId={selectedVariant?.id || product.variantId}
-            />
+            <div className="mt-6" ref={primaryPurchaseRef}>
+              <NtmsSaleorAddToCartButton
+                disabled={!canAdd}
+                label="Add to cart"
+                quantity={quantity}
+                size="full"
+                variantId={selectedVariant?.id || product.variantId}
+              />
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2 border-t border-[color:var(--cyber-gold)]/12 pt-5 text-center text-[11px] font-semibold text-foreground/52">
+              <PurchaseSignal icon={<PackageCheck />} label="Live inventory" />
+              <PurchaseSignal icon={<Truck />} label="UPS rates" />
+              <PurchaseSignal icon={<ShieldCheck />} label="Secure checkout" />
+            </div>
           </aside>
         </section>
 
-        {product.description ? (
-          <section className="border-t border-[color:var(--cyber-gold)]/14 py-8">
+        <section className="grid gap-8 border-t border-[color:var(--cyber-gold)]/14 py-10 lg:grid-cols-[minmax(0,1fr)_360px] lg:gap-14">
+          <div>
             <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-              Product details
+              Product information
             </p>
-            <div className="mt-4 max-w-3xl space-y-4 text-sm leading-7 text-foreground/64">
-              {product.description.split(/\n{2,}/).map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
-            </div>
-          </section>
-        ) : null}
+            <h2 className="mt-2 text-2xl font-semibold text-foreground">
+              Details
+            </h2>
+            {product.description ? (
+              <div className="mt-5 max-w-3xl space-y-4 text-[15px] leading-7 text-foreground/66">
+                {product.description.split(/\n{2,}/).map((paragraph) => (
+                  <p key={paragraph}>{paragraph}</p>
+                ))}
+              </div>
+            ) : (
+              <p className="mt-5 text-sm leading-7 text-foreground/52">
+                Product specifications are shown for the selected option.
+              </p>
+            )}
+          </div>
+          <dl className="divide-y divide-[color:var(--cyber-gold)]/12 border-y border-[color:var(--cyber-gold)]/12 text-sm">
+            <ProductFact label="SKU" value={selectedSku} />
+            <ProductFact
+              label="Category"
+              value={product.category?.name ?? "Tattoo supply"}
+            />
+            <ProductFact
+              label="Available options"
+              value={product.variants.length.toLocaleString()}
+            />
+            <ProductFact
+              label="Inventory"
+              value={
+                canAdd ? `${availableQuantity} available` : "Check availability"
+              }
+            />
+          </dl>
+        </section>
 
         {relatedProducts.length > 0 ? (
           <section className="border-t border-[color:var(--cyber-gold)]/14 py-11">
@@ -515,31 +601,211 @@ export function NtmsSaleorProductPageView({
                   Continue sourcing
                 </p>
                 <h2 className="mt-2 text-3xl font-semibold text-foreground">
-                  Related studio supplies
+                  More in {product.category?.name ?? "this category"}
                 </h2>
               </div>
-              <Link
-                to="/search"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
-              >
-                Search catalog
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+              {product.category ? (
+                <Link
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+                  params={{ collection: product.category.slug }}
+                  to="/collections/$collection"
+                >
+                  View category
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link
+                  className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+                  to="/search"
+                >
+                  Search catalog
+                  <ArrowRight className="h-4 w-4" />
+                </Link>
+              )}
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-              {relatedProducts.slice(0, 8).map((item) => (
+              {relatedProducts.slice(0, 8).map((item, index) => (
                 <SaleorProductCard
                   enableLinks
                   key={item.id}
                   product={item}
-                  priority={false}
+                  priority={index < 4}
                 />
               ))}
             </div>
           </section>
         ) : null}
+
+        <div className="h-20 lg:hidden" aria-hidden="true" />
       </div>
+
+      {showMobileBuyBar ? (
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 border-t border-[color:var(--cyber-gold)]/18 bg-background/96 px-4 pt-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] shadow-[0_-16px_40px_rgba(0,0,0,.3)] backdrop-blur-lg lg:hidden"
+          data-saleor-mobile-buy-bar
+        >
+          <div className="mx-auto flex max-w-screen-2xl items-center gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-[11px] font-semibold text-foreground/50">
+                {selectedSku}
+              </p>
+              <p className="mt-0.5 text-lg font-semibold text-[color:var(--cyber-gold-soft)]">
+                {selectedPrice ? formatSaleorMoney(selectedPrice) : "Pending"}
+              </p>
+            </div>
+            <NtmsSaleorAddToCartButton
+              className="h-11 w-auto min-w-40 px-5"
+              disabled={!canAdd}
+              label={`Add ${quantity} to cart`}
+              quantity={quantity}
+              size="full"
+              variantId={selectedVariant?.id || product.variantId}
+            />
+          </div>
+        </div>
+      ) : null}
+
+      <Dialog open={isGalleryOpen} onOpenChange={setIsGalleryOpen}>
+        <DialogContent className="h-[min(90vh,920px)] max-w-[min(96vw,1100px)] grid-rows-[minmax(0,1fr)] gap-0 overflow-hidden rounded-md border-white/12 bg-black p-0">
+          <DialogTitle className="sr-only">
+            {product.name} image viewer
+          </DialogTitle>
+          <DialogDescription className="sr-only">
+            View product images at a larger size.
+          </DialogDescription>
+          <div className="relative flex min-h-0 flex-1 items-center justify-center p-5 sm:p-10">
+            {selectedImage ? (
+              <img
+                alt={selectedMedia?.alt || product.imageAlt}
+                className="max-h-full max-w-full object-contain"
+                src={selectedImage}
+              />
+            ) : null}
+            {activeGallery.length > 1 ? (
+              <>
+                <GalleryNavigationButton
+                  direction="previous"
+                  onClick={() => showAdjacentMedia(-1)}
+                />
+                <GalleryNavigationButton
+                  direction="next"
+                  onClick={() => showAdjacentMedia(1)}
+                />
+              </>
+            ) : null}
+            <span className="absolute right-4 bottom-3 rounded-full bg-black/70 px-3 py-1 text-xs font-semibold text-white/72">
+              {selectedMediaIndex + 1} / {Math.max(1, activeGallery.length)}
+            </span>
+          </div>
+        </DialogContent>
+      </Dialog>
     </main>
+  );
+}
+
+function GalleryNavigationButton({
+  direction,
+  onClick,
+}: {
+  direction: "previous" | "next";
+  onClick: () => void;
+}) {
+  const isPrevious = direction === "previous";
+  const Icon = isPrevious ? ChevronLeft : ChevronRight;
+
+  return (
+    <button
+      aria-label={`${isPrevious ? "Previous" : "Next"} product image`}
+      className={[
+        "absolute top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-md border border-black/10 bg-white/92 text-black/65 shadow-md transition hover:bg-white hover:text-black focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]",
+        isPrevious ? "left-3" : "right-3",
+      ].join(" ")}
+      onClick={(event) => {
+        event.stopPropagation();
+        onClick();
+      }}
+      type="button"
+    >
+      <Icon className="h-4 w-4" />
+    </button>
+  );
+}
+
+function QuantityControl({
+  canAdd,
+  maxQuantity,
+  quantity,
+  updateQuantity,
+}: {
+  canAdd: boolean;
+  maxQuantity: number;
+  quantity: number;
+  updateQuantity: (quantity: number) => void;
+}) {
+  return (
+    <div className="flex h-10 shrink-0 items-center rounded-md border border-[color:var(--cyber-gold)]/20 bg-background">
+      <button
+        aria-label="Decrease quantity"
+        className="grid h-full w-10 place-items-center border-r border-[color:var(--cyber-gold)]/20 text-foreground/65 transition hover:bg-[color:var(--cyber-gold)]/10 hover:text-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-35"
+        data-saleor-decrease-quantity
+        disabled={!canAdd || quantity <= 1}
+        onClick={() => updateQuantity(quantity - 1)}
+        type="button"
+      >
+        <Minus className="h-4 w-4" />
+      </button>
+      <input
+        aria-label="Quantity"
+        className="h-full w-12 border-0 bg-transparent px-1 text-center text-sm font-semibold text-foreground outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)] disabled:text-foreground/40"
+        data-saleor-product-quantity
+        disabled={!canAdd}
+        inputMode="numeric"
+        max={maxQuantity}
+        min={1}
+        onChange={(event) => updateQuantity(event.currentTarget.valueAsNumber)}
+        step={1}
+        type="number"
+        value={quantity}
+      />
+      <button
+        aria-label="Increase quantity"
+        className="grid h-full w-10 place-items-center border-l border-[color:var(--cyber-gold)]/20 text-foreground/65 transition hover:bg-[color:var(--cyber-gold)]/10 hover:text-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-35"
+        data-saleor-increase-quantity
+        disabled={!canAdd || quantity >= maxQuantity}
+        onClick={() => updateQuantity(quantity + 1)}
+        type="button"
+      >
+        <Plus className="h-4 w-4" />
+      </button>
+    </div>
+  );
+}
+
+function PurchaseSignal({
+  icon,
+  label,
+}: {
+  icon: React.ReactNode;
+  label: string;
+}) {
+  return (
+    <div className="flex min-w-0 flex-col items-center gap-2">
+      <span className="text-[color:var(--cyber-gold-soft)] [&_svg]:h-4 [&_svg]:w-4">
+        {icon}
+      </span>
+      <span className="leading-4">{label}</span>
+    </div>
+  );
+}
+
+function ProductFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="grid grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] gap-4 py-4">
+      <dt className="text-foreground/48">{label}</dt>
+      <dd className="break-words text-right font-semibold text-foreground/78">
+        {value}
+      </dd>
+    </div>
   );
 }
 

@@ -70,6 +70,13 @@ type SaleorProductNode = {
       totalCount?: number | null;
     } | null;
   } | null;
+  relatedCategory?: {
+    products?: {
+      edges: {
+        node: SaleorProductNode;
+      }[];
+    } | null;
+  } | null;
   pricing?: {
     priceRange?: {
       start?: {
@@ -201,11 +208,6 @@ type NtmsSaleorCategoryCollectionOverridesResponse = {
 
 type NtmsSaleorProductPageResponse = {
   product?: SaleorProductNode | null;
-  products?: {
-    edges: {
-      node: SaleorProductNode;
-    }[];
-  } | null;
 };
 
 type NtmsSaleorProductsConnectionResponse = {
@@ -659,11 +661,13 @@ const ntmsSaleorProductPageQuery = `
       ${saleorProductDetailFields}
       description
       media { url alt type }
-    }
-    products(first: 9, channel: $channel) {
-      edges {
-        node {
-          ${saleorProductCardFields}
+      relatedCategory: category {
+        products(first: 9, channel: $channel) {
+          edges {
+            node {
+              ${saleorProductCardFields}
+            }
+          }
         }
       }
     }
@@ -989,7 +993,7 @@ export async function getNtmsSaleorProductPage(
   }
 
   const product = data.product;
-  const relatedProducts = (data.products?.edges ?? [])
+  const relatedProducts = (product.relatedCategory?.products?.edges ?? [])
     .map((edge) => mapProduct(edge.node))
     .filter((item) => item.slug !== product.slug)
     .slice(0, 8);
