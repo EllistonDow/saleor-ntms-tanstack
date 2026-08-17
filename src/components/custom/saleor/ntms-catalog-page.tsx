@@ -22,8 +22,8 @@ const categoryDisplayNames = new Map([
 ]);
 
 export const categoryPriority = [
-  "Needles",
   "Inks",
+  "Needles",
   "Machines",
   "Tubes & Grips",
   "Power Supplies & Cords",
@@ -282,6 +282,7 @@ function HeroProductMedia({
     <Link
       to="/product/$productId"
       params={{ productId: product.slug }}
+      preload="intent"
       aria-label={`Open ${product.name}`}
       className="absolute inset-y-0 right-0 z-0 hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)] lg:block lg:w-[62%]"
     >
@@ -337,6 +338,7 @@ function SupplyIndexItem({
     <Link
       to="/collections/$collection"
       params={{ collection: category.slug }}
+      preload="intent"
       className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
     >
       {content}
@@ -370,6 +372,7 @@ function BrandCollectionItem({
     <Link
       to="/collections/$collection"
       params={{ collection: collection.slug }}
+      preload="intent"
       className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
     >
       {content}
@@ -417,6 +420,7 @@ export function SaleorProductCard({
           <Link
             to="/product/$productId"
             params={{ productId: product.slug }}
+            preload="intent"
             className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)]"
           >
             {media}
@@ -433,6 +437,7 @@ export function SaleorProductCard({
           <Link
             to="/product/$productId"
             params={{ productId: product.slug }}
+            preload="intent"
             className="mt-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
           >
             <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-5 text-foreground transition group-hover:text-[color:var(--cyber-gold-soft)]">
@@ -462,6 +467,7 @@ export function SaleorProductCard({
             <Link
               to="/product/$productId"
               params={{ productId: product.slug }}
+              preload="intent"
               className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 px-3 text-xs font-semibold text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/52 hover:text-[color:var(--cyber-gold-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
               data-saleor-choose-options
             >
@@ -478,6 +484,7 @@ export function SaleorProductCard({
             <Link
               to="/product/$productId"
               params={{ productId: product.slug }}
+              preload="intent"
               className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 px-3 text-xs font-semibold text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/52 hover:text-[color:var(--cyber-gold-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
             >
               View item

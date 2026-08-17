@@ -141,7 +141,10 @@ export function NtmsSaleorCategoryPageView({
                 {totalProducts.toLocaleString()} {category.name} supplies
               </h2>
             </div>
-            <p className="text-sm font-semibold text-foreground/50">
+            <p
+              className="text-sm font-semibold text-foreground/50"
+              data-saleor-category-result-range
+            >
               {totalProducts > 0
                 ? `Showing ${firstResult.toLocaleString()}-${lastResult.toLocaleString()} of ${totalProducts.toLocaleString()}`
                 : "No items"}
@@ -233,6 +236,7 @@ function CollectionNavLink({
       to="/collections/$collection"
       params={{ collection }}
       search={{ sort }}
+      preload="intent"
       className={[
         "shrink-0 border border-[color:var(--cyber-gold)]/14 px-3 py-2 text-sm font-semibold transition lg:border-x-0 lg:border-t-0 lg:px-0",
         active
@@ -277,6 +281,7 @@ function CategoryPagination({
     <nav
       aria-label={`${label} pagination`}
       className="mt-8 flex flex-col gap-3 border-y border-[color:var(--cyber-gold)]/14 py-4 sm:flex-row sm:items-center sm:justify-between"
+      data-saleor-category-pagination
     >
       <p className="text-sm font-semibold text-foreground/58">
         Page {currentPage.toLocaleString()} of {totalPages.toLocaleString()}
@@ -287,6 +292,7 @@ function CategoryPagination({
             <Link
               to="/collections/$collection"
               params={{ collection }}
+              preload="intent"
               rel="prev"
               search={{ after: undefined, page: previousPage, sort }}
             >
@@ -305,6 +311,7 @@ function CategoryPagination({
             <Link
               to="/collections/$collection"
               params={{ collection }}
+              preload="intent"
               rel="next"
               search={{
                 after: nextPageCursor || undefined,
@@ -342,6 +349,7 @@ function CategorySortLink({
     <Link
       to="/collections/$collection"
       params={{ collection }}
+      preload="intent"
       search={{ after: undefined, page: undefined, sort: item.slug }}
       className={[
         "inline-flex h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition",

@@ -128,6 +128,7 @@ function NtmsSaleorHeader({
               key={item.slug}
               to="/collections/$collection"
               params={{ collection: item.slug }}
+              preload="intent"
               className="shrink-0 border-b-2 border-transparent py-3 text-xs font-bold uppercase text-foreground/64 transition hover:border-[color:var(--cyber-gold)] hover:text-foreground sm:text-sm"
               activeProps={{
                 "aria-current": "page",
@@ -265,6 +266,7 @@ function NtmsMobileNavigation({
               key={item.slug}
               to="/collections/$collection"
               params={{ collection: item.slug }}
+              preload="intent"
               onClick={() => setOpen(false)}
               className="group flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 py-3 text-sm font-semibold text-foreground/70 transition hover:text-[color:var(--cyber-gold-soft)]"
               activeProps={{
@@ -348,6 +350,7 @@ function NtmsSaleorFooter({
                 <Link
                   to="/collections/$collection"
                   params={{ collection: item.slug }}
+                  preload="intent"
                   className="text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
                 >
                   {item.label}

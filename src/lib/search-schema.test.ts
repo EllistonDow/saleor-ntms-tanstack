@@ -31,7 +31,7 @@ describe("storefront search parameters", () => {
     expect(result).toMatchObject({
       value: {
         brand: "eternal-ink",
-        page: "2",
+        page: 2,
         sort: defaultSort.slug,
       },
     });

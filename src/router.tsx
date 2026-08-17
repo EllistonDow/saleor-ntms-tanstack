@@ -15,7 +15,8 @@ export const getRouter = () => {
     parseSearch,
     stringifySearch,
     scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
+    // Intent preloads are reused briefly while product and category data stays fresh.
+    defaultPreloadStaleTime: 30_000,
     defaultNotFoundComponent: NotFound,
     context: {
       queryClient,

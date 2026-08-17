@@ -18,8 +18,8 @@ function category(name: string, productCount = 1): CatalogCategory {
 describe("NTMS homepage categories", () => {
   test("matches the Zoey top-level merchandising order", () => {
     expect(categoryPriority).toEqual([
-      "Needles",
       "Inks",
+      "Needles",
       "Machines",
       "Tubes & Grips",
       "Power Supplies & Cords",

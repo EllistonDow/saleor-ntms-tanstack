@@ -132,7 +132,10 @@ export function NtmsSaleorSearchPageView({
                 {hasQuery ? "Matching supplies" : "Catalog preview"}
               </h2>
             </div>
-            <p className="text-sm font-semibold text-foreground/50">
+            <p
+              className="text-sm font-semibold text-foreground/50"
+              data-saleor-search-result-range
+            >
               {page.totalProducts > 0
                 ? `${firstResult.toLocaleString()}-${lastResult.toLocaleString()} shown`
                 : "No results"}
@@ -228,6 +231,7 @@ function SortLink({
     <Link
       to="/search"
       search={{
+        after: undefined,
         page: undefined,
         q: query || undefined,
         sort: item.slug,
@@ -261,6 +265,7 @@ function SearchPagination({ page }: { page: NtmsSaleorSearchPage }) {
     <nav
       aria-label="Search pagination"
       className="mt-8 flex flex-col gap-3 border-y border-[color:var(--cyber-gold)]/14 py-4 sm:flex-row sm:items-center sm:justify-between"
+      data-saleor-search-pagination
     >
       <p className="text-sm font-semibold text-foreground/58">
         Page {page.page.toLocaleString()} of {page.totalPages.toLocaleString()}
@@ -270,6 +275,7 @@ function SearchPagination({ page }: { page: NtmsSaleorSearchPage }) {
           <Button asChild variant="outline">
             <Link
               to="/search"
+              preload="intent"
               rel="prev"
               search={{
                 ...search,
@@ -291,6 +297,7 @@ function SearchPagination({ page }: { page: NtmsSaleorSearchPage }) {
           <Button asChild>
             <Link
               to="/search"
+              preload="intent"
               rel="next"
               search={{
                 ...search,

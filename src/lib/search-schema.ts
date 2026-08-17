@@ -7,6 +7,14 @@ const validSortSlugs = sorting.map((item) => item.slug) as [SortSlugs];
 
 // Base search schema for common search parameters
 export const baseSearchSchema = z.object({
+  after: z
+    .string()
+    .trim()
+    .max(1024)
+    .regex(/^[A-Za-z0-9+/=_-]+$/)
+    .optional()
+    .catch(undefined),
+  page: z.coerce.number().int().min(1).max(100).optional().catch(undefined),
   q: z
     .string()
     .transform((value) => value.trim().slice(0, 200))
@@ -19,7 +27,7 @@ export const baseSearchSchema = z.object({
     .catch(defaultSort.slug),
 });
 
-// Allow dynamic facet parameters without parsing known keys a second time.
+// Known controls are validated above while custom facets remain URL-addressable.
 export const searchSchema = baseSearchSchema.catchall(z.string().optional());
 
 export type SearchParams = z.infer<typeof searchSchema>;

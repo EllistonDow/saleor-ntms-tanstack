@@ -345,6 +345,103 @@ async function verifySaleorMobileCategoryNavigation(browser) {
   }
 }
 
+async function expectResultRange(page, selector, pattern, label) {
+  const locator = page.locator(selector);
+  await locator.waitFor({ state: "visible", timeout: 25_000 });
+  await page.waitForFunction(
+    ({ selector, source }) =>
+      new RegExp(source).test(document.querySelector(selector)?.textContent || ""),
+    { selector, source: pattern.source },
+    { timeout: 25_000 },
+  ).catch((error) => {
+    throw new Error(`${label} did not render: ${error?.message || error}`);
+  });
+}
+
+async function verifySaleorCatalogPagination(page) {
+  await gotoWithRetry(
+    page,
+    `${baseUrl}/collections/ntms-91-inks?sort=name-a-z`,
+    "saleor category pagination",
+  );
+  await waitForUsable(page, "saleor category pagination");
+
+  await expectResultRange(
+    page,
+    "[data-saleor-category-result-range]",
+    /^Showing 1-24 of [\d,]+$/,
+    "Category page one",
+  );
+
+  await page
+    .locator("[data-saleor-category-pagination]")
+    .getByRole("link", { name: "Next" })
+    .click();
+  await page.waitForURL(
+    (url) =>
+      url.pathname === "/collections/ntms-91-inks" &&
+      url.searchParams.get("page") === "2" &&
+      Boolean(url.searchParams.get("after")),
+    { timeout: 25_000 },
+  );
+  await expectResultRange(
+    page,
+    "[data-saleor-category-result-range]",
+    /^Showing 25-48 of [\d,]+$/,
+    "Category page two",
+  );
+
+  await page
+    .locator("[data-saleor-category-pagination]")
+    .getByRole("link", { name: "Previous" })
+    .click();
+  await page.waitForURL(
+    (url) =>
+      url.pathname === "/collections/ntms-91-inks" &&
+      !url.searchParams.has("page") &&
+      !url.searchParams.has("after"),
+    { timeout: 25_000 },
+  );
+  await expectResultRange(
+    page,
+    "[data-saleor-category-result-range]",
+    /^Showing 1-24 of [\d,]+$/,
+    "Category return to page one",
+  );
+
+  await gotoWithRetry(
+    page,
+    `${baseUrl}/search?q=ink&sort=name-a-z`,
+    "saleor search pagination",
+  );
+  await waitForUsable(page, "saleor search pagination");
+
+  await expectResultRange(
+    page,
+    "[data-saleor-search-result-range]",
+    /^1-24 shown$/,
+    "Search page one",
+  );
+
+  await page
+    .locator("[data-saleor-search-pagination]")
+    .getByRole("link", { name: "Next" })
+    .click();
+  await page.waitForURL(
+    (url) =>
+      url.pathname === "/search" &&
+      url.searchParams.get("page") === "2" &&
+      Boolean(url.searchParams.get("after")),
+    { timeout: 25_000 },
+  );
+  await expectResultRange(
+    page,
+    "[data-saleor-search-result-range]",
+    /^25-48 shown$/,
+    "Search page two",
+  );
+}
+
 async function runTarget(browser) {
   const context = await browser.newContext({
     viewport: { width: 1440, height: 1000 },
@@ -377,6 +474,7 @@ async function runTarget(browser) {
         throw new Error("Mobile category button is visible on desktop");
       }
       await verifySaleorMobileCategoryNavigation(browser);
+      await verifySaleorCatalogPagination(page);
     }
 
     await clickFirstLink(
@@ -423,6 +521,7 @@ async function runTarget(browser) {
         ...(smokeBackend === "saleor"
           ? [
               "mobile category navigation",
+              "category and search pagination",
               "saleor add to cart",
               "configurable variant selection",
             ]
