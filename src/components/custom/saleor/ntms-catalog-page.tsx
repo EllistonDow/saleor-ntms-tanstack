@@ -22,8 +22,8 @@ const categoryDisplayNames = new Map([
 ]);
 
 export const categoryPriority = [
-  "Inks",
   "Needles",
+  "Inks",
   "Machines",
   "Tubes & Grips",
   "Power Supplies & Cords",

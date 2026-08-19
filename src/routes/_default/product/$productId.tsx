@@ -17,7 +17,6 @@ import {
   ProductDetails,
 } from "@/components/custom/product/product-description";
 import { ProductCard } from "@/components/custom/product-card";
-import { getSaleorProductPage } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorProductPageView } from "@/components/custom/saleor/ntms-product-page";
 import { readFragment } from "@/gql/graphql";
 import {
@@ -33,6 +32,7 @@ import {
   getCanonicalUrl,
   getPublicRobotsDirective,
 } from "@/lib/metadata";
+import { saleorProductPageQueryOptions } from "@/lib/saleor/catalog-query";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 import assetFragment from "@/lib/vendure/fragments/image";
 import type searchResultFragment from "@/lib/vendure/fragments/search-result";
@@ -46,9 +46,9 @@ export const Route = createFileRoute("/_default/product/$productId")({
   validateSearch: productSearchSchema,
   loader: async ({ context, params }) => {
     if (isSaleorStorefront) {
-      const productPage = await getSaleorProductPage({
-        data: { productId: params.productId },
-      });
+      const productPage = await context.queryClient.ensureQueryData(
+        saleorProductPageQueryOptions(params.productId),
+      );
 
       if (!productPage) {
         throw notFound();

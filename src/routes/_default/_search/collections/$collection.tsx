@@ -16,7 +16,6 @@ import Facets from "@/components/custom/layout/search/facets";
 import FilterItemDropdown from "@/components/custom/layout/search/filter/dropdown";
 import { MobileCatalogActions } from "@/components/custom/layout/search/mobile-catalog-actions";
 import { StatusPanel } from "@/components/custom/layout/status-panel";
-import { getSaleorCategoryPage } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { NtmsSaleorCategoryPageView } from "@/components/custom/saleor/ntms-category-page";
 import ProductGridSkeleton from "@/components/custom/skeletons/grid";
@@ -37,6 +36,7 @@ import {
   getBaseUrl,
   getCanonicalUrl,
 } from "@/lib/metadata";
+import { saleorCategoryPageQueryOptions } from "@/lib/saleor/catalog-query";
 import { searchSchema } from "@/lib/search-schema";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 import { cn } from "@/lib/utils";
@@ -48,14 +48,14 @@ export const Route = createFileRoute(
   loaderDeps: ({ search }) => ({ search }),
   loader: async ({ context, params: { collection }, deps: { search } }) => {
     if (isSaleorStorefront) {
-      const categoryPage = await getSaleorCategoryPage({
-        data: {
+      const categoryPage = await context.queryClient.ensureQueryData(
+        saleorCategoryPageQueryOptions({
           collection,
           cursor: search.after,
           page: search.page,
           sort: search.sort,
-        },
-      });
+        }),
+      );
 
       if (!categoryPage) {
         throw notFound();

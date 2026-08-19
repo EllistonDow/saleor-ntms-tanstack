@@ -13,7 +13,6 @@ import { ThreeItemGrid } from "@/components/custom/grid/three-items";
 import { SearchDiscoveryBar } from "@/components/custom/layout/search/discovery-bar";
 import { StatusPanel } from "@/components/custom/layout/status-panel";
 import { ProductCard } from "@/components/custom/product-card";
-import { getSaleorCatalogPreview } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorCatalogPage } from "@/components/custom/saleor/ntms-catalog-page";
 import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { clientEnv } from "@/env/client";
@@ -23,6 +22,7 @@ import {
   collectionsQueryOptions,
 } from "@/hooks/use-catalog-products";
 import { getBaseUrl, getCanonicalUrl } from "@/lib/metadata";
+import { saleorCatalogPreviewQueryOptions } from "@/lib/saleor/catalog-query";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 import { Route as DefaultRoute } from "@/routes/_default/route";
 
@@ -38,7 +38,9 @@ export const Route = createFileRoute("/_default/")({
     if (isSaleorStorefront) {
       return {
         storefrontBackend: "saleor" as const,
-        catalog: await getSaleorCatalogPreview(),
+        catalog: await context.queryClient.ensureQueryData(
+          saleorCatalogPreviewQueryOptions(),
+        ),
       };
     }
 

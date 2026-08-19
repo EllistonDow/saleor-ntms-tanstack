@@ -15,8 +15,9 @@ export const getRouter = () => {
     parseSearch,
     stringifySearch,
     scrollRestoration: true,
-    // Intent preloads are reused briefly while product and category data stays fresh.
-    defaultPreloadStaleTime: 30_000,
+    // TanStack Query owns freshness while the Router still coordinates intent preloads.
+    defaultPreloadStaleTime: 0,
+    defaultPreloadGcTime: 5 * 60_000,
     defaultNotFoundComponent: NotFound,
     context: {
       queryClient,

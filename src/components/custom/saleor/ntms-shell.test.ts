@@ -21,8 +21,8 @@ describe("NTMS Saleor navigation categories", () => {
     ]);
 
     expect(navigation).toEqual([
-      { label: "Inks", slug: "ntms-91-inks" },
       { label: "Needles", slug: "ntms-289-needles" },
+      { label: "Inks", slug: "ntms-91-inks" },
       { label: "Machines", slug: "ntms-103-machines" },
       { label: "Tubes & Grips", slug: "ntms-107-tubes-and-grips" },
       {

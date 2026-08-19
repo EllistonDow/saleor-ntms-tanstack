@@ -4,25 +4,27 @@ import {
   Outlet,
   Scripts,
 } from "@tanstack/react-router";
+import { lazy, Suspense } from "react";
 import { CartProvider } from "@/components/custom/cart/cart-context";
 import { ChannelProvider } from "@/components/custom/cart/channel-context";
 import ErrorComponent from "@/components/custom/errors/error";
-import { SaleorCartProvider } from "@/components/custom/saleor/ntms-cart-context";
-import { NtmsSaleorCartDrawer } from "@/components/custom/saleor/ntms-cart-drawer";
-import { getSaleorNavigationCategories } from "@/components/custom/saleor/ntms-catalog-actions";
-import { NtmsSaleorShell } from "@/components/custom/saleor/ntms-shell";
 import { ThemeProvider } from "@/components/custom/theme/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { clientEnv } from "@/env/client";
 import { activeOrderQueryOptions } from "@/hooks/use-active-order";
 import { activeChannelQueryOptions } from "@/hooks/use-catalog-products";
 import { getBaseUrl, getPublicRobotsDirective } from "@/lib/metadata";
+import { saleorNavigationQueryOptions } from "@/lib/saleor/catalog-query";
 import { getSecurityHeaders } from "@/lib/security";
 import { fetchUser, hasPocSessionCookie } from "@/lib/session";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 import type { RouterContext } from "@/lib/tanstack-query";
 import { ensureStartsWith } from "@/lib/utils";
 import appCss from "../styles.css?url";
+
+const NtmsSaleorRootLayout = lazy(
+  () => import("@/components/custom/saleor/ntms-root-layout"),
+);
 
 const getTwitterHandle = (value: string | undefined) => {
   if (!value) {
@@ -184,8 +186,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   loader: async ({ context }) => {
     if (isSaleorStorefront) {
       // Navigation must not make the storefront unavailable if Saleor is slow.
-      const saleorNavigationCategories =
-        await getSaleorNavigationCategories().catch(() => []);
+      const saleorNavigationCategories = await context.queryClient
+        .ensureQueryData(saleorNavigationQueryOptions())
+        .catch(() => []);
       return {
         activeOrder: null,
         activeChannel: undefined,
@@ -256,15 +259,9 @@ function RootLayout() {
 
   if (isSaleorStorefront) {
     return (
-      <ThemeProvider>
-        <SaleorCartProvider>
-          <NtmsSaleorShell categories={saleorNavigationCategories}>
-            <Outlet />
-            <NtmsSaleorCartDrawer />
-            <Toaster />
-          </NtmsSaleorShell>
-        </SaleorCartProvider>
-      </ThemeProvider>
+      <Suspense fallback={<div className="min-h-screen bg-background" />}>
+        <NtmsSaleorRootLayout categories={saleorNavigationCategories} />
+      </Suspense>
     );
   }
 

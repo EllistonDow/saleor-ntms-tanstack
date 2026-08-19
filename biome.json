@@ -12,6 +12,8 @@
       "**/.vscode/**/*",
       "**/index.html",
       "**/vite.config.js",
+      "!**/playwright-report/**/*",
+      "!**/test-results/**/*",
       "!**/.netlify/**/*",
       "!**/src/routeTree.gen.ts",
       "!**/src/styles.css",

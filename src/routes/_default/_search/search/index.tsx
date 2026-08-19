@@ -11,7 +11,6 @@ import FilterList from "@/components/custom/layout/search/filter";
 import { MobileCatalogActions } from "@/components/custom/layout/search/mobile-catalog-actions";
 import { ResultStatus } from "@/components/custom/layout/search/result-status";
 import { StatusPanel } from "@/components/custom/layout/status-panel";
-import { getSaleorSearchPage } from "@/components/custom/saleor/ntms-catalog-actions";
 import { NtmsSaleorCatalogPending } from "@/components/custom/saleor/ntms-catalog-pending";
 import { NtmsSaleorSearchPageView } from "@/components/custom/saleor/ntms-search-page";
 import ProductGridSkeleton from "@/components/custom/skeletons/grid";
@@ -25,6 +24,7 @@ import {
 import { sorting } from "@/lib/constants";
 import { createBasicMeta, getSearchRobotsDirective } from "@/lib/metadata";
 import { recordRecentSearch } from "@/lib/recent-searches";
+import { saleorSearchPageQueryOptions } from "@/lib/saleor/catalog-query";
 import { searchSchema } from "@/lib/search-schema";
 import { isSaleorStorefront } from "@/lib/storefront-mode";
 
@@ -40,9 +40,9 @@ export const Route = createFileRoute("/_default/_search/search/")({
     if (isSaleorStorefront) {
       return {
         storefrontBackend: "saleor" as const,
-        searchPage: await getSaleorSearchPage({
-          data: { cursor: after, page, query: q, sort },
-        }),
+        searchPage: await context.queryClient.ensureQueryData(
+          saleorSearchPageQueryOptions({ cursor: after, page, query: q, sort }),
+        ),
       };
     }
 
