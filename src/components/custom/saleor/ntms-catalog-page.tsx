@@ -5,8 +5,12 @@ import {
   BadgeCheck,
   BadgePercent,
   Boxes,
+  Layers,
   Search,
+  Sparkles,
+  Zap,
 } from "lucide-react";
+import { useState } from "react";
 import { GridTileImage } from "@/components/custom/grid/tile";
 import type { NtmsSaleorCatalogPreview } from "@/lib/saleor/catalog";
 import { cn } from "@/lib/utils";
@@ -33,6 +37,39 @@ export const categoryPriority = [
   "Sales",
 ];
 
+const HERO_SLIDES = [
+  {
+    badge: "FLAGSHIP ROTARY",
+    title: "Precision by Design: Wireless & Direct Drive",
+    description:
+      "High-torque Swiss motors, adjustable needle stroke profiles, and ergonomic aircraft-grade aluminum frames engineered for multi-hour sessions.",
+    ctaText: "Explore Machines",
+    ctaLink: "/collections/$collection" as const,
+    ctaParams: { collection: "machines" },
+    categoryIcon: Zap,
+  },
+  {
+    badge: "SURGICAL CARTRIDGES",
+    title: "Ultra-Tight Liners & High-Displacement Mags",
+    description:
+      "Medical grade 316L stainless steel needles with zero-play stabilization membranes for crisp, trauma-free ink deposit.",
+    ctaText: "Shop Needles",
+    ctaLink: "/collections/$collection" as const,
+    ctaParams: { collection: "needles" },
+    categoryIcon: Layers,
+  },
+  {
+    badge: "JET BLACK FORMULAS",
+    title: "High Pigment Load Inks & Dynamic Shading Sets",
+    description:
+      "Pure, concentrated dispersion inks tested for maximum color saturation, fast healing, and permanent solid saturation.",
+    ctaText: "Shop Inks",
+    ctaLink: "/collections/$collection" as const,
+    ctaParams: { collection: "ntms-91-inks" },
+    categoryIcon: Sparkles,
+  },
+];
+
 export function NtmsSaleorCatalogPage({
   catalog,
   enableLinks = false,
@@ -42,13 +79,21 @@ export function NtmsSaleorCatalogPage({
   catalog: NtmsSaleorCatalogPreview;
   enableLinks?: boolean;
 }) {
+  const [activeSlide, setActiveSlide] = useState(0);
+  const currentHero = HERO_SLIDES[activeSlide];
+
   const featuredProduct =
     catalog.products.find((product) => product.imageUrl) ?? catalog.products[0];
+  const bentoSpotlight = catalog.products[0];
+  const bentoSecondary1 = catalog.products[1];
+  const bentoSecondary2 = catalog.products[2];
+
   const categories = getHomeCategories(catalog.categories);
   const products = catalog.products.slice(0, 8);
 
   return (
     <main className="min-h-screen bg-background text-foreground">
+      {/* 80vh / Immersive Carousel Hero */}
       <section className="relative isolate min-h-[580px] overflow-hidden border-b border-[color:var(--cyber-gold)]/18 bg-black text-white lg:min-h-[660px]">
         {featuredProduct ? (
           <HeroProductMedia
@@ -56,38 +101,67 @@ export function NtmsSaleorCatalogPage({
             product={featuredProduct}
           />
         ) : null}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-0 w-full bg-black/65 lg:w-[48%]" />
+        <div className="pointer-events-none absolute inset-y-0 left-0 z-0 w-full bg-gradient-to-r from-black via-black/85 to-black/30 lg:w-[54%]" />
 
         <div className="relative z-10 mx-auto flex min-h-[580px] max-w-screen-2xl items-end px-4 py-10 lg:min-h-[660px] lg:items-center lg:py-16">
           <div className="max-w-2xl">
-            <p className="flex items-center gap-2 text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-              <BadgeCheck className="h-4 w-4" />
-              Professional tattoo equipment
-            </p>
-            <h1 className="mt-5 text-5xl font-black leading-[1.02] text-white sm:text-6xl">
-              Nuclear Tattoo Supply
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--cyber-gold)]/30 bg-[color:var(--cyber-gold)]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--cyber-gold-soft)]">
+                <currentHero.categoryIcon className="h-3.5 w-3.5" />
+                {currentHero.badge}
+              </span>
+              <span className="text-xs font-semibold uppercase text-white/50">
+                Studio Grade
+              </span>
+            </div>
+
+            <h1 className="mt-5 text-4xl font-black leading-[1.02] text-white sm:text-5xl lg:text-6xl">
+              {currentHero.title}
             </h1>
             <p className="mt-5 max-w-xl text-base leading-7 text-white/72">
-              Equipment, pigments, needles, clinical essentials, and shop
-              consumables for professional tattoo, PMU, and piercing studios.
+              {currentHero.description}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
               <Link
-                to="/search"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[color:var(--cyber-gold)] px-5 text-sm font-black text-black transition hover:bg-[color:var(--cyber-gold-soft)]"
+                to={currentHero.ctaLink}
+                params={currentHero.ctaParams}
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[color:var(--cyber-gold)] px-6 text-sm font-black text-black shadow-[0_12px_32px_rgba(247,200,31,0.22)] transition hover:bg-[color:var(--cyber-gold-soft)]"
               >
-                Browse supplies
+                {currentHero.ctaText}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
-                to="/collections/$collection"
-                params={{ collection: "ntms-91-inks" }}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/25 px-5 text-sm font-bold text-white transition hover:border-[color:var(--cyber-gold)] hover:text-[color:var(--cyber-gold-soft)]"
+                to="/search"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-6 text-sm font-bold text-white transition hover:border-[color:var(--cyber-gold)] hover:bg-white/10 hover:text-[color:var(--cyber-gold-soft)]"
               >
-                Shop inks
+                Browse Full Catalog
                 <ArrowDownRight className="h-4 w-4" />
               </Link>
+            </div>
+
+            {/* Slide Navigation Trigger Indicators */}
+            <div
+              className="mt-8 flex items-center gap-2"
+              role="tablist"
+              aria-label="Hero Carousel Slides"
+            >
+              {HERO_SLIDES.map((slide, idx) => (
+                <button
+                  key={slide.badge}
+                  type="button"
+                  role="tab"
+                  aria-selected={idx === activeSlide}
+                  aria-label={slide.badge}
+                  onClick={() => setActiveSlide(idx)}
+                  className={cn(
+                    "h-2.5 rounded-full transition-all duration-300",
+                    idx === activeSlide
+                      ? "w-10 bg-[color:var(--cyber-gold)]"
+                      : "w-2.5 bg-white/30 hover:bg-white/60",
+                  )}
+                />
+              ))}
             </div>
 
             <div className="mt-10 grid max-w-xl divide-y divide-white/15 border-y border-white/15 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
@@ -99,18 +173,177 @@ export function NtmsSaleorCatalogPage({
               <CatalogSignal
                 icon={<Search className="h-4 w-4" />}
                 label="Reference"
-                value="SKU-level detail"
+                value="Live Stock Sync"
               />
               <CatalogSignal
                 icon={<BadgeCheck className="h-4 w-4" />}
-                label="Coverage"
-                value="Tattoo, PMU, medical"
+                label="Delivery"
+                value="Same-Day Shipping"
               />
             </div>
           </div>
         </div>
       </section>
 
+      {/* Bento Editorial Modern Spotlight Grid */}
+      {bentoSpotlight ? (
+        <section className="border-b border-[color:var(--cyber-gold)]/14 bg-background/50 py-12">
+          <div className="mx-auto max-w-screen-2xl px-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading
+                eyebrow="Studio Spotlight"
+                title="Hardware & Cartridge Showcase"
+              />
+              <Link
+                to="/search"
+                className="inline-flex items-center gap-2 text-sm font-bold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+              >
+                View all hardware
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
+
+            <div className="mt-8 grid gap-6 lg:grid-cols-3">
+              {/* Primary Bento Spotlight Card */}
+              <div className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/20 bg-card p-6 shadow-xl transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50 lg:col-span-2 lg:p-8">
+                <div className="flex items-center justify-between">
+                  <span className="rounded-full bg-[color:var(--cyber-gold)] px-3 py-1 text-xs font-black uppercase text-black tracking-wide">
+                    Pro Spotlight
+                  </span>
+                  <PriceLabel
+                    compact
+                    price={bentoSpotlight.price}
+                    priorPrice={bentoSpotlight.priorPrice}
+                  />
+                </div>
+                <div className="my-6 flex h-64 items-center justify-center p-4">
+                  {bentoSpotlight.imageUrl ? (
+                    <img
+                      src={bentoSpotlight.imageUrl}
+                      alt={bentoSpotlight.imageAlt}
+                      className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <ImageFallback label={bentoSpotlight.name} />
+                  )}
+                </div>
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
+                    {bentoSpotlight.categoryName}
+                  </p>
+                  <h3 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
+                    {bentoSpotlight.name}
+                  </h3>
+                  <div className="mt-4 flex items-center justify-between gap-4 border-t border-[color:var(--cyber-gold)]/10 pt-4">
+                    <StockBadge
+                      quantityAvailable={bentoSpotlight.quantityAvailable}
+                    />
+                    {enableLinks ? (
+                      <Link
+                        to="/product/$productId"
+                        params={{ productId: bentoSpotlight.slug }}
+                        className="inline-flex items-center gap-2 rounded-md bg-foreground/10 px-4 py-2 text-xs font-bold text-foreground transition hover:bg-[color:var(--cyber-gold)] hover:text-black"
+                      >
+                        Inspect Details
+                        <ArrowRight className="h-3.5 w-3.5" />
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              </div>
+
+              {/* Complementary Secondary Mini Bento Cards */}
+              <div className="flex flex-col gap-6">
+                {bentoSecondary1 ? (
+                  <div className="group flex flex-1 items-center gap-5 overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/18 bg-card p-5 transition hover:border-[color:var(--cyber-gold)]/40">
+                    <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 p-2">
+                      {bentoSecondary1.imageUrl ? (
+                        <img
+                          src={bentoSecondary1.imageUrl}
+                          alt={bentoSecondary1.imageAlt}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      ) : (
+                        <ImageFallback
+                          label={bentoSecondary1.name.slice(0, 2)}
+                        />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary1.categoryName}
+                      </span>
+                      <h4 className="truncate text-base font-bold text-foreground">
+                        {bentoSecondary1.name}
+                      </h4>
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="text-sm font-bold text-[color:var(--cyber-gold-soft)]">
+                          {bentoSecondary1.price
+                            ? formatSaleorMoney(bentoSecondary1.price)
+                            : "Pending"}
+                        </span>
+                        {enableLinks ? (
+                          <Link
+                            to="/product/$productId"
+                            params={{ productId: bentoSecondary1.slug }}
+                            className="text-xs font-semibold text-foreground/60 hover:text-foreground"
+                          >
+                            Details &rarr;
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+
+                {bentoSecondary2 ? (
+                  <div className="group flex flex-1 items-center gap-5 overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/18 bg-card p-5 transition hover:border-[color:var(--cyber-gold)]/40">
+                    <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 p-2">
+                      {bentoSecondary2.imageUrl ? (
+                        <img
+                          src={bentoSecondary2.imageUrl}
+                          alt={bentoSecondary2.imageAlt}
+                          className="max-h-full max-w-full object-contain"
+                        />
+                      ) : (
+                        <ImageFallback
+                          label={bentoSecondary2.name.slice(0, 2)}
+                        />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary2.categoryName}
+                      </span>
+                      <h4 className="truncate text-base font-bold text-foreground">
+                        {bentoSecondary2.name}
+                      </h4>
+                      <div className="mt-2 flex items-center justify-between">
+                        <span className="text-sm font-bold text-[color:var(--cyber-gold-soft)]">
+                          {bentoSecondary2.price
+                            ? formatSaleorMoney(bentoSecondary2.price)
+                            : "Pending"}
+                        </span>
+                        {enableLinks ? (
+                          <Link
+                            to="/product/$productId"
+                            params={{ productId: bentoSecondary2.slug }}
+                            className="text-xs font-semibold text-foreground/60 hover:text-foreground"
+                          >
+                            Details &rarr;
+                          </Link>
+                        ) : null}
+                      </div>
+                    </div>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : null}
+
+      {/* Category Index Grid */}
       <section className="border-b border-[color:var(--cyber-gold)]/14">
         <div className="mx-auto max-w-screen-2xl px-4 py-12">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -135,6 +368,7 @@ export function NtmsSaleorCatalogPage({
         </div>
       </section>
 
+      {/* Brand Index */}
       {catalog.curatedCollections.length > 0 ? (
         <section className="border-b border-[color:var(--cyber-gold)]/14 bg-card">
           <div className="mx-auto max-w-screen-2xl px-4 py-11">
@@ -161,6 +395,7 @@ export function NtmsSaleorCatalogPage({
         </section>
       ) : null}
 
+      {/* Product Grid */}
       <section className="bg-card">
         <div className="mx-auto max-w-screen-2xl px-4 py-11">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
