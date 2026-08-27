@@ -81,20 +81,20 @@ export function NtmsSaleorCatalogPage({
   const products = catalog.products.slice(0, 8);
 
   return (
-    <main className="min-h-screen bg-[#000000] text-[#f5f5f7] antialiased selection:bg-white selection:text-black">
-      {/* 1. APPLE STAGE HERO: Frameless Immersive Canvas & Giant Clean Typography */}
-      <section className="relative isolate flex min-h-[86vh] flex-col justify-between overflow-hidden bg-[#000000] px-6 py-12 lg:min-h-[92vh] lg:px-12 lg:py-20">
-        {/* Soft Ambient Studio Spotlight */}
-        <div className="pointer-events-none absolute left-1/2 top-1/4 -z-10 h-[650px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.06),transparent_70%)] blur-3xl" />
+    <main className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] antialiased selection:bg-[#0071e3] selection:text-white">
+      {/* 1. APPLE STORE STAGE HERO: Clean Airy Canvas & Dominant Product Bleed */}
+      <section className="relative isolate flex min-h-[82vh] flex-col justify-between overflow-hidden bg-gradient-to-b from-[#ffffff] via-[#fbfbfd] to-[#f5f5f7] px-6 py-10 lg:min-h-[88vh] lg:px-12 lg:py-16">
+        {/* Soft Ambient Radial Floor Glare */}
+        <div className="pointer-events-none absolute left-1/2 top-1/4 -z-10 h-[600px] w-[1000px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[radial-gradient(circle_at_center,rgba(0,113,227,0.06),transparent_70%)] blur-3xl" />
 
-        {/* Giant Floating Product Hero (Right Bleed) */}
+        {/* Giant Floating Product Hero (Natural Blend) */}
         {featuredProduct ? (
           <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden w-[55%] items-center justify-center lg:flex">
             {featuredProduct.imageUrl ? (
               <img
                 src={featuredProduct.imageUrl}
                 alt={featuredProduct.imageAlt}
-                className="max-h-[580px] w-full object-contain drop-shadow-[0_45px_90px_rgba(0,0,0,0.95)] transition-all duration-1000 lg:scale-110"
+                className="max-h-[560px] w-full object-contain mix-blend-multiply drop-shadow-[0_30px_60px_rgba(0,0,0,0.12)] transition-all duration-1000 lg:scale-105"
               />
             ) : null}
           </div>
@@ -103,7 +103,7 @@ export function NtmsSaleorCatalogPage({
         <div className="relative z-10 mx-auto w-full max-w-7xl">
           {/* Top Segmented Frosted Pill Control */}
           <div className="flex items-center justify-between">
-            <div className="inline-flex items-center gap-1 rounded-full bg-[#161617]/90 p-1 backdrop-blur-2xl">
+            <div className="inline-flex items-center gap-1 rounded-full bg-[#f5f5f7]/90 p-1.5 shadow-sm backdrop-blur-xl">
               {HERO_SHOWCASES.map((item, idx) => (
                 <button
                   key={item.tag}
@@ -112,8 +112,8 @@ export function NtmsSaleorCatalogPage({
                   className={cn(
                     "rounded-full px-4 py-1.5 text-xs font-semibold tracking-tight transition-all duration-300",
                     idx === activeSlide
-                      ? "bg-white text-black shadow-[0_2px_12px_rgba(255,255,255,0.2)]"
-                      : "text-[#86868b] hover:text-[#f5f5f7]",
+                      ? "bg-white text-[#1d1d1f] shadow-[0_2px_8px_rgba(0,0,0,0.08)]"
+                      : "text-[#6e6e73] hover:text-[#1d1d1f]",
                   )}
                 >
                   {item.tag}
@@ -121,32 +121,32 @@ export function NtmsSaleorCatalogPage({
               ))}
             </div>
 
-            <div className="hidden items-center gap-2 text-xs font-medium text-[#86868b] sm:flex">
+            <div className="hidden items-center gap-2 text-xs font-medium text-[#6e6e73] sm:flex">
               <span>Enterprise Tattoo Engineering</span>
               <span>&bull;</span>
-              <span className="text-[#f5f5f7]">Direct Wholesale</span>
+              <span className="text-[#1d1d1f]">Direct Wholesale</span>
             </div>
           </div>
 
-          {/* Hero Headlines */}
-          <div className="mt-16 max-w-2xl lg:mt-28">
-            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#86868b]">
+          {/* Hero Content */}
+          <div className="mt-16 max-w-2xl lg:mt-24">
+            <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#0071e3]">
               {hero.subhead}
             </p>
-            <h1 className="mt-4 text-5xl font-extrabold tracking-tight text-white sm:text-7xl lg:text-8xl">
+            <h1 className="mt-4 text-5xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-7xl lg:text-8xl">
               {hero.headline}
             </h1>
-            <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#a1a1a6] sm:text-xl">
+            <p className="mt-6 max-w-lg text-lg leading-relaxed text-[#515154] sm:text-xl">
               {hero.lead}
             </p>
 
-            {/* Clean Apple Action Links */}
+            {/* Apple Action Links */}
             <div className="mt-10 flex flex-wrap items-center gap-6">
               {enableLinks ? (
                 <Link
                   to={hero.href}
                   params={hero.params}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black shadow-[0_4px_20px_rgba(255,255,255,0.2)] transition-all duration-300 hover:scale-105 hover:bg-[#e8e8ed]"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0071e3] px-7 py-3.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,113,227,0.3)] transition-all duration-300 hover:scale-105 hover:bg-[#0077ed]"
                 >
                   <span>{hero.cta}</span>
                   <ChevronRight className="h-4 w-4" />
@@ -154,7 +154,7 @@ export function NtmsSaleorCatalogPage({
               ) : (
                 <button
                   type="button"
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-7 py-3.5 text-sm font-semibold text-black transition-all hover:bg-[#e8e8ed]"
+                  className="inline-flex items-center gap-2 rounded-full bg-[#0071e3] px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#0077ed]"
                 >
                   <span>{hero.cta}</span>
                   <ChevronRight className="h-4 w-4" />
@@ -164,7 +164,7 @@ export function NtmsSaleorCatalogPage({
               {enableLinks ? (
                 <Link
                   to="/search"
-                  className="text-sm font-semibold text-[#2997ff] hover:underline"
+                  className="text-sm font-semibold text-[#0066cc] hover:underline"
                 >
                   Search all studio hardware &rarr;
                 </Link>
@@ -177,36 +177,36 @@ export function NtmsSaleorCatalogPage({
         <div className="relative z-10 mx-auto mt-16 w-full max-w-7xl">
           <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:gap-12">
             <div>
-              <p className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <p className="text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                 {catalog.totalProducts > 0
                   ? `${catalog.totalProducts}+`
                   : "5,000+"}
               </p>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#86868b]">
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#6e6e73]">
                 In-Stock SKUs
               </p>
             </div>
             <div>
-              <p className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <p className="text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                 0.1V
               </p>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#86868b]">
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#6e6e73]">
                 Voltage Precision
               </p>
             </div>
             <div>
-              <p className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <p className="text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                 100%
               </p>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#86868b]">
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#6e6e73]">
                 EO Gas Sterilized
               </p>
             </div>
             <div>
-              <p className="text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <p className="text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                 Same-Day
               </p>
-              <p className="mt-1 text-xs font-medium uppercase tracking-wider text-[#86868b]">
+              <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-[#6e6e73]">
                 Studio Dispatch
               </p>
             </div>
@@ -214,49 +214,49 @@ export function NtmsSaleorCatalogPage({
         </div>
       </section>
 
-      {/* 2. APPLE BENTO SHOWCASE: Borderless Deep Graphite Glass Cards */}
+      {/* 2. APPLE BENTO SHOWCASE: Seamless Studio Light Cards */}
       {bento1 ? (
-        <section className="bg-[#000000] py-20 lg:py-32">
+        <section className="bg-[#f5f5f7] py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-6 lg:px-12">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#86868b]">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#6e6e73]">
                 Featured Hardware
               </p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-5xl">
                 Built for the highest standard.
               </h2>
             </div>
 
             <div className="mt-12 grid gap-6 lg:grid-cols-3">
               {/* Giant Left Showcase Card */}
-              <div className="group relative flex min-h-[580px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#161617] p-8 shadow-2xl transition-all duration-500 hover:bg-[#1c1c1e] lg:col-span-2 lg:p-12">
+              <div className="group relative flex min-h-[580px] flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#ffffff] p-8 shadow-[0_4px_30px_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_20px_50px_rgba(0,0,0,0.08)] lg:col-span-2 lg:p-12">
                 <div className="relative z-10 flex items-start justify-between">
                   <div>
-                    <span className="text-xs font-semibold uppercase tracking-widest text-[#86868b]">
+                    <span className="text-xs font-bold uppercase tracking-widest text-[#6e6e73]">
                       {bento1.categoryName || "Flagship Hardware"}
                     </span>
-                    <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+                    <h3 className="mt-2 text-2xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-3xl">
                       {bento1.name}
                     </h3>
                   </div>
-                  <span className="rounded-full bg-white/10 px-4 py-1.5 text-sm font-bold text-white backdrop-blur-xl">
+                  <span className="rounded-full bg-[#f5f5f7] px-4 py-1.5 text-sm font-bold text-[#1d1d1f]">
                     {bento1.price
                       ? formatSaleorMoney(bento1.price)
                       : "Pro Item"}
                   </span>
                 </div>
 
-                {/* Massive Frameless Floating Image (85%+ Area) */}
+                {/* Seamless Floating Image (Zero White Patch borders) */}
                 <div className="relative z-0 my-6 flex min-h-[380px] flex-1 items-center justify-center sm:min-h-[440px]">
                   {bento1.imageUrl ? (
                     <img
                       src={bento1.imageUrl}
                       alt={bento1.imageAlt}
-                      className="max-h-[420px] w-full object-contain drop-shadow-[0_40px_70px_rgba(0,0,0,0.9)] transition-transform duration-700 group-hover:scale-106 sm:max-h-[480px]"
+                      className="max-h-[440px] w-full object-contain mix-blend-multiply drop-shadow-[0_25px_35px_rgba(0,0,0,0.07)] transition-transform duration-700 group-hover:scale-106 sm:max-h-[480px]"
                     />
                   ) : (
-                    <div className="flex h-64 w-64 items-center justify-center rounded-3xl bg-[#000000]/50 text-sm text-[#86868b]">
-                      Studio Showcase Visual
+                    <div className="flex h-64 w-64 items-center justify-center rounded-3xl bg-[#f5f5f7] text-sm text-[#6e6e73]">
+                      Studio Hardware Visual
                     </div>
                   )}
                 </div>
@@ -266,37 +266,37 @@ export function NtmsSaleorCatalogPage({
                     <Link
                       to="/product/$productId"
                       params={{ productId: bento1.slug }}
-                      className="inline-flex items-center text-sm font-semibold text-[#2997ff] transition-transform duration-300 group-hover:translate-x-1"
+                      className="inline-flex items-center text-sm font-semibold text-[#0066cc] transition-transform duration-300 group-hover:translate-x-1"
                     >
                       <span>Explore details</span>
                       <ChevronRight className="ml-1 h-4 w-4" />
                     </Link>
                   ) : (
-                    <span className="text-sm font-semibold text-[#86868b]">
+                    <span className="text-sm font-semibold text-[#6e6e73]">
                       Engineered for professionals
                     </span>
                   )}
                   <NtmsSaleorAddToCartButton
                     variantId={bento1.variantId}
-                    className="rounded-full bg-white px-6 py-2 text-xs font-semibold text-black transition-all duration-300 hover:scale-105 hover:bg-[#e8e8ed]"
+                    className="rounded-full bg-[#1d1d1f] px-6 py-2 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-[#333336]"
                   />
                 </div>
               </div>
 
-              {/* Right Stack: 2 Refined Graphite Cards */}
+              {/* Right Stack: 2 Clean White Studio Cards */}
               <div className="flex flex-col gap-6">
                 {bento2 ? (
-                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#161617] p-8 shadow-xl transition-all duration-500 hover:bg-[#1c1c1e]">
+                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#ffffff] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
                     <div className="relative z-10 flex items-start justify-between">
                       <div>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#86868b]">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6e6e73]">
                           {bento2.categoryName || "Power System"}
                         </span>
-                        <h4 className="mt-1 text-xl font-bold tracking-tight text-white">
+                        <h4 className="mt-1 text-xl font-bold tracking-tight text-[#1d1d1f]">
                           {bento2.name}
                         </h4>
                       </div>
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white">
+                      <span className="rounded-full bg-[#f5f5f7] px-3 py-1 text-xs font-bold text-[#1d1d1f]">
                         {bento2.price
                           ? formatSaleorMoney(bento2.price)
                           : "Pro Item"}
@@ -308,7 +308,7 @@ export function NtmsSaleorCatalogPage({
                         <img
                           src={bento2.imageUrl}
                           alt={bento2.imageAlt}
-                          className="max-h-[190px] w-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.85)] transition-transform duration-700 group-hover:scale-108"
+                          className="max-h-[200px] w-full object-contain mix-blend-multiply drop-shadow-[0_15px_25px_rgba(0,0,0,0.06)] transition-transform duration-700 group-hover:scale-108"
                         />
                       ) : null}
                     </div>
@@ -318,35 +318,35 @@ export function NtmsSaleorCatalogPage({
                         <Link
                           to="/product/$productId"
                           params={{ productId: bento2.slug }}
-                          className="text-xs font-semibold text-[#2997ff] hover:underline"
+                          className="text-xs font-semibold text-[#0066cc] hover:underline"
                         >
                           View hardware &rarr;
                         </Link>
                       ) : (
-                        <span className="text-xs text-[#86868b]">
+                        <span className="text-xs text-[#6e6e73]">
                           Studio standard
                         </span>
                       )}
                       <NtmsSaleorAddToCartButton
                         variantId={bento2.variantId}
-                        className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-black transition-all duration-300 hover:scale-105 hover:bg-[#e8e8ed]"
+                        className="rounded-full bg-[#1d1d1f] px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-[#333336]"
                       />
                     </div>
                   </div>
                 ) : null}
 
                 {bento3 ? (
-                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#161617] p-8 shadow-xl transition-all duration-500 hover:bg-[#1c1c1e]">
+                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2.5rem] bg-[#ffffff] p-8 shadow-[0_4px_24px_rgba(0,0,0,0.04)] transition-all duration-500 hover:shadow-[0_16px_40px_rgba(0,0,0,0.07)]">
                     <div className="relative z-10 flex items-start justify-between">
                       <div>
-                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#86868b]">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6e6e73]">
                           {bento3.categoryName || "Precision Supply"}
                         </span>
-                        <h4 className="mt-1 text-xl font-bold tracking-tight text-white">
+                        <h4 className="mt-1 text-xl font-bold tracking-tight text-[#1d1d1f]">
                           {bento3.name}
                         </h4>
                       </div>
-                      <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-bold text-white">
+                      <span className="rounded-full bg-[#f5f5f7] px-3 py-1 text-xs font-bold text-[#1d1d1f]">
                         {bento3.price
                           ? formatSaleorMoney(bento3.price)
                           : "Pro Item"}
@@ -358,7 +358,7 @@ export function NtmsSaleorCatalogPage({
                         <img
                           src={bento3.imageUrl}
                           alt={bento3.imageAlt}
-                          className="max-h-[190px] w-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.85)] transition-transform duration-700 group-hover:scale-108"
+                          className="max-h-[200px] w-full object-contain mix-blend-multiply drop-shadow-[0_15px_25px_rgba(0,0,0,0.06)] transition-transform duration-700 group-hover:scale-108"
                         />
                       ) : null}
                     </div>
@@ -368,18 +368,18 @@ export function NtmsSaleorCatalogPage({
                         <Link
                           to="/product/$productId"
                           params={{ productId: bento3.slug }}
-                          className="text-xs font-semibold text-[#2997ff] hover:underline"
+                          className="text-xs font-semibold text-[#0066cc] hover:underline"
                         >
                           View hardware &rarr;
                         </Link>
                       ) : (
-                        <span className="text-xs text-[#86868b]">
+                        <span className="text-xs text-[#6e6e73]">
                           Studio standard
                         </span>
                       )}
                       <NtmsSaleorAddToCartButton
                         variantId={bento3.variantId}
-                        className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-black transition-all duration-300 hover:scale-105 hover:bg-[#e8e8ed]"
+                        className="rounded-full bg-[#1d1d1f] px-4 py-1.5 text-xs font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-[#333336]"
                       />
                     </div>
                   </div>
@@ -390,22 +390,22 @@ export function NtmsSaleorCatalogPage({
         </section>
       ) : null}
 
-      {/* 3. HARDWARE CATEGORY SECTORS: Apple Minimal Pill Cards */}
-      <section className="bg-[#000000] py-20">
+      {/* 3. HARDWARE CATEGORY SECTORS: Apple Minimal Studio Cards */}
+      <section className="bg-[#fbfbfd] py-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
           <div className="flex items-end justify-between">
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#86868b]">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#6e6e73]">
                 Ecosystem
               </p>
-              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                 Explore by Category.
               </h2>
             </div>
             {enableLinks ? (
               <Link
                 to="/search"
-                className="hidden text-sm font-semibold text-[#2997ff] hover:underline sm:inline-flex"
+                className="hidden text-sm font-semibold text-[#0066cc] hover:underline sm:inline-flex"
               >
                 All categories &rarr;
               </Link>
@@ -416,22 +416,22 @@ export function NtmsSaleorCatalogPage({
             {categories.map((cat) => {
               const label = categoryDisplayNames.get(cat.name) || cat.name;
               const content = (
-                <div className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] bg-[#161617] p-6 transition-all duration-300 hover:bg-[#1c1c1e] hover:scale-[1.02]">
+                <div className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] bg-[#ffffff] p-6 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition-all duration-300 hover:shadow-[0_12px_28px_rgba(0,0,0,0.07)] hover:scale-[1.02]">
                   <div>
-                    <h3 className="text-lg font-bold tracking-tight text-white transition-colors group-hover:text-[#2997ff]">
+                    <h3 className="text-lg font-bold tracking-tight text-[#1d1d1f] transition-colors group-hover:text-[#0071e3]">
                       {label}
                     </h3>
-                    <p className="mt-1 text-xs text-[#86868b]">
+                    <p className="mt-1 text-xs text-[#6e6e73]">
                       {cat.productCount > 0
                         ? `${cat.productCount} models`
                         : "Professional series"}
                     </p>
                   </div>
                   <div className="mt-8 flex items-center justify-between">
-                    <span className="text-xs font-semibold text-[#2997ff] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                    <span className="text-xs font-semibold text-[#0071e3] opacity-0 transition-opacity duration-300 group-hover:opacity-100">
                       Explore &rarr;
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-[#86868b] transition-colors group-hover:bg-white group-hover:text-black">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#f5f5f7] text-[#6e6e73] transition-colors group-hover:bg-[#0071e3] group-hover:text-white">
                       <ChevronRight className="h-4 w-4" />
                     </div>
                   </div>
@@ -444,7 +444,7 @@ export function NtmsSaleorCatalogPage({
                     key={cat.id}
                     to="/collections/$collection"
                     params={{ collection: cat.slug }}
-                    className="block outline-none focus-visible:ring-2 focus-visible:ring-[#2997ff]"
+                    className="block outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]"
                   >
                     {content}
                   </Link>
@@ -457,23 +457,23 @@ export function NtmsSaleorCatalogPage({
         </div>
       </section>
 
-      {/* 4. CURATED HARDWARE GRID: Borderless Graphite Cards with Dominant Hardware View */}
+      {/* 4. CURATED HARDWARE GRID: Pure Studio Cards with Seamless Hardware View */}
       {products.length > 0 ? (
-        <section className="bg-[#000000] py-20 lg:py-32">
+        <section className="bg-[#f5f5f7] py-20 lg:py-28">
           <div className="mx-auto max-w-7xl px-6 lg:px-12">
             <div className="flex items-end justify-between">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#86868b]">
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#6e6e73]">
                   Precision Inventory
                 </p>
-                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-4xl">
+                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-4xl">
                   Latest Hardware Releases.
                 </h2>
               </div>
               {enableLinks ? (
                 <Link
                   to="/search"
-                  className="text-sm font-semibold text-[#2997ff] hover:underline"
+                  className="text-sm font-semibold text-[#0066cc] hover:underline"
                 >
                   Browse all {catalog.totalProducts} items &rarr;
                 </Link>
@@ -495,13 +495,13 @@ export function NtmsSaleorCatalogPage({
       ) : null}
 
       {/* 5. STUDIO PROMISE FOOTNOTE */}
-      <section className="bg-[#000000] pb-24 pt-12">
+      <section className="bg-[#fbfbfd] pb-24 pt-12">
         <div className="mx-auto max-w-7xl px-6 lg:px-12">
-          <div className="rounded-[2.5rem] bg-[#161617] p-8 text-center sm:p-16">
-            <h3 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+          <div className="rounded-[2.5rem] bg-[#ffffff] p-8 text-center shadow-[0_4px_24px_rgba(0,0,0,0.03)] sm:p-16">
+            <h3 className="text-2xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-3xl">
               Equipping Professional Tattoo Artists Nationwide.
             </h3>
-            <p className="mx-auto mt-4 max-w-2xl text-base text-[#a1a1a6]">
+            <p className="mx-auto mt-4 max-w-2xl text-base text-[#515154]">
               Every machine, power system, and cartridge batch passes rigid
               quality verification before leaving our temperature-controlled
               distribution facility.
@@ -510,7 +510,7 @@ export function NtmsSaleorCatalogPage({
               {enableLinks ? (
                 <Link
                   to="/search"
-                  className="rounded-full bg-white px-6 py-3 text-sm font-semibold text-black transition-all hover:bg-[#e8e8ed]"
+                  className="rounded-full bg-[#1d1d1f] px-7 py-3.5 text-sm font-semibold text-white transition-all hover:bg-[#333336]"
                 >
                   Open Studio Catalog
                 </Link>
@@ -532,42 +532,43 @@ export function SaleorProductCard({
   priority?: boolean;
 }) {
   const content = (
-    <article className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] bg-[#161617] p-6 transition-all duration-500 hover:bg-[#1c1c1e] hover:shadow-2xl">
+    <article className="group relative flex flex-col justify-between overflow-hidden rounded-[2rem] bg-[#ffffff] p-6 shadow-[0_2px_14px_rgba(0,0,0,0.03)] transition-all duration-500 hover:shadow-[0_16px_36px_rgba(0,0,0,0.08)] hover:-translate-y-1">
       <div className="relative z-10 flex items-start justify-between">
         <div>
-          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#86868b]">
+          <span className="text-[11px] font-semibold uppercase tracking-wider text-[#6e6e73]">
             {product.categoryName || "Hardware"}
           </span>
-          <h3 className="mt-1 text-base font-bold tracking-tight text-white transition-colors group-hover:text-[#2997ff]">
+          <h3 className="mt-1 text-base font-semibold tracking-tight text-[#1d1d1f] transition-colors group-hover:text-[#0071e3]">
             {product.name}
           </h3>
         </div>
-        <p className="text-sm font-semibold text-[#f5f5f7]">
+        <p className="text-sm font-semibold text-[#1d1d1f]">
           {product.price ? formatSaleorMoney(product.price) : "Pro Item"}
         </p>
       </div>
 
+      {/* Product Image Stage: seamless white blend with subtle floating elevation */}
       <div className="relative my-8 flex min-h-[220px] items-center justify-center">
         {product.imageUrl ? (
           <img
             src={product.imageUrl}
             alt={product.imageAlt}
-            className="max-h-[200px] w-full object-contain drop-shadow-[0_25px_45px_rgba(0,0,0,0.85)] transition-transform duration-700 group-hover:scale-108"
+            className="max-h-[210px] w-full object-contain mix-blend-multiply drop-shadow-[0_15px_25px_rgba(0,0,0,0.08)] transition-transform duration-700 group-hover:scale-108"
           />
         ) : (
-          <div className="flex h-36 w-36 items-center justify-center rounded-2xl bg-[#000000]/40 text-xs text-[#86868b]">
+          <div className="flex h-36 w-36 items-center justify-center rounded-2xl bg-[#f5f5f7] text-xs text-[#6e6e73]">
             Studio Visual
           </div>
         )}
       </div>
 
       <div className="relative z-10 flex items-center justify-between pt-2">
-        <span className="inline-flex items-center text-xs font-semibold text-[#2997ff] transition-transform duration-300 group-hover:translate-x-1">
+        <span className="inline-flex items-center text-xs font-semibold text-[#0066cc] transition-transform duration-300 group-hover:translate-x-1">
           Explore hardware &rarr;
         </span>
         <NtmsSaleorAddToCartButton
           variantId={product.variantId}
-          className="rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-black transition-all duration-300 hover:bg-[#e8e8ed] hover:scale-105"
+          className="rounded-full bg-[#f5f5f7] px-4 py-1.5 text-xs font-semibold text-[#1d1d1f] transition-all duration-300 hover:bg-[#1d1d1f] hover:text-white hover:scale-105"
         />
       </div>
     </article>
@@ -578,7 +579,7 @@ export function SaleorProductCard({
       <Link
         to="/product/$productId"
         params={{ productId: product.slug }}
-        className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-[#2997ff]"
+        className="block h-full outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]"
       >
         {content}
       </Link>
