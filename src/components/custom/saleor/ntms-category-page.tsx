@@ -1,14 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import {
-  ArrowDownAZ,
-  ArrowRight,
-  Boxes,
-  ChevronLeft,
-  ChevronRight,
-  Layers3,
-  Search,
-  SearchX,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, SearchX } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { type SortFilterItem, sorting } from "@/lib/constants";
 import type { NtmsSaleorCategoryPage } from "@/lib/saleor/catalog";
@@ -37,184 +28,151 @@ export function NtmsSaleorCategoryPageView({
   const lastResult = totalProducts > 0 ? firstResult + products.length - 1 : 0;
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-[color:var(--cyber-gold)]/14">
-        <div className="mx-auto max-w-screen-2xl px-4 py-4">
+    <main className="min-h-screen bg-[#fbfbfd] text-[#1d1d1f] antialiased">
+      {/* 1. Header & Breadcrumbs in Apple Light Style */}
+      <header className="border-b border-black/[0.04] bg-white">
+        <div className="mx-auto max-w-7xl px-4 py-3.5 sm:px-6 lg:px-8">
           <nav
             aria-label="Breadcrumb"
-            className="flex min-w-0 items-center gap-2 text-xs font-semibold uppercase text-foreground/45"
+            className="flex min-w-0 items-center gap-2 text-[11px] font-medium tracking-tight text-[#86868b]"
           >
-            <Link
-              to="/"
-              className="shrink-0 transition hover:text-[color:var(--cyber-gold-soft)]"
-            >
-              Nuclear Tattoo Supply
+            <Link to="/" className="shrink-0 transition hover:text-[#0071e3]">
+              Store
             </Link>
-            <ArrowRight className="h-3.5 w-3.5 shrink-0" />
-            <span className="min-w-0 truncate text-foreground/70">
+            <ChevronRight className="h-3 w-3 shrink-0 text-[#86868b]" />
+            <span className="min-w-0 truncate text-[#1d1d1f] font-semibold">
               {category.name}
             </span>
           </nav>
         </div>
 
-        <div className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-9 lg:grid-cols-[minmax(0,1fr)_minmax(460px,0.8fr)] lg:items-end">
-          <div className="min-w-0">
-            <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-              {isCollectionOnly ? "Curated collection" : "Category"}
-            </p>
-            <h1 className="mt-3 break-words text-4xl font-black leading-[1.04] text-foreground sm:text-5xl">
-              {category.name}
-            </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-foreground/60">
-              Product references for professional studio ordering.
-            </p>
-          </div>
-          <div className="grid divide-y divide-[color:var(--cyber-gold)]/14 border-y border-[color:var(--cyber-gold)]/14 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-            <CollectionMetric
-              icon={<Boxes className="h-4 w-4" />}
-              label="Products"
-              value={totalProducts.toLocaleString()}
-            />
-            <CollectionMetric
-              icon={<Layers3 className="h-4 w-4" />}
-              label="Subcategories"
-              value={children.length.toLocaleString()}
-            />
-            <CollectionMetric
-              icon={<Search className="h-4 w-4" />}
-              label="Sort views"
-              value={sorting.length.toLocaleString()}
-            />
-          </div>
-        </div>
-      </header>
+        <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
+            <div className="max-w-2xl">
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[#0071e3]">
+                {isCollectionOnly ? "Curated Series" : "Hardware & Consumables"}
+              </p>
+              <h1 className="mt-3 text-4xl font-extrabold tracking-tight text-[#1d1d1f] sm:text-6xl">
+                {category.name}
+              </h1>
+              <p className="mt-4 text-base leading-relaxed text-[#6e6e73] sm:text-lg">
+                Engineered for master tattooists, clinical PMU technicians, and
+                high-volume piercing studios.
+              </p>
+            </div>
 
-      <section className="mx-auto grid max-w-screen-2xl gap-8 px-4 py-9 lg:grid-cols-[240px_minmax(0,1fr)] lg:gap-10">
-        <aside className="min-w-0 lg:sticky lg:top-24 lg:self-start">
-          <div className="border-b border-[color:var(--cyber-gold)]/14 pb-4 lg:border-b-0 lg:pb-0">
-            <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-              Browse collection
-            </p>
-            <nav
-              aria-label={`${category.name} subcategories`}
-              className="mt-3 flex gap-2 overflow-x-auto pb-1 lg:grid lg:gap-0 lg:overflow-visible"
-            >
+            <div className="inline-flex items-center gap-6 rounded-2xl bg-[#f5f5f7] px-6 py-3.5 shadow-sm">
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#86868b]">
+                  Available Items
+                </span>
+                <span className="text-lg font-extrabold text-[#1d1d1f]">
+                  {totalProducts.toLocaleString()}
+                </span>
+              </div>
+              <div className="h-7 w-[1px] bg-black/[0.08]" />
+              <div className="flex flex-col">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#86868b]">
+                  Subcategories
+                </span>
+                <span className="text-lg font-extrabold text-[#1d1d1f]">
+                  {children.length.toLocaleString()}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Subcategories Pill Bar */}
+          {children.length > 0 ? (
+            <div className="mt-8 flex items-center gap-2 overflow-x-auto pb-2">
               <CollectionNavLink
                 active
                 collection={category.slug}
-                label={`All ${category.name}`}
+                label="All"
                 sort={sort}
               />
               {children.map((child) => (
                 <CollectionNavLink
                   collection={child.slug}
                   key={child.id}
-                  label={`${child.name} (${child.productCount.toLocaleString()})`}
+                  label={child.name}
                   sort={sort}
                 />
               ))}
-            </nav>
-          </div>
-
-          {category.imageUrl ? (
-            <div className="mt-7 hidden border-y border-[color:var(--cyber-gold)]/14 bg-white lg:block">
-              <img
-                alt={category.imageAlt}
-                className="aspect-square h-auto w-full object-contain p-5"
-                decoding="async"
-                height={384}
-                loading="lazy"
-                src={category.imageUrl}
-                width={384}
-              />
             </div>
           ) : null}
-        </aside>
+        </div>
+      </header>
 
-        <div className="min-w-0">
-          <div className="flex flex-col gap-4 border-b border-[color:var(--cyber-gold)]/14 pb-5 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-                Catalog entries
-              </p>
-              <h2 className="mt-2 text-3xl font-semibold text-foreground">
-                {totalProducts.toLocaleString()} {category.name} supplies
-              </h2>
-            </div>
-            <p
-              className="text-sm font-semibold text-foreground/50"
-              data-saleor-category-result-range
-            >
-              {totalProducts > 0
-                ? `Showing ${firstResult.toLocaleString()}-${lastResult.toLocaleString()} of ${totalProducts.toLocaleString()}`
-                : "No items"}
-            </p>
+      {/* 2. Products Gallery Grid */}
+      <section className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {/* Sort and Count Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-6 border-b border-black/[0.04]">
+          <p
+            className="text-xs font-semibold uppercase tracking-wider text-[#86868b]"
+            data-saleor-category-result-range
+          >
+            {totalProducts > 0
+              ? `Displaying ${firstResult.toLocaleString()}–${lastResult.toLocaleString()} of ${totalProducts.toLocaleString()} items`
+              : "0 items"}
+          </p>
+
+          <div className="flex items-center gap-2 overflow-x-auto">
+            <span className="text-xs font-semibold text-[#86868b] mr-2">
+              Sort:
+            </span>
+            {sorting.map((item) => (
+              <CategorySortLink
+                collection={category.slug}
+                currentSort={sort}
+                item={item}
+                key={item.slug}
+              />
+            ))}
           </div>
+        </div>
 
-          <div className="mt-5 flex flex-col gap-4 border-y border-[color:var(--cyber-gold)]/14 py-4 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-[color:var(--cyber-gold-soft)]">
-                <ArrowDownAZ className="h-4 w-4" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-                  Sort catalog
-                </p>
-                <p className="mt-1 text-sm text-foreground/52">
-                  Choose the order for this collection.
-                </p>
-              </div>
-            </div>
-            <nav aria-label="Sort products" className="flex flex-wrap gap-2">
-              {sorting.map((item) => (
-                <CategorySortLink
-                  collection={category.slug}
-                  currentSort={sort}
-                  item={item}
-                  key={item.slug}
+        {products.length > 0 ? (
+          <>
+            <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {products.map((product, index) => (
+                <SaleorProductCard
+                  enableLinks
+                  key={product.id}
+                  product={product}
+                  priority={index < 4}
                 />
               ))}
-            </nav>
-          </div>
-
-          {products.length > 0 ? (
-            <>
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 2xl:grid-cols-4">
-                {products.map((product, index) => (
-                  <SaleorProductCard
-                    enableLinks
-                    key={product.id}
-                    product={product}
-                    priority={index < 2}
-                  />
-                ))}
-              </div>
-              <CategoryPagination
-                collection={category.slug}
-                currentPage={currentPage}
-                hasNextPage={hasNextPage}
-                hasPreviousPage={hasPreviousPage}
-                label={category.name}
-                nextPageCursor={nextPageCursor}
-                sort={sort}
-                totalPages={totalPages}
-              />
-            </>
-          ) : (
-            <div className="mt-6 border border-[color:var(--cyber-gold)]/14 bg-card p-8 text-center">
-              <SearchX className="mx-auto h-8 w-8 text-[color:var(--cyber-gold-soft)]" />
-              <h3 className="mt-4 text-xl font-semibold text-foreground">
-                No visible products yet
-              </h3>
-              <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-foreground/55">
-                No published products are currently visible in this collection.
-              </p>
-              <Button asChild className="mt-5">
-                <Link to="/">Back to catalog</Link>
-              </Button>
             </div>
-          )}
-        </div>
+            <CategoryPagination
+              collection={category.slug}
+              currentPage={currentPage}
+              hasNextPage={hasNextPage}
+              hasPreviousPage={hasPreviousPage}
+              label={category.name}
+              nextPageCursor={nextPageCursor}
+              sort={sort}
+              totalPages={totalPages}
+            />
+          </>
+        ) : (
+          <div className="mt-12 rounded-3xl bg-white p-12 text-center shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+            <SearchX className="mx-auto h-12 w-12 text-[#86868b]" />
+            <h3 className="mt-4 text-xl font-bold text-[#1d1d1f]">
+              No Products in this Category
+            </h3>
+            <p className="mx-auto mt-2 max-w-md text-sm text-[#6e6e73]">
+              We are constantly stocking new inventory. Check back shortly or
+              explore other categories.
+            </p>
+            <Button
+              asChild
+              className="mt-6 rounded-full bg-[#0071e3] px-6 text-white hover:bg-[#0077ed]"
+            >
+              <Link to="/">Explore Store Home</Link>
+            </Button>
+          </div>
+        )}
       </section>
     </main>
   );
@@ -238,10 +196,10 @@ function CollectionNavLink({
       search={{ sort }}
       preload="intent"
       className={[
-        "shrink-0 border border-[color:var(--cyber-gold)]/14 px-3 py-2 text-sm font-semibold transition lg:border-x-0 lg:border-t-0 lg:px-0",
+        "shrink-0 rounded-full px-4 py-1.5 text-xs font-semibold tracking-tight transition-all duration-300",
         active
-          ? "border-[color:var(--cyber-gold)]/50 bg-[color:var(--cyber-gold)]/10 text-foreground lg:bg-transparent"
-          : "text-foreground/58 hover:border-[color:var(--cyber-gold)]/42 hover:text-foreground",
+          ? "bg-[#1d1d1f] text-white shadow-sm"
+          : "bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]",
       ].join(" ")}
       aria-current={active ? "page" : undefined}
     >
@@ -280,15 +238,23 @@ function CategoryPagination({
   return (
     <nav
       aria-label={`${label} pagination`}
-      className="mt-8 flex flex-col gap-3 border-y border-[color:var(--cyber-gold)]/14 py-4 sm:flex-row sm:items-center sm:justify-between"
+      className="mt-12 flex flex-col gap-4 rounded-2xl bg-white p-6 shadow-[0_2px_14px_rgba(0,0,0,0.03)] sm:flex-row sm:items-center sm:justify-between"
       data-saleor-category-pagination
     >
-      <p className="text-sm font-semibold text-foreground/58">
-        Page {currentPage.toLocaleString()} of {totalPages.toLocaleString()}
+      <p className="text-xs font-semibold tracking-tight text-[#6e6e73]">
+        Page{" "}
+        <span className="text-[#1d1d1f] font-bold">
+          {currentPage.toLocaleString()}
+        </span>{" "}
+        of {totalPages.toLocaleString()}
       </p>
-      <div className="grid grid-cols-2 gap-2 sm:flex">
+      <div className="flex items-center gap-3">
         {hasPreviousPage ? (
-          <Button asChild variant="outline">
+          <Button
+            asChild
+            variant="outline"
+            className="rounded-full border-black/[0.08] px-4 text-xs font-semibold text-[#1d1d1f] hover:bg-[#f5f5f7]"
+          >
             <Link
               to="/collections/$collection"
               params={{ collection }}
@@ -296,18 +262,25 @@ function CategoryPagination({
               rel="prev"
               search={{ after: undefined, page: previousPage, sort }}
             >
-              <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+              <ChevronLeft aria-hidden="true" className="h-3.5 w-3.5 mr-1" />
               Previous
             </Link>
           </Button>
         ) : (
-          <Button disabled variant="outline">
-            <ChevronLeft aria-hidden="true" className="h-4 w-4" />
+          <Button
+            disabled
+            variant="outline"
+            className="rounded-full border-black/[0.04] px-4 text-xs font-semibold text-[#86868b] opacity-40"
+          >
+            <ChevronLeft aria-hidden="true" className="h-3.5 w-3.5 mr-1" />
             Previous
           </Button>
         )}
         {hasNextPage ? (
-          <Button asChild>
+          <Button
+            asChild
+            className="rounded-full bg-[#0071e3] px-4 text-xs font-semibold text-white hover:bg-[#0077ed]"
+          >
             <Link
               to="/collections/$collection"
               params={{ collection }}
@@ -320,13 +293,16 @@ function CategoryPagination({
               }}
             >
               Next
-              <ChevronRight aria-hidden="true" className="h-4 w-4" />
+              <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 ml-1" />
             </Link>
           </Button>
         ) : (
-          <Button disabled>
+          <Button
+            disabled
+            className="rounded-full bg-[#0071e3] px-4 text-xs font-semibold text-white opacity-40"
+          >
             Next
-            <ChevronRight aria-hidden="true" className="h-4 w-4" />
+            <ChevronRight aria-hidden="true" className="h-3.5 w-3.5 ml-1" />
           </Button>
         )}
       </div>
@@ -352,40 +328,14 @@ function CategorySortLink({
       preload="intent"
       search={{ after: undefined, page: undefined, sort: item.slug }}
       className={[
-        "inline-flex h-9 items-center justify-center rounded-md border px-3 text-xs font-semibold transition",
+        "inline-flex h-8 items-center justify-center rounded-full px-3 text-[11px] font-semibold tracking-tight transition-all duration-300",
         active
-          ? "border-[color:var(--cyber-gold)]/45 bg-[color:var(--cyber-gold)] text-black"
-          : "border-[color:var(--cyber-gold)]/14 text-foreground/58 hover:border-[color:var(--cyber-gold)]/42 hover:text-foreground",
+          ? "bg-[#0071e3] text-white shadow-sm"
+          : "bg-[#f5f5f7] text-[#6e6e73] hover:bg-[#e8e8ed] hover:text-[#1d1d1f]",
       ].join(" ")}
       aria-current={active ? "page" : undefined}
     >
       {item.name}
     </Link>
-  );
-}
-
-function CollectionMetric({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: React.ReactNode;
-}) {
-  return (
-    <div className="flex min-w-0 items-center gap-3 px-0 py-4 sm:px-4 sm:first:pl-0 sm:last:pr-0">
-      <span className="shrink-0 text-[color:var(--cyber-gold-soft)]">
-        {icon}
-      </span>
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase text-foreground/44">
-          {label}
-        </p>
-        <p className="mt-1 truncate text-sm font-semibold text-foreground">
-          {value}
-        </p>
-      </div>
-    </div>
   );
 }
