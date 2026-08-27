@@ -2,11 +2,8 @@ import { Link } from "@tanstack/react-router";
 import {
   ArrowDownRight,
   ArrowRight,
-  BadgeCheck,
   BadgePercent,
-  Boxes,
   Layers,
-  Search,
   Sparkles,
   Zap,
 } from "lucide-react";
@@ -21,8 +18,8 @@ type NtmsSaleorCategory = NtmsSaleorCatalogPreview["categories"][number];
 
 const categoryDisplayNames = new Map([
   ["Products", "Studio Essentials"],
-  ["Papa", "PAPA"],
-  ["Power Supplies & Cords", "Power"],
+  ["Papa", "PAPA Supply"],
+  ["Power Supplies & Cords", "Power & Cordage"],
 ]);
 
 export const categoryPriority = [
@@ -40,9 +37,10 @@ export const categoryPriority = [
 const HERO_SLIDES = [
   {
     badge: "FLAGSHIP ROTARY",
-    title: "Precision by Design: Wireless & Direct Drive",
+    title: "Precision. Redefined.",
+    subtitle: "Swiss Engineered Rotary Systems & Cordless Power",
     description:
-      "High-torque Swiss motors, adjustable needle stroke profiles, and ergonomic aircraft-grade aluminum frames engineered for multi-hour sessions.",
+      "Crafted from aircraft-grade aerospace alloys with zero-tolerance drive shafts. Engineered for 10+ hour continuous tattooing with instant torque response.",
     ctaText: "Explore Machines",
     ctaLink: "/collections/$collection" as const,
     ctaParams: { collection: "machines" },
@@ -50,19 +48,21 @@ const HERO_SLIDES = [
   },
   {
     badge: "SURGICAL CARTRIDGES",
-    title: "Ultra-Tight Liners & High-Displacement Mags",
+    title: "Ultra-Tight. Flawless.",
+    subtitle: "Medical 316L Stainless Needles & Stabilizer Membrane",
     description:
-      "Medical grade 316L stainless steel needles with zero-play stabilization membranes for crisp, trauma-free ink deposit.",
+      "Micro-polished taper profiles paired with proprietary bounce-back silicone membranes for absolute needle stability and minimal skin trauma.",
     ctaText: "Shop Needles",
     ctaLink: "/collections/$collection" as const,
     ctaParams: { collection: "needles" },
     categoryIcon: Layers,
   },
   {
-    badge: "JET BLACK FORMULAS",
-    title: "High Pigment Load Inks & Dynamic Shading Sets",
+    badge: "PURE PIGMENT FORMULAS",
+    title: "Deep Black. Permanent Tone.",
+    subtitle: "High Solid-Load Inks & Smooth Shading Gradients",
     description:
-      "Pure, concentrated dispersion inks tested for maximum color saturation, fast healing, and permanent solid saturation.",
+      "Pre-dispersed carbon formulations delivering rich solid fills, lightning-fast skin healing, and decades-long jet black retention.",
     ctaText: "Shop Inks",
     ctaLink: "/collections/$collection" as const,
     ctaParams: { collection: "ntms-91-inks" },
@@ -92,129 +92,155 @@ export function NtmsSaleorCatalogPage({
   const products = catalog.products.slice(0, 8);
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      {/* 80vh / Immersive Carousel Hero */}
-      <section className="relative isolate min-h-[580px] overflow-hidden border-b border-[color:var(--cyber-gold)]/18 bg-black text-white lg:min-h-[660px]">
+    <main className="min-h-screen bg-[#050505] text-zinc-100 antialiased selection:bg-[color:var(--cyber-gold)] selection:text-black">
+      {/* -------------------------------------------------------------------------
+          APPLE-STYLE STAGE HERO: 80vh Ambient Dark Canvas + Massive Typography
+      -------------------------------------------------------------------------- */}
+      <section className="relative isolate flex min-h-[82vh] flex-col justify-between overflow-hidden border-b border-white/[0.08] bg-black px-4 py-12 lg:min-h-[88vh] lg:py-20">
+        {/* Apple Atmospheric Studio Glow */}
+        <div className="pointer-events-none absolute -top-40 left-1/2 -z-10 h-[600px] w-[900px] -translate-x-1/2 rounded-full bg-[radial-gradient(ellipse_at_center,rgba(247,200,31,0.12),transparent_70%)] blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 right-0 -z-10 h-[480px] w-[580px] rounded-full bg-[radial-gradient(ellipse_at_center,rgba(255,255,255,0.04),transparent_70%)] blur-2xl" />
+
+        {/* Hero Product Giant Floating Hardware Backdrop */}
         {featuredProduct ? (
-          <HeroProductMedia
+          <AppleHeroHardwareMedia
             enableLinks={enableLinks}
             product={featuredProduct}
           />
         ) : null}
-        <div className="pointer-events-none absolute inset-y-0 left-0 z-0 w-full bg-gradient-to-r from-black via-black/85 to-black/30 lg:w-[54%]" />
 
-        <div className="relative z-10 mx-auto flex min-h-[580px] max-w-screen-2xl items-end px-4 py-10 lg:min-h-[660px] lg:items-center lg:py-16">
-          <div className="max-w-2xl">
-            <div className="flex items-center gap-2">
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--cyber-gold)]/30 bg-[color:var(--cyber-gold)]/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--cyber-gold-soft)]">
-                <currentHero.categoryIcon className="h-3.5 w-3.5" />
-                {currentHero.badge}
-              </span>
-              <span className="text-xs font-semibold uppercase text-white/50">
-                Studio Grade
-              </span>
+        <div className="relative z-10 mx-auto w-full max-w-screen-2xl">
+          {/* Top Apple-Style Segmented Pill Navigation */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-zinc-900/80 p-1 backdrop-blur-xl shadow-2xl">
+              {HERO_SLIDES.map((slide, idx) => {
+                const Icon = slide.categoryIcon;
+                const isSelected = idx === activeSlide;
+                return (
+                  <button
+                    key={slide.badge}
+                    type="button"
+                    onClick={() => setActiveSlide(idx)}
+                    className={cn(
+                      "flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-semibold tracking-wide transition-all duration-300",
+                      isSelected
+                        ? "bg-white text-black shadow-lg"
+                        : "text-zinc-400 hover:text-white",
+                    )}
+                  >
+                    <Icon
+                      className={cn(
+                        "h-3.5 w-3.5",
+                        isSelected ? "text-black" : "text-zinc-500",
+                      )}
+                    />
+                    <span>{slide.badge}</span>
+                  </button>
+                );
+              })}
             </div>
 
-            <h1 className="mt-5 text-4xl font-black leading-[1.02] text-white sm:text-5xl lg:text-6xl">
+            <div className="hidden items-center gap-2 rounded-full border border-white/[0.08] bg-zinc-900/50 px-4 py-1.5 text-xs font-medium text-zinc-400 backdrop-blur-md sm:flex">
+              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+              Live Studio Stock Active
+            </div>
+          </div>
+
+          {/* Apple Grand Pro Typography Presentation */}
+          <div className="mt-14 max-w-3xl lg:mt-24">
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-[color:var(--cyber-gold-soft)]">
+              {currentHero.subtitle}
+            </p>
+            <h1 className="mt-4 text-5xl font-extrabold tracking-tight text-white sm:text-7xl lg:text-8xl">
               {currentHero.title}
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-white/72">
+            <p className="mt-6 max-w-xl text-base leading-relaxed text-zinc-400 sm:text-lg sm:leading-8">
               {currentHero.description}
             </p>
 
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* Apple Action Buttons (Pill-shaped, sleek) */}
+            <div className="mt-10 flex flex-wrap items-center gap-4">
               <Link
                 to={currentHero.ctaLink}
                 params={currentHero.ctaParams}
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md bg-[color:var(--cyber-gold)] px-6 text-sm font-black text-black shadow-[0_12px_32px_rgba(247,200,31,0.22)] transition hover:bg-[color:var(--cyber-gold-soft)]"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full bg-white px-7 text-sm font-bold text-black shadow-[0_12px_36px_rgba(255,255,255,0.18)] transition hover:bg-zinc-200 active:scale-95"
               >
                 {currentHero.ctaText}
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 to="/search"
-                className="inline-flex h-12 items-center justify-center gap-2 rounded-md border border-white/20 bg-white/5 px-6 text-sm font-bold text-white transition hover:border-[color:var(--cyber-gold)] hover:bg-white/10 hover:text-[color:var(--cyber-gold-soft)]"
+                className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/[0.06] px-7 text-sm font-semibold text-white backdrop-blur-md transition hover:bg-white/[0.12] hover:border-white/40 active:scale-95"
               >
-                Browse Full Catalog
-                <ArrowDownRight className="h-4 w-4" />
+                Explore All Products
+                <ArrowDownRight className="h-4 w-4 text-zinc-400" />
               </Link>
             </div>
+          </div>
+        </div>
 
-            {/* Slide Navigation Trigger Indicators */}
-            <div
-              className="mt-8 flex items-center gap-2"
-              role="tablist"
-              aria-label="Hero Carousel Slides"
-            >
-              {HERO_SLIDES.map((slide, idx) => (
-                <button
-                  key={slide.badge}
-                  type="button"
-                  role="tab"
-                  aria-selected={idx === activeSlide}
-                  aria-label={slide.badge}
-                  onClick={() => setActiveSlide(idx)}
-                  className={cn(
-                    "h-2.5 rounded-full transition-all duration-300",
-                    idx === activeSlide
-                      ? "w-10 bg-[color:var(--cyber-gold)]"
-                      : "w-2.5 bg-white/30 hover:bg-white/60",
-                  )}
-                />
-              ))}
-            </div>
-
-            <div className="mt-10 grid max-w-xl divide-y divide-white/15 border-y border-white/15 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-              <CatalogSignal
-                icon={<Boxes className="h-4 w-4" />}
-                label="Catalog"
-                value={`${catalog.totalProducts.toLocaleString()} supplies`}
-              />
-              <CatalogSignal
-                icon={<Search className="h-4 w-4" />}
-                label="Reference"
-                value="Live Stock Sync"
-              />
-              <CatalogSignal
-                icon={<BadgeCheck className="h-4 w-4" />}
-                label="Delivery"
-                value="Same-Day Shipping"
-              />
-            </div>
+        {/* Bottom Feature Metrics Bar */}
+        <div className="relative z-10 mx-auto mt-12 w-full max-w-screen-2xl border-t border-white/[0.08] pt-6">
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+            <AppleMetricItem
+              label="Pro Inventory"
+              value={`${catalog.totalProducts.toLocaleString()}+ Supplies`}
+            />
+            <AppleMetricItem label="Engineered Quality" value="ISO 13485 Std" />
+            <AppleMetricItem
+              label="Same-Day Dispatch"
+              value="Orders by 3PM EST"
+            />
+            <AppleMetricItem
+              label="Direct Studio Sync"
+              value="Live Warehouse"
+            />
           </div>
         </div>
       </section>
 
-      {/* Bento Editorial Modern Spotlight Grid - Image-First Visual Architecture */}
+      {/* -------------------------------------------------------------------------
+          APPLE-STYLE BENTO HARDWARE SHOWCASE: Full-Canvas Bleed & High Gloss
+      -------------------------------------------------------------------------- */}
       {bentoSpotlight ? (
-        <section className="border-b border-[color:var(--cyber-gold)]/14 bg-background/50 py-12">
+        <section className="relative overflow-hidden border-b border-white/[0.08] bg-[#09090b] py-16 lg:py-24">
           <div className="mx-auto max-w-screen-2xl px-4">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <SectionHeading
-                eyebrow="Studio Spotlight"
-                title="Hardware & Cartridge Showcase"
-              />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--cyber-gold-soft)]">
+                  Hardware Showcase
+                </p>
+                <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                  Engineered for Masters.
+                </h2>
+              </div>
               <Link
                 to="/search"
-                className="inline-flex items-center gap-2 text-sm font-bold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+                className="group inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400 transition hover:text-white"
               >
-                View all hardware
-                <ArrowRight className="h-4 w-4" />
+                View all studio hardware
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
               </Link>
             </div>
 
-            <div className="mt-8 grid gap-6 lg:grid-cols-3">
-              {/* Primary Bento Spotlight Card - Dominant Visual Showcase */}
-              <div className="group relative flex min-h-[540px] flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/25 bg-card p-6 shadow-2xl transition-all duration-300 hover:border-[color:var(--cyber-gold)]/60 lg:col-span-2 lg:p-8">
-                {/* Background Ambient Glow */}
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(247,200,31,0.08),transparent_70%)]" />
+            {/* Apple Bento Grid Matrix */}
+            <div className="mt-10 grid gap-6 lg:grid-cols-3">
+              {/* Major 2-Column Spotlight Hero Canvas */}
+              <div className="group relative flex min-h-[580px] flex-col justify-between overflow-hidden rounded-[2.5rem] border border-white/[0.1] bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 p-8 shadow-2xl backdrop-blur-2xl transition-all duration-500 hover:border-white/25 lg:col-span-2 lg:p-12">
+                {/* Subtle spotlight radial highlight */}
+                <div className="pointer-events-none absolute -left-20 -top-20 h-96 w-96 rounded-full bg-[color:var(--cyber-gold)]/10 blur-3xl transition-opacity group-hover:opacity-100" />
 
-                {/* Floating Top Header Badges */}
+                {/* Top Floating Badge & Specs */}
                 <div className="relative z-10 flex items-center justify-between">
-                  <span className="rounded-full bg-[color:var(--cyber-gold)] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-black shadow-md">
-                    Pro Spotlight
-                  </span>
-                  <div className="rounded-full border border-white/15 bg-black/60 px-4 py-1.5 backdrop-blur-md">
+                  <div>
+                    <span className="text-[11px] font-black uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
+                      {bentoSpotlight.categoryName}
+                    </span>
+                    <h3 className="mt-1 text-2xl font-bold tracking-tight text-white sm:text-4xl">
+                      {bentoSpotlight.name}
+                    </h3>
+                  </div>
+                  <div className="rounded-full border border-white/15 bg-black/60 px-4 py-2 backdrop-blur-xl shadow-lg">
                     <PriceLabel
                       compact
                       price={bentoSpotlight.price}
@@ -223,71 +249,69 @@ export function NtmsSaleorCatalogPage({
                   </div>
                 </div>
 
-                {/* Huge Dominant Product Image Showcase (80% Visual Focus) */}
-                <div className="relative z-0 my-4 flex min-h-[340px] flex-1 items-center justify-center p-2 sm:min-h-[380px]">
+                {/* Apple-Style Dominant Image Canvas: 100% Unrestricted Bleed */}
+                <div className="relative z-0 my-6 flex min-h-[360px] flex-1 items-center justify-center sm:min-h-[420px]">
                   {bentoSpotlight.imageUrl ? (
                     <img
                       src={bentoSpotlight.imageUrl}
                       alt={bentoSpotlight.imageAlt}
-                      className="max-h-[360px] w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] transition-transform duration-500 group-hover:scale-105 sm:max-h-[420px]"
+                      className="max-h-[380px] w-full object-contain drop-shadow-[0_30px_50px_rgba(0,0,0,0.85)] transition-all duration-700 group-hover:scale-106 sm:max-h-[460px]"
                     />
                   ) : (
                     <ImageFallback label={bentoSpotlight.name} />
                   )}
                 </div>
 
-                {/* Minimal Overlay Footer Information */}
-                <div className="relative z-10 rounded-xl border border-white/10 bg-black/75 p-4 backdrop-blur-lg sm:p-5">
-                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="min-w-0">
-                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--cyber-gold-soft)]">
-                        {bentoSpotlight.categoryName}
-                      </p>
-                      <h3 className="mt-1 truncate text-xl font-black text-white sm:text-2xl">
-                        {bentoSpotlight.name}
-                      </h3>
-                    </div>
-                    <div className="flex shrink-0 items-center gap-3">
-                      <StockBadge
-                        quantityAvailable={bentoSpotlight.quantityAvailable}
-                      />
-                      {enableLinks ? (
-                        <Link
-                          to="/product/$productId"
-                          params={{ productId: bentoSpotlight.slug }}
-                          className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--cyber-gold)] px-4 py-2.5 text-xs font-black text-black shadow transition hover:bg-[color:var(--cyber-gold-soft)]"
-                        >
-                          Inspect Details
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </Link>
-                      ) : null}
-                    </div>
+                {/* Floating Bottom Action Bar */}
+                <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 border-t border-white/[0.08] pt-6">
+                  <div className="flex items-center gap-3">
+                    <StockBadge
+                      quantityAvailable={bentoSpotlight.quantityAvailable}
+                    />
+                    <span className="text-xs text-zinc-400">
+                      SKU: {bentoSpotlight.sku || "Pro Baseline"}
+                    </span>
                   </div>
+                  {enableLinks ? (
+                    <Link
+                      to="/product/$productId"
+                      params={{ productId: bentoSpotlight.slug }}
+                      className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-xs font-bold text-black shadow-lg transition hover:bg-zinc-200 active:scale-95"
+                    >
+                      Buy / Inspect
+                      <ArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  ) : null}
                 </div>
               </div>
 
-              {/* Complementary Secondary Vertical Cards - Large Media Focus */}
-              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
+              {/* Two Vertical Stacked Apple Cards */}
+              <div className="flex flex-col gap-6">
                 {bentoSecondary1 ? (
-                  <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/20 bg-card p-5 shadow-lg transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
-                        {bentoSecondary1.categoryName}
-                      </span>
-                      <span className="rounded-md border border-white/10 bg-black/50 px-2.5 py-0.5 text-xs font-bold text-[color:var(--cyber-gold-soft)]">
+                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2rem] border border-white/[0.1] bg-gradient-to-b from-zinc-900/70 to-zinc-950/70 p-6 shadow-xl backdrop-blur-xl transition-all duration-500 hover:border-white/25">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                          {bentoSecondary1.categoryName}
+                        </span>
+                        <h4 className="mt-1 line-clamp-1 text-lg font-bold text-white group-hover:text-[color:var(--cyber-gold-soft)]">
+                          {bentoSecondary1.name}
+                        </h4>
+                      </div>
+                      <span className="rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] backdrop-blur-md">
                         {bentoSecondary1.price
                           ? formatSaleorMoney(bentoSecondary1.price)
                           : "Pending"}
                       </span>
                     </div>
 
-                    {/* Large Secondary Image Area */}
-                    <div className="my-3 flex h-48 items-center justify-center rounded-xl bg-white/[0.03] p-2 transition group-hover:bg-white/[0.06]">
+                    {/* Expansive Secondary Hardware Graphic */}
+                    <div className="my-4 flex h-52 items-center justify-center p-2">
                       {bentoSecondary1.imageUrl ? (
                         <img
                           src={bentoSecondary1.imageUrl}
                           alt={bentoSecondary1.imageAlt}
-                          className="max-h-44 w-full object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                          className="max-h-48 w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)] transition-transform duration-500 group-hover:scale-106"
                         />
                       ) : (
                         <ImageFallback
@@ -296,18 +320,17 @@ export function NtmsSaleorCatalogPage({
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-2">
-                      <h4 className="truncate text-sm font-bold text-foreground">
-                        {bentoSecondary1.name}
-                      </h4>
+                    <div className="flex items-center justify-between border-t border-white/[0.06] pt-4">
+                      <StockBadge
+                        quantityAvailable={bentoSecondary1.quantityAvailable}
+                      />
                       {enableLinks ? (
                         <Link
                           to="/product/$productId"
                           params={{ productId: bentoSecondary1.slug }}
-                          className="ml-2 inline-flex shrink-0 items-center gap-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] transition hover:text-white"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-zinc-300 transition hover:text-white"
                         >
-                          Details
-                          <ArrowRight className="h-3.5 w-3.5" />
+                          View details &rarr;
                         </Link>
                       ) : null}
                     </div>
@@ -315,25 +338,30 @@ export function NtmsSaleorCatalogPage({
                 ) : null}
 
                 {bentoSecondary2 ? (
-                  <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/20 bg-card p-5 shadow-lg transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
-                        {bentoSecondary2.categoryName}
-                      </span>
-                      <span className="rounded-md border border-white/10 bg-black/50 px-2.5 py-0.5 text-xs font-bold text-[color:var(--cyber-gold-soft)]">
+                  <div className="group relative flex flex-1 flex-col justify-between overflow-hidden rounded-[2rem] border border-white/[0.1] bg-gradient-to-b from-zinc-900/70 to-zinc-950/70 p-6 shadow-xl backdrop-blur-xl transition-all duration-500 hover:border-white/25">
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
+                          {bentoSecondary2.categoryName}
+                        </span>
+                        <h4 className="mt-1 line-clamp-1 text-lg font-bold text-white group-hover:text-[color:var(--cyber-gold-soft)]">
+                          {bentoSecondary2.name}
+                        </h4>
+                      </div>
+                      <span className="rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] backdrop-blur-md">
                         {bentoSecondary2.price
                           ? formatSaleorMoney(bentoSecondary2.price)
                           : "Pending"}
                       </span>
                     </div>
 
-                    {/* Large Secondary Image Area */}
-                    <div className="my-3 flex h-48 items-center justify-center rounded-xl bg-white/[0.03] p-2 transition group-hover:bg-white/[0.06]">
+                    {/* Expansive Secondary Hardware Graphic */}
+                    <div className="my-4 flex h-52 items-center justify-center p-2">
                       {bentoSecondary2.imageUrl ? (
                         <img
                           src={bentoSecondary2.imageUrl}
                           alt={bentoSecondary2.imageAlt}
-                          className="max-h-44 w-full object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                          className="max-h-48 w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.7)] transition-transform duration-500 group-hover:scale-106"
                         />
                       ) : (
                         <ImageFallback
@@ -342,18 +370,17 @@ export function NtmsSaleorCatalogPage({
                       )}
                     </div>
 
-                    <div className="flex items-center justify-between pt-2">
-                      <h4 className="truncate text-sm font-bold text-foreground">
-                        {bentoSecondary2.name}
-                      </h4>
+                    <div className="flex items-center justify-between border-t border-white/[0.06] pt-4">
+                      <StockBadge
+                        quantityAvailable={bentoSecondary2.quantityAvailable}
+                      />
                       {enableLinks ? (
                         <Link
                           to="/product/$productId"
                           params={{ productId: bentoSecondary2.slug }}
-                          className="ml-2 inline-flex shrink-0 items-center gap-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] transition hover:text-white"
+                          className="inline-flex items-center gap-1 text-xs font-bold text-zinc-300 transition hover:text-white"
                         >
-                          Details
-                          <ArrowRight className="h-3.5 w-3.5" />
+                          View details &rarr;
                         </Link>
                       ) : null}
                     </div>
@@ -365,22 +392,32 @@ export function NtmsSaleorCatalogPage({
         </section>
       ) : null}
 
-      {/* Category Index Grid */}
-      <section className="border-b border-[color:var(--cyber-gold)]/14">
-        <div className="mx-auto max-w-screen-2xl px-4 py-12">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading eyebrow="Supply index" title="Build the order" />
+      {/* -------------------------------------------------------------------------
+          APPLE-STYLE CATEGORY TILES: Clean Rounded Large Media Cards
+      -------------------------------------------------------------------------- */}
+      <section className="border-b border-white/[0.08] bg-[#050505] py-16 lg:py-24">
+        <div className="mx-auto max-w-screen-2xl px-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--cyber-gold-soft)]">
+                Supply Directory
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                Explore by Category.
+              </h2>
+            </div>
             <Link
               to="/search"
-              className="inline-flex items-center gap-2 text-sm font-bold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400 transition hover:text-white"
             >
-              Search the catalog
+              Search complete catalog
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-7 grid border-l border-t border-[color:var(--cyber-gold)]/14 sm:grid-cols-2 lg:grid-cols-3">
+
+          <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {categories.map((category) => (
-              <SupplyIndexItem
+              <AppleSupplyCard
                 key={category.id}
                 category={category}
                 enableLinks={enableLinks}
@@ -390,49 +427,32 @@ export function NtmsSaleorCatalogPage({
         </div>
       </section>
 
-      {/* Brand Index */}
-      {catalog.curatedCollections.length > 0 ? (
-        <section className="border-b border-[color:var(--cyber-gold)]/14 bg-card">
-          <div className="mx-auto max-w-screen-2xl px-4 py-11">
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-              <SectionHeading eyebrow="Brand index" title="Shop by brand" />
-              <Link
-                to="/search"
-                className="inline-flex items-center gap-2 text-sm font-bold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
-              >
-                Search all brands
-                <ArrowRight className="h-4 w-4" />
-              </Link>
+      {/* -------------------------------------------------------------------------
+          APPLE PRODUCT GALLERY: Clean Minimalist Studio Hardware Grid
+      -------------------------------------------------------------------------- */}
+      <section className="bg-black py-16 lg:py-24">
+        <div className="mx-auto max-w-screen-2xl px-4">
+          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[0.24em] text-[color:var(--cyber-gold-soft)]">
+                Studio Staples
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight text-white sm:text-5xl">
+                Essential Studio Picks.
+              </h2>
             </div>
-            <div className="mt-6 grid border-l border-t border-[color:var(--cyber-gold)]/14 sm:grid-cols-3">
-              {catalog.curatedCollections.map((collection) => (
-                <BrandCollectionItem
-                  collection={collection}
-                  enableLinks={enableLinks}
-                  key={collection.id}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
-      ) : null}
-
-      {/* Product Grid */}
-      <section className="bg-card">
-        <div className="mx-auto max-w-screen-2xl px-4 py-11">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-            <SectionHeading eyebrow="Studio picks" title="Commonly ordered" />
             <Link
               to="/search"
-              className="inline-flex items-center gap-2 text-sm font-bold text-foreground/58 transition hover:text-[color:var(--cyber-gold-soft)]"
+              className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-400 transition hover:text-white"
             >
-              Search all products
+              Browse all items
               <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <div className="mt-5 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
             {products.map((product) => (
-              <SaleorProductCard
+              <AppleProductCard
                 enableLinks={enableLinks}
                 key={product.id}
                 product={product}
@@ -466,46 +486,18 @@ function getCategoryDisplayName(category: NtmsSaleorCategory) {
   return categoryDisplayNames.get(category.name) ?? category.name;
 }
 
-function SectionHeading({
-  eyebrow,
-  title,
-}: {
-  eyebrow: string;
-  title: string;
-}) {
+function AppleMetricItem({ label, value }: { label: string; value: string }) {
   return (
-    <div>
-      <p className="text-xs font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-        {eyebrow}
+    <div className="border-l border-white/15 pl-4">
+      <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-400">
+        {label}
       </p>
-      <h2 className="mt-2 text-3xl font-bold text-foreground">{title}</h2>
+      <p className="mt-1 text-sm font-bold text-white">{value}</p>
     </div>
   );
 }
 
-function CatalogSignal({
-  icon,
-  label,
-  value,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="flex min-w-0 items-center gap-3 px-0 py-4 first:pt-4 last:pb-4 sm:px-4 sm:first:pl-0 sm:last:pr-0">
-      <span className="text-[color:var(--cyber-gold-soft)]">{icon}</span>
-      <div className="min-w-0">
-        <p className="text-[10px] font-bold uppercase text-white/55">{label}</p>
-        <p className="mt-1 truncate text-sm font-semibold text-white">
-          {value}
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function HeroProductMedia({
+function AppleHeroHardwareMedia({
   enableLinks,
   product,
 }: {
@@ -515,13 +507,13 @@ function HeroProductMedia({
   const content = product.imageUrl ? (
     <img
       alt={product.imageAlt}
-      className="h-full w-full object-contain p-8 opacity-55 sm:p-10 lg:p-14 lg:opacity-100"
+      className="h-full w-full object-contain p-6 opacity-30 drop-shadow-[0_40px_80px_rgba(0,0,0,0.9)] transition-all duration-700 sm:opacity-50 lg:p-12 lg:opacity-95 lg:scale-110"
       decoding="async"
       fetchPriority="high"
-      height={512}
+      height={720}
       loading="eager"
       src={product.imageUrl}
-      width={512}
+      width={720}
     />
   ) : (
     <ImageFallback label={product.name} />
@@ -529,7 +521,7 @@ function HeroProductMedia({
 
   if (!enableLinks) {
     return (
-      <div className="absolute inset-y-0 right-0 z-0 hidden lg:block lg:w-[62%]">
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-0 hidden lg:flex lg:w-[58%] lg:items-center lg:justify-center">
         {content}
       </div>
     );
@@ -541,14 +533,14 @@ function HeroProductMedia({
       params={{ productId: product.slug }}
       preload="intent"
       aria-label={`Open ${product.name}`}
-      className="absolute inset-y-0 right-0 z-0 hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)] lg:block lg:w-[62%]"
+      className="absolute inset-y-0 right-0 z-0 hidden focus-visible:outline-none lg:flex lg:w-[58%] lg:items-center lg:justify-center"
     >
       {content}
     </Link>
   );
 }
 
-function SupplyIndexItem({
+function AppleSupplyCard({
   category,
   enableLinks,
 }: {
@@ -556,14 +548,14 @@ function SupplyIndexItem({
   enableLinks: boolean;
 }) {
   const displayName = getCategoryDisplayName(category);
-  const content = (
-    <article className="group flex flex-col border-b border-r border-[color:var(--cyber-gold)]/14 bg-card transition hover:border-[color:var(--cyber-gold)]/40 hover:bg-card/90">
-      {/* Large Image Showcase Area */}
-      <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden border-b border-[color:var(--cyber-gold)]/10 bg-white p-4">
+  const card = (
+    <article className="group relative flex flex-col overflow-hidden rounded-[2rem] border border-white/[0.08] bg-zinc-900/50 p-6 shadow-xl backdrop-blur-xl transition-all duration-500 hover:border-white/25 hover:bg-zinc-900/80">
+      {/* Category Large Image Feature */}
+      <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-white/[0.03] p-4 transition duration-500 group-hover:bg-white/[0.06]">
         {category.imageUrl ? (
           <img
             alt={category.imageAlt}
-            className="h-full w-full object-contain transition duration-500 group-hover:scale-108"
+            className="max-h-full max-w-full object-contain drop-shadow-[0_15px_30px_rgba(0,0,0,0.6)] transition duration-700 group-hover:scale-108"
             decoding="async"
             height={420}
             loading="lazy"
@@ -573,74 +565,41 @@ function SupplyIndexItem({
         ) : (
           <ImageFallback label={category.name.slice(0, 2).toUpperCase()} />
         )}
-        <span className="absolute right-3 top-3 rounded-md bg-black/75 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[color:var(--cyber-gold-soft)] backdrop-blur-md">
+        <span className="absolute right-3 top-3 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-zinc-300 backdrop-blur-md">
           {category.productCount.toLocaleString()} items
         </span>
       </div>
 
-      {/* Concise Visual Label */}
-      <div className="flex items-center justify-between p-4 sm:p-5">
-        <h3 className="truncate text-lg font-bold text-foreground group-hover:text-[color:var(--cyber-gold-soft)]">
-          {displayName}
-        </h3>
-        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-[color:var(--cyber-gold-soft)] transition group-hover:border-[color:var(--cyber-gold)] group-hover:bg-[color:var(--cyber-gold)] group-hover:text-black">
+      <div className="mt-5 flex items-center justify-between">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            Collection
+          </span>
+          <h3 className="text-xl font-bold text-white group-hover:text-[color:var(--cyber-gold-soft)]">
+            {displayName}
+          </h3>
+        </div>
+        <span className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/[0.05] text-zinc-300 transition group-hover:bg-white group-hover:text-black">
           <ArrowRight className="h-4 w-4" />
         </span>
       </div>
     </article>
   );
 
-  if (!enableLinks) {
-    return content;
-  }
-
+  if (!enableLinks) return card;
   return (
     <Link
       to="/collections/$collection"
       params={{ collection: category.slug }}
       preload="intent"
-      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
+      className="block focus-visible:outline-none"
     >
-      {content}
+      {card}
     </Link>
   );
 }
 
-function BrandCollectionItem({
-  collection,
-  enableLinks,
-}: {
-  collection: NtmsSaleorCategory;
-  enableLinks: boolean;
-}) {
-  const content = (
-    <article className="group min-h-[152px] border-b border-r border-[color:var(--cyber-gold)]/14 p-5 transition hover:bg-background">
-      <p className="text-[10px] font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-        {collection.productCount.toLocaleString()} products
-      </p>
-      <h3 className="mt-3 text-2xl font-semibold leading-tight text-foreground">
-        {collection.name}
-      </h3>
-      <span className="mt-6 inline-flex h-8 w-8 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-[color:var(--cyber-gold-soft)] transition group-hover:border-[color:var(--cyber-gold)] group-hover:bg-[color:var(--cyber-gold)] group-hover:text-black">
-        <ArrowRight className="h-4 w-4" />
-      </span>
-    </article>
-  );
-
-  if (!enableLinks) return content;
-  return (
-    <Link
-      to="/collections/$collection"
-      params={{ collection: collection.slug }}
-      preload="intent"
-      className="block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
-    >
-      {content}
-    </Link>
-  );
-}
-
-export function SaleorProductCard({
+export function AppleProductCard({
   enableLinks = false,
   product,
   priority,
@@ -654,10 +613,11 @@ export function SaleorProductCard({
     !requiresVariantSelection &&
     Boolean(product.variantId) &&
     Boolean(product.quantityAvailable && product.quantityAvailable > 0);
+
   const media = product.imageUrl ? (
     <GridTileImage
       alt={product.imageAlt}
-      className="object-contain p-4"
+      className="object-contain p-4 drop-shadow-[0_12px_24px_rgba(0,0,0,0.6)] transition-transform duration-500 group-hover:scale-105"
       frame={false}
       height={512}
       priority={priority}
@@ -672,16 +632,17 @@ export function SaleorProductCard({
 
   return (
     <article
-      className="group flex h-full min-h-[280px] flex-col overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/14 bg-card transition hover:border-[color:var(--cyber-gold)]/42 hover:bg-card/90"
+      className="group relative flex flex-col justify-between overflow-hidden rounded-[1.75rem] border border-white/[0.08] bg-zinc-900/40 p-4 shadow-lg backdrop-blur-xl transition-all duration-500 hover:border-white/25 hover:bg-zinc-900/80 sm:p-5"
       data-saleor-product-card
     >
-      <div className="aspect-square border-b border-[color:var(--cyber-gold)]/10 bg-white">
+      {/* Product Image Area */}
+      <div className="relative aspect-square w-full overflow-hidden rounded-2xl bg-white/[0.03] p-2 transition group-hover:bg-white/[0.06]">
         {enableLinks ? (
           <Link
             to="/product/$productId"
             params={{ productId: product.slug }}
             preload="intent"
-            className="block h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)]"
+            className="block h-full focus-visible:outline-none"
           >
             {media}
           </Link>
@@ -689,33 +650,32 @@ export function SaleorProductCard({
           media
         )}
       </div>
-      <div className="flex flex-1 flex-col p-3 sm:p-4">
-        <p className="line-clamp-1 text-[10px] font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-          {product.categoryName}
-        </p>
-        {enableLinks ? (
-          <Link
-            to="/product/$productId"
-            params={{ productId: product.slug }}
-            preload="intent"
-            className="mt-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
-          >
-            <h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-5 text-foreground transition group-hover:text-[color:var(--cyber-gold-soft)]">
+
+      <div className="mt-4 flex flex-1 flex-col justify-between">
+        <div>
+          <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">
+            {product.categoryName}
+          </span>
+          {enableLinks ? (
+            <Link
+              to="/product/$productId"
+              params={{ productId: product.slug }}
+              preload="intent"
+              className="mt-1 block focus-visible:outline-none"
+            >
+              <h3 className="line-clamp-2 text-sm font-bold text-white transition group-hover:text-[color:var(--cyber-gold-soft)]">
+                {product.name}
+              </h3>
+            </Link>
+          ) : (
+            <h3 className="mt-1 line-clamp-2 text-sm font-bold text-white">
               {product.name}
             </h3>
-          </Link>
-        ) : (
-          <h3 className="mt-2 line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-5 text-foreground transition group-hover:text-[color:var(--cyber-gold-soft)]">
-            {product.name}
-          </h3>
-        )}
-        <p className="mt-2 line-clamp-1 text-xs text-foreground/48">
-          {requiresVariantSelection
-            ? `${product.variantCount.toLocaleString()} variants`
-            : `SKU ${product.sku || "pending"}`}
-        </p>
-        <div className="mt-auto border-t border-[color:var(--cyber-gold)]/12 pt-3">
-          <div className="flex items-end justify-between gap-2">
+          )}
+        </div>
+
+        <div className="mt-4 border-t border-white/[0.06] pt-3">
+          <div className="flex items-center justify-between">
             <PriceLabel
               compact
               price={product.price}
@@ -723,12 +683,13 @@ export function SaleorProductCard({
             />
             <StockBadge quantityAvailable={product.quantityAvailable} />
           </div>
+
           {requiresVariantSelection ? (
             <Link
               to="/product/$productId"
               params={{ productId: product.slug }}
               preload="intent"
-              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 px-3 text-xs font-semibold text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/52 hover:text-[color:var(--cyber-gold-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
+              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-full border border-white/20 bg-white/[0.06] px-3 text-xs font-bold text-white transition hover:bg-white hover:text-black active:scale-95"
               data-saleor-choose-options
             >
               Choose options
@@ -736,8 +697,8 @@ export function SaleorProductCard({
             </Link>
           ) : canAdd ? (
             <NtmsSaleorAddToCartButton
-              className="mt-3 h-9 w-full"
-              label="Add"
+              className="mt-3 h-9 w-full rounded-full"
+              label="Add to cart"
               variantId={product.variantId}
             />
           ) : enableLinks ? (
@@ -745,9 +706,9 @@ export function SaleorProductCard({
               to="/product/$productId"
               params={{ productId: product.slug }}
               preload="intent"
-              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 px-3 text-xs font-semibold text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/52 hover:text-[color:var(--cyber-gold-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
+              className="mt-3 inline-flex h-9 w-full items-center justify-center gap-1.5 rounded-full border border-white/20 bg-white/[0.06] px-3 text-xs font-bold text-white transition hover:bg-white hover:text-black active:scale-95"
             >
-              View item
+              View details
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           ) : null}
@@ -765,19 +726,18 @@ function StockBadge({
   return (
     <span
       className={cn(
-        "rounded-sm border px-2 py-1 text-[10px] font-semibold",
+        "rounded-full px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider",
         quantityAvailable && quantityAvailable > 0
-          ? "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
-          : "border-amber-300/20 bg-amber-400/10 text-amber-100",
+          ? "border border-emerald-400/20 bg-emerald-500/10 text-emerald-400"
+          : "border border-amber-400/20 bg-amber-500/10 text-amber-400",
       )}
     >
-      {quantityAvailable && quantityAvailable > 0 ? "In stock" : "Check stock"}
+      {quantityAvailable && quantityAvailable > 0 ? "In stock" : "Low Stock"}
     </span>
   );
 }
 
 function PriceLabel({
-  compact = false,
   price,
   priorPrice,
 }: {
@@ -789,22 +749,21 @@ function PriceLabel({
 
   return (
     <div className="min-w-0">
-      {!compact ? <p className="text-xs text-foreground/48">Price</p> : null}
-      <div className="mt-1 flex min-h-5 flex-wrap items-center gap-x-2 gap-y-1">
-        <p className="text-base font-semibold leading-none text-[color:var(--cyber-gold-soft)]">
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-extrabold text-white">
           {price ? formatSaleorMoney(price) : "Price pending"}
-        </p>
+        </span>
         {discountPercent && priorPrice ? (
-          <p className="text-xs text-foreground/42 line-through">
+          <span className="text-xs text-zinc-500 line-through">
             {formatSaleorMoney(priorPrice)}
-          </p>
+          </span>
         ) : null}
       </div>
       {discountPercent ? (
-        <p className="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase text-emerald-300">
-          <BadgePercent className="h-3.5 w-3.5" />
+        <span className="mt-1 inline-flex items-center gap-1 text-[10px] font-bold text-emerald-400">
+          <BadgePercent className="h-3 w-3" />
           Save {discountPercent}%
-        </p>
+        </span>
       ) : null}
     </div>
   );
@@ -823,7 +782,7 @@ function saleorDiscountPercent(
 
 function ImageFallback({ label }: { label: string }) {
   return (
-    <div className="flex h-full w-full items-center justify-center px-4 text-center text-sm font-semibold uppercase text-foreground/35">
+    <div className="flex h-full w-full items-center justify-center px-4 text-center text-xs font-bold uppercase tracking-widest text-zinc-600">
       {label}
     </div>
   );
