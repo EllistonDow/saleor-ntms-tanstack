@@ -185,7 +185,7 @@ export function NtmsSaleorCatalogPage({
         </div>
       </section>
 
-      {/* Bento Editorial Modern Spotlight Grid */}
+      {/* Bento Editorial Modern Spotlight Grid - Image-First Visual Architecture */}
       {bentoSpotlight ? (
         <section className="border-b border-[color:var(--cyber-gold)]/14 bg-background/50 py-12">
           <div className="mx-auto max-w-screen-2xl px-4">
@@ -204,64 +204,90 @@ export function NtmsSaleorCatalogPage({
             </div>
 
             <div className="mt-8 grid gap-6 lg:grid-cols-3">
-              {/* Primary Bento Spotlight Card */}
-              <div className="group relative flex flex-col justify-between overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/20 bg-card p-6 shadow-xl transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50 lg:col-span-2 lg:p-8">
-                <div className="flex items-center justify-between">
-                  <span className="rounded-full bg-[color:var(--cyber-gold)] px-3 py-1 text-xs font-black uppercase text-black tracking-wide">
+              {/* Primary Bento Spotlight Card - Dominant Visual Showcase */}
+              <div className="group relative flex min-h-[540px] flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/25 bg-card p-6 shadow-2xl transition-all duration-300 hover:border-[color:var(--cyber-gold)]/60 lg:col-span-2 lg:p-8">
+                {/* Background Ambient Glow */}
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_50%_45%,rgba(247,200,31,0.08),transparent_70%)]" />
+
+                {/* Floating Top Header Badges */}
+                <div className="relative z-10 flex items-center justify-between">
+                  <span className="rounded-full bg-[color:var(--cyber-gold)] px-3.5 py-1 text-xs font-black uppercase tracking-wider text-black shadow-md">
                     Pro Spotlight
                   </span>
-                  <PriceLabel
-                    compact
-                    price={bentoSpotlight.price}
-                    priorPrice={bentoSpotlight.priorPrice}
-                  />
+                  <div className="rounded-full border border-white/15 bg-black/60 px-4 py-1.5 backdrop-blur-md">
+                    <PriceLabel
+                      compact
+                      price={bentoSpotlight.price}
+                      priorPrice={bentoSpotlight.priorPrice}
+                    />
+                  </div>
                 </div>
-                <div className="my-6 flex h-64 items-center justify-center p-4">
+
+                {/* Huge Dominant Product Image Showcase (80% Visual Focus) */}
+                <div className="relative z-0 my-4 flex min-h-[340px] flex-1 items-center justify-center p-2 sm:min-h-[380px]">
                   {bentoSpotlight.imageUrl ? (
                     <img
                       src={bentoSpotlight.imageUrl}
                       alt={bentoSpotlight.imageAlt}
-                      className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                      className="max-h-[360px] w-full object-contain drop-shadow-[0_20px_35px_rgba(0,0,0,0.65)] transition-transform duration-500 group-hover:scale-105 sm:max-h-[420px]"
                     />
                   ) : (
                     <ImageFallback label={bentoSpotlight.name} />
                   )}
                 </div>
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
-                    {bentoSpotlight.categoryName}
-                  </p>
-                  <h3 className="mt-1 text-2xl font-bold text-foreground sm:text-3xl">
-                    {bentoSpotlight.name}
-                  </h3>
-                  <div className="mt-4 flex items-center justify-between gap-4 border-t border-[color:var(--cyber-gold)]/10 pt-4">
-                    <StockBadge
-                      quantityAvailable={bentoSpotlight.quantityAvailable}
-                    />
-                    {enableLinks ? (
-                      <Link
-                        to="/product/$productId"
-                        params={{ productId: bentoSpotlight.slug }}
-                        className="inline-flex items-center gap-2 rounded-md bg-foreground/10 px-4 py-2 text-xs font-bold text-foreground transition hover:bg-[color:var(--cyber-gold)] hover:text-black"
-                      >
-                        Inspect Details
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </Link>
-                    ) : null}
+
+                {/* Minimal Overlay Footer Information */}
+                <div className="relative z-10 rounded-xl border border-white/10 bg-black/75 p-4 backdrop-blur-lg sm:p-5">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div className="min-w-0">
+                      <p className="text-[11px] font-black uppercase tracking-[0.16em] text-[color:var(--cyber-gold-soft)]">
+                        {bentoSpotlight.categoryName}
+                      </p>
+                      <h3 className="mt-1 truncate text-xl font-black text-white sm:text-2xl">
+                        {bentoSpotlight.name}
+                      </h3>
+                    </div>
+                    <div className="flex shrink-0 items-center gap-3">
+                      <StockBadge
+                        quantityAvailable={bentoSpotlight.quantityAvailable}
+                      />
+                      {enableLinks ? (
+                        <Link
+                          to="/product/$productId"
+                          params={{ productId: bentoSpotlight.slug }}
+                          className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--cyber-gold)] px-4 py-2.5 text-xs font-black text-black shadow transition hover:bg-[color:var(--cyber-gold-soft)]"
+                        >
+                          Inspect Details
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      ) : null}
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Complementary Secondary Mini Bento Cards */}
-              <div className="flex flex-col gap-6">
+              {/* Complementary Secondary Vertical Cards - Large Media Focus */}
+              <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-1">
                 {bentoSecondary1 ? (
-                  <div className="group flex flex-1 items-center gap-5 overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/18 bg-card p-5 transition hover:border-[color:var(--cyber-gold)]/40">
-                    <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 p-2">
+                  <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/20 bg-card p-5 shadow-lg transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary1.categoryName}
+                      </span>
+                      <span className="rounded-md border border-white/10 bg-black/50 px-2.5 py-0.5 text-xs font-bold text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary1.price
+                          ? formatSaleorMoney(bentoSecondary1.price)
+                          : "Pending"}
+                      </span>
+                    </div>
+
+                    {/* Large Secondary Image Area */}
+                    <div className="my-3 flex h-48 items-center justify-center rounded-xl bg-white/[0.03] p-2 transition group-hover:bg-white/[0.06]">
                       {bentoSecondary1.imageUrl ? (
                         <img
                           src={bentoSecondary1.imageUrl}
                           alt={bentoSecondary1.imageAlt}
-                          className="max-h-full max-w-full object-contain"
+                          className="max-h-44 w-full object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <ImageFallback
@@ -269,41 +295,45 @@ export function NtmsSaleorCatalogPage({
                         />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
-                        {bentoSecondary1.categoryName}
-                      </span>
-                      <h4 className="truncate text-base font-bold text-foreground">
+
+                    <div className="flex items-center justify-between pt-2">
+                      <h4 className="truncate text-sm font-bold text-foreground">
                         {bentoSecondary1.name}
                       </h4>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-sm font-bold text-[color:var(--cyber-gold-soft)]">
-                          {bentoSecondary1.price
-                            ? formatSaleorMoney(bentoSecondary1.price)
-                            : "Pending"}
-                        </span>
-                        {enableLinks ? (
-                          <Link
-                            to="/product/$productId"
-                            params={{ productId: bentoSecondary1.slug }}
-                            className="text-xs font-semibold text-foreground/60 hover:text-foreground"
-                          >
-                            Details &rarr;
-                          </Link>
-                        ) : null}
-                      </div>
+                      {enableLinks ? (
+                        <Link
+                          to="/product/$productId"
+                          params={{ productId: bentoSecondary1.slug }}
+                          className="ml-2 inline-flex shrink-0 items-center gap-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] transition hover:text-white"
+                        >
+                          Details
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}
 
                 {bentoSecondary2 ? (
-                  <div className="group flex flex-1 items-center gap-5 overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/18 bg-card p-5 transition hover:border-[color:var(--cyber-gold)]/40">
-                    <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-lg bg-white/5 p-2">
+                  <div className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/20 bg-card p-5 shadow-lg transition-all duration-300 hover:border-[color:var(--cyber-gold)]/50">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary2.categoryName}
+                      </span>
+                      <span className="rounded-md border border-white/10 bg-black/50 px-2.5 py-0.5 text-xs font-bold text-[color:var(--cyber-gold-soft)]">
+                        {bentoSecondary2.price
+                          ? formatSaleorMoney(bentoSecondary2.price)
+                          : "Pending"}
+                      </span>
+                    </div>
+
+                    {/* Large Secondary Image Area */}
+                    <div className="my-3 flex h-48 items-center justify-center rounded-xl bg-white/[0.03] p-2 transition group-hover:bg-white/[0.06]">
                       {bentoSecondary2.imageUrl ? (
                         <img
                           src={bentoSecondary2.imageUrl}
                           alt={bentoSecondary2.imageAlt}
-                          className="max-h-full max-w-full object-contain"
+                          className="max-h-44 w-full object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
                         />
                       ) : (
                         <ImageFallback
@@ -311,29 +341,21 @@ export function NtmsSaleorCatalogPage({
                         />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <span className="text-[10px] font-bold uppercase tracking-wider text-[color:var(--cyber-gold-soft)]">
-                        {bentoSecondary2.categoryName}
-                      </span>
-                      <h4 className="truncate text-base font-bold text-foreground">
+
+                    <div className="flex items-center justify-between pt-2">
+                      <h4 className="truncate text-sm font-bold text-foreground">
                         {bentoSecondary2.name}
                       </h4>
-                      <div className="mt-2 flex items-center justify-between">
-                        <span className="text-sm font-bold text-[color:var(--cyber-gold-soft)]">
-                          {bentoSecondary2.price
-                            ? formatSaleorMoney(bentoSecondary2.price)
-                            : "Pending"}
-                        </span>
-                        {enableLinks ? (
-                          <Link
-                            to="/product/$productId"
-                            params={{ productId: bentoSecondary2.slug }}
-                            className="text-xs font-semibold text-foreground/60 hover:text-foreground"
-                          >
-                            Details &rarr;
-                          </Link>
-                        ) : null}
-                      </div>
+                      {enableLinks ? (
+                        <Link
+                          to="/product/$productId"
+                          params={{ productId: bentoSecondary2.slug }}
+                          className="ml-2 inline-flex shrink-0 items-center gap-1 text-xs font-bold text-[color:var(--cyber-gold-soft)] transition hover:text-white"
+                        >
+                          Details
+                          <ArrowRight className="h-3.5 w-3.5" />
+                        </Link>
+                      ) : null}
                     </div>
                   </div>
                 ) : null}
@@ -535,32 +557,35 @@ function SupplyIndexItem({
 }) {
   const displayName = getCategoryDisplayName(category);
   const content = (
-    <article className="group grid min-h-[184px] grid-cols-[minmax(0,1fr)_132px] border-b border-r border-[color:var(--cyber-gold)]/14 bg-card transition hover:bg-background">
-      <div className="flex min-w-0 flex-col p-4 sm:p-5">
-        <p className="text-[10px] font-bold uppercase text-[color:var(--cyber-gold-soft)]">
-          {category.productCount.toLocaleString()} supplies
-        </p>
-        <h3 className="mt-2 text-xl font-semibold leading-tight text-foreground">
-          {displayName}
-        </h3>
-        <span className="mt-auto inline-flex h-8 w-8 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-[color:var(--cyber-gold-soft)] transition group-hover:border-[color:var(--cyber-gold)] group-hover:bg-[color:var(--cyber-gold)] group-hover:text-black">
-          <ArrowRight className="h-4 w-4" />
-        </span>
-      </div>
-      <div className="min-h-0 border-l border-[color:var(--cyber-gold)]/12 bg-white">
+    <article className="group flex flex-col border-b border-r border-[color:var(--cyber-gold)]/14 bg-card transition hover:border-[color:var(--cyber-gold)]/40 hover:bg-card/90">
+      {/* Large Image Showcase Area */}
+      <div className="relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden border-b border-[color:var(--cyber-gold)]/10 bg-white p-4">
         {category.imageUrl ? (
           <img
             alt={category.imageAlt}
-            className="h-full w-full object-contain p-3 transition duration-300 group-hover:scale-[1.04]"
+            className="h-full w-full object-contain transition duration-500 group-hover:scale-108"
             decoding="async"
-            height={384}
+            height={420}
             loading="lazy"
             src={category.imageUrl}
-            width={384}
+            width={420}
           />
         ) : (
           <ImageFallback label={category.name.slice(0, 2).toUpperCase()} />
         )}
+        <span className="absolute right-3 top-3 rounded-md bg-black/75 px-2.5 py-1 text-[10px] font-black uppercase tracking-wider text-[color:var(--cyber-gold-soft)] backdrop-blur-md">
+          {category.productCount.toLocaleString()} items
+        </span>
+      </div>
+
+      {/* Concise Visual Label */}
+      <div className="flex items-center justify-between p-4 sm:p-5">
+        <h3 className="truncate text-lg font-bold text-foreground group-hover:text-[color:var(--cyber-gold-soft)]">
+          {displayName}
+        </h3>
+        <span className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-[color:var(--cyber-gold-soft)] transition group-hover:border-[color:var(--cyber-gold)] group-hover:bg-[color:var(--cyber-gold)] group-hover:text-black">
+          <ArrowRight className="h-4 w-4" />
+        </span>
       </div>
     </article>
   );
