@@ -4,7 +4,7 @@ import {
   Loader2,
   Minus,
   Plus,
-  ShoppingCart,
+  ShoppingBag,
   Trash2,
   X,
 } from "lucide-react";
@@ -63,35 +63,33 @@ export function NtmsSaleorCartDrawer() {
       <SheetContent
         side="right"
         showCloseButton={false}
-        overlayClassName="fixed inset-0 bg-black/65 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-all ease-in-out duration-300 data-[state=open]:backdrop-blur-[2px] data-[state=closed]:backdrop-blur-none"
-        className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full flex-col gap-0 border-l border-[color:var(--cyber-gold)]/18 bg-card p-0 text-foreground shadow-[0_30px_90px_rgba(0,0,0,.34)] md:w-[440px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right transition-all ease-in-out duration-300 sm:max-w-none"
+        overlayClassName="fixed inset-0 bg-black/40 backdrop-blur-sm transition-all duration-300"
+        className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full flex-col gap-0 border-l border-black/[0.06] bg-white p-0 text-[#1d1d1f] shadow-2xl md:w-[460px] sm:max-w-none antialiased"
         data-saleor-cart-drawer
       >
-        <div className="border-b border-[color:var(--cyber-gold)]/14 bg-background px-5 py-5 sm:px-6">
+        {/* Header */}
+        <div className="border-b border-black/[0.06] bg-white px-6 py-6 font-sans">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="text-xs font-semibold uppercase text-[color:var(--cyber-gold-soft)]">
-                  Cart
-                </p>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#0071e3]">
+                  Review
+                </span>
                 {quantity > 0 ? (
-                  <span className="rounded-full border border-[color:var(--cyber-cyan)]/18 bg-background/70 px-2 py-0.5 text-[11px] font-semibold text-foreground/58">
-                    {quantity} item{quantity === 1 ? "" : "s"}
+                  <span className="rounded-full bg-[#f5f5f7] px-2.5 py-0.5 text-[11px] font-bold text-[#1d1d1f]">
+                    {quantity} {quantity === 1 ? "item" : "items"}
                   </span>
                 ) : null}
               </div>
-              <SheetTitle className="mt-2 text-2xl font-semibold">
-                Your cart
+              <SheetTitle className="mt-1 text-2xl font-extrabold tracking-tight text-[#1d1d1f]">
+                Studio Bag
               </SheetTitle>
-              <p className="mt-2 max-w-xs text-sm leading-5 text-foreground/52">
-                Review quantities and totals before checkout.
-              </p>
             </div>
             <button
               type="button"
               aria-label="Close cart"
               onClick={closeCart}
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 text-foreground/60 transition hover:border-[color:var(--cyber-gold)]/46 hover:text-foreground"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#f5f5f7] text-[#1d1d1f] transition hover:bg-[#e8e8ed] hover:scale-105"
             >
               <X className="h-4 w-4" />
             </button>
@@ -101,41 +99,45 @@ export function NtmsSaleorCartDrawer() {
           </SheetDescription>
         </div>
 
+        {/* Body */}
         {isLoading && !checkout ? (
-          <div className="flex flex-1 items-center justify-center text-sm text-foreground/55">
-            <Loader2 className="mr-2 h-4 w-4 animate-spin text-[color:var(--cyber-gold-soft)]" />
-            Loading cart
+          <div className="flex flex-1 items-center justify-center text-sm font-semibold text-[#86868b]">
+            <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#0071e3]" />
+            Updating bag...
           </div>
         ) : !hasLines ? (
-          <div className="px-5 pt-5 sm:px-6">
-            <div className="rounded-md border border-[color:var(--cyber-gold)]/14 bg-background p-6 text-center">
-              <ShoppingCart className="mx-auto h-8 w-8 text-[color:var(--cyber-gold-soft)]" />
-              <h2 className="mt-4 text-xl font-semibold text-foreground">
-                Your cart is empty
-              </h2>
-              <p className="mx-auto mt-2 max-w-sm text-sm leading-6 text-foreground/55">
-                Add products to continue to checkout.
-              </p>
-              <Button asChild className="mt-5">
-                <Link to="/search" onClick={closeCart}>
-                  Search products
-                </Link>
-              </Button>
+          <div className="flex flex-1 flex-col items-center justify-center p-8 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-[#f5f5f7] text-[#86868b]">
+              <ShoppingBag className="h-9 w-9 text-[#86868b]" />
             </div>
+            <h2 className="mt-5 text-xl font-bold text-[#1d1d1f]">
+              Your Bag is Empty
+            </h2>
+            <p className="mt-2 text-sm text-[#6e6e73]">
+              Supplies and hardware you add will appear here.
+            </p>
+            <Button
+              asChild
+              className="mt-6 rounded-full bg-[#0071e3] px-6 text-white hover:bg-[#0077ed]"
+            >
+              <Link to="/search" onClick={closeCart}>
+                Explore Catalog
+              </Link>
+            </Button>
           </div>
         ) : checkout ? (
-          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-5 pb-5 pt-2 sm:px-6 sm:pb-6">
-            <ul className="min-h-0 grow space-y-3 overflow-auto py-4 pr-1">
+          <div className="flex min-h-0 flex-1 flex-col overflow-hidden px-6 pb-6 pt-2">
+            <ul className="min-h-0 grow space-y-4 overflow-auto py-4 pr-1">
               {checkout.lines.map((line) => (
                 <li
-                  className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/14 bg-background transition hover:border-[color:var(--cyber-gold)]/34"
+                  className="overflow-hidden rounded-2xl bg-[#fbfbfd] p-3.5 shadow-sm transition hover:shadow-md"
                   data-saleor-cart-line
                   key={line.id}
                 >
-                  <div className="flex w-full gap-3 p-3">
+                  <div className="flex w-full gap-4">
                     <Link
                       aria-label={`Open ${line.productName}`}
-                      className="relative h-[88px] w-[88px] flex-none overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/14 bg-white"
+                      className="relative h-20 w-20 flex-none overflow-hidden rounded-xl bg-white p-2 shadow-inner"
                       onClick={closeCart}
                       params={{ productId: line.productSlug }}
                       to="/product/$productId"
@@ -143,75 +145,73 @@ export function NtmsSaleorCartDrawer() {
                       {line.imageUrl ? (
                         <img
                           alt={line.imageAlt}
-                          className="h-full w-full object-contain p-2"
+                          className="h-full w-full object-contain mix-blend-multiply"
                           loading="lazy"
                           src={line.imageUrl}
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center px-2 text-center text-xs font-semibold uppercase text-foreground/35">
+                        <div className="flex h-full w-full items-center justify-center text-center text-[10px] font-bold uppercase text-[#86868b]">
                           {line.productName}
                         </div>
                       )}
                     </Link>
-                    <div className="flex min-w-0 flex-1 flex-col gap-3">
+
+                    <div className="flex min-w-0 flex-1 flex-col justify-between">
                       <Link
-                        className="z-30 min-w-0"
+                        className="min-w-0"
                         onClick={closeCart}
                         params={{ productId: line.productSlug }}
                         to="/product/$productId"
                       >
-                        <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition hover:text-[color:var(--cyber-gold-soft)]">
+                        <span className="line-clamp-2 text-xs font-bold text-[#1d1d1f] hover:text-[#0071e3]">
                           {line.productName}
                         </span>
-                        <p className="mt-1 truncate text-[11px] font-medium uppercase text-foreground/38">
-                          SKU {line.sku || "pending"}
+                        <p className="mt-0.5 text-[10px] uppercase tracking-wider text-[#86868b]">
+                          SKU {line.sku || "N/A"}
                         </p>
                       </Link>
 
-                      <div className="flex items-end justify-between gap-3">
-                        <div>
-                          <p className="text-[11px] font-semibold uppercase text-foreground/40">
-                            Line total
-                          </p>
-                          <p className="mt-1 text-sm font-semibold text-[color:var(--cyber-gold-soft)]">
-                            {formatSaleorMoney(line.totalPrice)}
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1.5">
-                          <div className="ml-auto flex h-9 flex-row items-center rounded-md border border-[color:var(--cyber-gold)]/14 bg-card p-0.5">
+                      <div className="flex items-center justify-between pt-2">
+                        <p className="text-xs font-extrabold text-[#1d1d1f]">
+                          {formatSaleorMoney(line.totalPrice)}
+                        </p>
+
+                        <div className="flex items-center gap-2">
+                          <div className="flex h-7 items-center rounded-full bg-white p-0.5 shadow-sm">
                             <QuantityButton
                               disabled={isMutating || line.quantity <= 1}
-                              icon={<Minus className="h-3.5 w-3.5" />}
+                              icon={
+                                <Minus className="h-3 w-3 text-[#1d1d1f]" />
+                              }
                               label="Decrease quantity"
                               onClick={() =>
                                 handleUpdateLine(line, line.quantity - 1)
                               }
                             />
-                            <p className="w-7 text-center">
-                              <span className="w-full text-sm font-semibold">
-                                {line.quantity}
-                              </span>
-                            </p>
+                            <span className="w-5 text-center text-xs font-bold text-[#1d1d1f]">
+                              {line.quantity}
+                            </span>
                             <QuantityButton
                               disabled={
                                 isMutating ||
                                 (line.quantityAvailable !== null &&
                                   line.quantity >= line.quantityAvailable)
                               }
-                              icon={<Plus className="h-3.5 w-3.5" />}
+                              icon={<Plus className="h-3 w-3 text-[#1d1d1f]" />}
                               label="Increase quantity"
                               onClick={() =>
                                 handleUpdateLine(line, line.quantity + 1)
                               }
                             />
                           </div>
+
                           <button
                             type="button"
                             aria-label="Remove item"
                             data-saleor-cart-remove-line
                             disabled={isMutating}
                             onClick={() => handleRemoveLine(line)}
-                            className="flex h-9 w-9 items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/14 bg-card text-foreground/55 transition hover:border-red-300/30 hover:text-red-200 disabled:cursor-not-allowed disabled:opacity-50"
+                            className="flex h-7 w-7 items-center justify-center rounded-full text-[#86868b] transition hover:bg-[#e8e8ed] hover:text-red-500"
                           >
                             <Trash2 className="h-3.5 w-3.5" />
                           </button>
@@ -223,11 +223,12 @@ export function NtmsSaleorCartDrawer() {
               ))}
             </ul>
 
-            <div className="border-t border-[color:var(--cyber-gold)]/14 py-4">
+            <div className="border-t border-black/[0.06] pt-4">
               <NtmsSaleorPromoCode />
             </div>
 
-            <div className="border-y border-[color:var(--cyber-gold)]/14 py-4 text-sm text-foreground/60">
+            {/* Total and Checkout */}
+            <div className="border-y border-black/[0.06] py-4 text-xs font-medium text-[#6e6e73] space-y-1.5">
               <SummaryRow
                 label="Subtotal"
                 price={checkout.originalSubtotalPrice}
@@ -235,7 +236,7 @@ export function NtmsSaleorCartDrawer() {
               {checkout.automaticDiscountPrice.amount > 0 ? (
                 <SummaryRow
                   discount
-                  label="Automatic quantity discount"
+                  label="Automatic Promotion"
                   price={checkout.automaticDiscountPrice}
                 />
               ) : null}
@@ -246,12 +247,16 @@ export function NtmsSaleorCartDrawer() {
                   price={checkout.discountPrice}
                 />
               ) : null}
-              <SummaryRow label="Shipping" price={checkout.shippingPrice} />
-              <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/12 pt-3">
-                <p className="font-medium text-foreground">Total</p>
-                <p className="text-xl font-semibold text-[color:var(--cyber-gold-soft)]">
+              <SummaryRow
+                label="Estimated Freight"
+                price={checkout.shippingPrice}
+              />
+
+              <div className="mt-3 flex items-center justify-between border-t border-black/[0.06] pt-3 text-[#1d1d1f]">
+                <span className="text-sm font-bold">Total Due</span>
+                <span className="text-lg font-extrabold text-[#1d1d1f]">
                   {formatSaleorMoney(checkout.totalPrice)}
-                </p>
+                </span>
               </div>
             </div>
 
@@ -260,24 +265,17 @@ export function NtmsSaleorCartDrawer() {
                 to="/checkout"
                 onClick={closeCart}
                 data-saleor-checkout-link
-                className="flex w-full items-center justify-center gap-2 rounded-md bg-[color:var(--cyber-gold)] px-5 py-3.5 text-sm font-semibold text-black transition hover:bg-[color:var(--cyber-gold-soft)]"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] py-3.5 text-sm font-semibold text-white shadow-[0_4px_16px_rgba(0,113,227,0.3)] transition-all hover:bg-[#0077ed] hover:shadow-[0_6px_20px_rgba(0,113,227,0.4)] hover:scale-[1.02] active:scale-[0.98]"
               >
-                Checkout
+                Checkout with Bag
                 <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link
-                to="/search"
-                onClick={closeCart}
-                className="mt-3 flex w-full items-center justify-center rounded-md border border-[color:var(--cyber-gold)]/18 px-4 py-3 text-sm font-semibold text-foreground/62 transition hover:border-[color:var(--cyber-gold)]/42 hover:text-foreground"
-              >
-                Continue shopping
               </Link>
               <button
                 type="button"
                 onClick={clearCartSession}
-                className="mt-3 w-full text-center text-xs font-semibold uppercase text-foreground/35 transition hover:text-foreground/65"
+                className="mt-3 w-full text-center text-[11px] font-semibold text-[#86868b] transition hover:text-[#1d1d1f]"
               >
-                Reset cart
+                Clear Cart
               </button>
             </div>
           </div>
@@ -305,8 +303,8 @@ function QuantityButton({
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        "flex h-8 w-8 items-center justify-center rounded-md text-foreground/58 transition hover:bg-[color:var(--cyber-gold)]/10 hover:text-foreground",
-        disabled && "cursor-not-allowed opacity-40",
+        "flex h-6 w-6 items-center justify-center rounded-full transition hover:bg-[#f5f5f7]",
+        disabled && "cursor-not-allowed opacity-30",
       )}
     >
       {icon}
@@ -321,20 +319,23 @@ function SummaryRow({
 }: {
   discount?: boolean;
   label: string;
-  price: { amount: number; currency: string };
+  price: { amount: number; currency: string } | null;
 }) {
   return (
-    <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-2 last:mb-0">
-      <p>{label}</p>
-      <p
+    <div className="flex items-center justify-between">
+      <span>{label}</span>
+      <span
         className={cn(
-          "text-right font-medium text-foreground",
-          discount && "text-emerald-300",
+          "font-medium",
+          discount ? "text-emerald-600" : "text-[#1d1d1f]",
         )}
       >
-        {discount ? "-" : ""}
-        {formatSaleorMoney(price)}
-      </p>
+        {price
+          ? discount
+            ? `-${formatSaleorMoney(price)}`
+            : formatSaleorMoney(price)
+          : "Free"}
+      </span>
     </div>
   );
 }
