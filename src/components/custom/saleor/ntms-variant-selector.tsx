@@ -158,14 +158,14 @@ export function NtmsSaleorVariantSelector({
   }
 
   return (
-    <div className="space-y-5" data-saleor-variant-attribute-selector>
+    <div className="space-y-6" data-saleor-variant-attribute-selector>
       {groups.map((group, groupIndex) => {
         const selectedValueId = getAttributeValueId(selectedVariant, group.id);
         const isColorAttribute = isSaleorColorAttribute(group);
 
         return (
           <div data-saleor-variant-attribute-name={group.name} key={group.id}>
-            <p className="mb-2 text-xs font-bold uppercase text-foreground/52">
+            <p className="mb-2.5 text-xs font-semibold uppercase tracking-wider text-[#86868b]">
               {group.name}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -187,11 +187,10 @@ export function NtmsSaleorVariantSelector({
                     aria-label={`Select ${group.name}: ${value.name}`}
                     aria-pressed={selected}
                     className={clsx(
-                      "min-h-10 max-w-full border border-[color:var(--cyber-gold)]/20 bg-background px-3 py-2 text-left text-sm font-semibold text-foreground transition focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]/40 disabled:cursor-not-allowed disabled:opacity-35",
+                      "min-h-10 max-w-full rounded-full px-4 py-2 text-left text-xs font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]/30 disabled:cursor-not-allowed disabled:opacity-35",
                       {
-                        "border-[color:var(--cyber-gold)]/70 bg-[color:var(--cyber-gold)]/14 text-[color:var(--cyber-gold-soft)]":
-                          selected,
-                        "hover:border-[color:var(--cyber-gold)]/45 hover:bg-[color:var(--cyber-gold)]/8":
+                        "bg-[#1d1d1f] text-white shadow-sm": selected,
+                        "bg-[#f5f5f7] text-[#1d1d1f] hover:bg-[#e8e8ed]":
                           !selected && available,
                       },
                     )}
@@ -213,7 +212,7 @@ export function NtmsSaleorVariantSelector({
                     {isColorAttribute ? (
                       <span
                         aria-hidden="true"
-                        className="mr-2 inline-block h-4 w-4 shrink-0 border border-foreground/25 align-[-0.15em]"
+                        className="mr-2 inline-block h-3.5 w-3.5 shrink-0 rounded-full border border-black/10 align-[-0.15em] shadow-inner"
                         data-saleor-variant-color-swatch={
                           swatch ? "resolved" : "fallback"
                         }

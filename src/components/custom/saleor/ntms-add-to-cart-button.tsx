@@ -42,7 +42,10 @@ export function NtmsSaleorAddToCartButton({
   if (size === "full") {
     return (
       <Button
-        className={cn("h-12 w-full gap-2 font-semibold", className)}
+        className={cn(
+          "h-12 w-full gap-2 rounded-full bg-[#0071e3] font-medium text-white shadow-sm transition hover:bg-[#0077ed] active:scale-[0.99] disabled:bg-[#d2d2d7] disabled:text-[#86868b]",
+          className,
+        )}
         data-saleor-add-to-cart-button
         data-saleor-quantity={safeQuantity}
         data-saleor-variant-id={variantId}
@@ -55,7 +58,7 @@ export function NtmsSaleorAddToCartButton({
         ) : (
           <ShoppingCart className="h-4 w-4" />
         )}
-        {isMutating ? "Adding" : label}
+        {isMutating ? "Adding..." : label}
       </Button>
     );
   }
@@ -70,7 +73,7 @@ export function NtmsSaleorAddToCartButton({
       disabled={!canAdd || isMutating}
       onClick={handleAdd}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 bg-[color:var(--cyber-gold)] px-2.5 text-xs font-bold text-black transition hover:bg-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-3",
+        "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#0071e3] px-3.5 text-xs font-semibold text-white shadow-sm transition hover:bg-[#0077ed] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-[#f5f5f7] disabled:text-[#86868b] sm:px-4",
         className,
       )}
     >
@@ -79,7 +82,7 @@ export function NtmsSaleorAddToCartButton({
       ) : (
         <ArrowRight className="h-3.5 w-3.5" />
       )}
-      <span>{isMutating ? "Adding" : label}</span>
+      <span>{isMutating ? "Adding..." : label}</span>
     </button>
   );
 }
