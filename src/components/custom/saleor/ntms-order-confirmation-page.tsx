@@ -10,27 +10,34 @@ export function NtmsSaleorOrderConfirmationPage({
 }) {
   if (!order) {
     return (
-      <main className="min-h-screen bg-background px-4 py-10 text-foreground">
+      <main className="min-h-screen bg-[#fbfbfd] px-4 py-16 text-[#1d1d1f]">
         <div className="mx-auto max-w-screen-md">
           <Link
             to="/"
-            className="text-sm font-black uppercase text-foreground transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-semibold tracking-tight text-[#1d1d1f] transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <div className="mt-8 border border-[color:var(--cyber-gold)]/12 bg-card p-8 text-center">
-            <PackageCheck className="mx-auto h-9 w-9 text-[color:var(--cyber-gold-soft)]" />
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight">
+          <div className="mt-8 rounded-[1.5rem] border border-black/[0.06] bg-white p-12 text-center shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+            <PackageCheck className="mx-auto h-10 w-10 text-[#86868b]" />
+            <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#1d1d1f]">
               Order not found
             </h1>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-foreground/58">
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#6e6e73]">
               The Saleor order confirmation link is no longer available.
             </p>
             <div className="mt-6 flex justify-center gap-3">
-              <Button asChild>
+              <Button
+                asChild
+                className="rounded-full bg-[#0071e3] px-6 text-white hover:bg-[#0077ed]"
+              >
                 <Link to="/search">Search products</Link>
               </Button>
-              <Button asChild variant="outline">
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-full border-black/10 text-[#1d1d1f] hover:bg-black/[0.03]"
+              >
                 <Link to="/">Catalog</Link>
               </Button>
             </div>
@@ -41,77 +48,80 @@ export function NtmsSaleorOrderConfirmationPage({
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <header className="border-b border-[color:var(--cyber-gold)]/10 bg-background">
-        <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-4 py-4">
+    <main
+      className="min-h-screen bg-gradient-to-b from-[#ffffff] via-[#fbfbfd] to-[#f5f5f7] text-[#1d1d1f]"
+      data-saleor-order-confirmation-page
+    >
+      <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-[#ffffff]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-4 px-6 py-4">
           <Link
             to="/"
-            className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/68 transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-base font-semibold tracking-tight text-[#1d1d1f] transition hover:opacity-70"
           >
             Nuclear Tattoo Supply
           </Link>
-          <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
-            Confirmation
+          <span className="rounded-full bg-emerald-500/10 px-3.5 py-1 text-xs font-semibold tracking-wide text-emerald-600">
+            Confirmed
           </span>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-screen-2xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
-        <section className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-          <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-6">
-            <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="mx-auto grid max-w-screen-2xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
+        <section className="overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+          <div className="border-b border-black/[0.06] px-6 py-6">
+            <div className="flex items-center gap-2 text-emerald-600">
               <CheckCircle2 className="h-5 w-5" />
-              <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+              <p className="text-xs font-semibold uppercase tracking-[0.16em]">
                 Order confirmed
               </p>
             </div>
-            <h1 className="mt-3 text-3xl font-semibold tracking-tight sm:text-4xl">
+            <h1 className="mt-3 text-3xl font-bold tracking-tight text-[#1d1d1f] sm:text-4xl">
               Order #{order.number}
             </h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-foreground/58">
-              Your checkout was accepted and your order has been created.
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-[#6e6e73]">
+              Thank you! Your checkout was accepted and your order has been created.
             </p>
           </div>
 
-          <div className="grid gap-3 p-5 sm:grid-cols-3">
+          <div className="grid gap-3 p-6 sm:grid-cols-3">
             <Metric label="Status" value={order.statusDisplay} />
             <Metric label="Payment" value={order.paymentStatusDisplay} />
             <Metric
               label="Delivery"
-              value={order.shippingMethodName || "Pending"}
+              value={order.shippingMethodName || "Standard Shipping"}
             />
           </div>
 
-          <div className="border-t border-[color:var(--cyber-gold)]/10 p-5">
-            <h2 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+          <div className="border-t border-black/[0.06] p-6">
+            <h2 className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-[#0071e3]">
               <ReceiptText className="h-4 w-4" />
-              Items
+              Purchased items ({order.lines.length})
             </h2>
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-4 space-y-3.5">
               {order.lines.map((line) => (
                 <li
-                  className="flex gap-3 rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-3"
+                  className="flex items-center gap-3.5 rounded-2xl border border-black/[0.06] bg-[#fbfbfd] p-4 transition hover:bg-white hover:shadow-[0_2px_10px_rgba(0,0,0,0.02)]"
                   key={line.id}
                 >
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/10 bg-card">
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-black/[0.06] bg-white">
                     {line.imageUrl ? (
                       <img
                         alt={line.imageAlt}
-                        className="h-full w-full object-contain p-1.5"
+                        className="h-full w-full object-contain p-1.5 mix-blend-multiply"
                         src={line.imageUrl}
                       />
                     ) : null}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="line-clamp-2 text-sm font-semibold">
+                    <p className="line-clamp-2 text-sm font-semibold text-[#1d1d1f]">
                       {line.productName}
                     </p>
-                    <p className="mt-1 text-xs text-foreground/45">
+                    <p className="mt-0.5 text-xs text-[#86868b]">
                       Qty {line.quantity}
-                      {line.sku ? ` - SKU ${line.sku}` : ""}
+                      {line.sku ? ` · SKU ${line.sku}` : ""}
                     </p>
                   </div>
-                  <p className="shrink-0 text-sm font-semibold text-[color:var(--cyber-gold-soft)]">
+                  <p className="shrink-0 text-sm font-bold text-[#1d1d1f]">
                     {formatSaleorMoney(line.totalPrice)}
                   </p>
                 </li>
@@ -120,30 +130,37 @@ export function NtmsSaleorOrderConfirmationPage({
           </div>
         </section>
 
-        <aside className="sticky top-6 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-          <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
-              Receipt
+        <aside className="sticky top-24 overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+          <div className="border-b border-black/[0.06] px-6 py-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0071e3]">
+              Receipt Summary
             </p>
-            <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+            <h2 className="mt-2 text-xl font-bold tracking-tight text-[#1d1d1f]">
               {order.userEmail || "Guest order"}
             </h2>
           </div>
-          <div className="p-5">
+          <div className="p-6">
             <SummaryRow label="Subtotal" price={order.subtotalPrice} />
             <SummaryRow label="Shipping" price={order.shippingPrice} />
-            <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-3">
-              <p className="font-semibold">Total</p>
-              <p className="text-2xl font-semibold text-[color:var(--cyber-gold-soft)]">
+            <div className="mt-4 flex items-center justify-between border-t border-black/[0.06] pt-4">
+              <p className="text-base font-bold text-[#1d1d1f]">Total</p>
+              <p className="text-2xl font-bold tracking-tight text-[#1d1d1f]">
                 {formatSaleorMoney(order.totalPrice)}
               </p>
             </div>
-            <div className="mt-5 grid gap-3">
-              <Button asChild>
+            <div className="mt-6 grid gap-3">
+              <Button
+                asChild
+                className="h-12 rounded-full bg-[#0071e3] font-semibold text-white shadow-sm hover:bg-[#0077ed]"
+              >
                 <Link to="/">Continue shopping</Link>
               </Button>
-              <Button asChild variant="outline">
-                <Link to="/search">Search products</Link>
+              <Button
+                asChild
+                variant="outline"
+                className="h-12 rounded-full border-black/10 text-[#1d1d1f] hover:bg-black/[0.03]"
+              >
+                <Link to="/search">Search catalog</Link>
               </Button>
             </div>
           </div>
@@ -155,11 +172,11 @@ export function NtmsSaleorOrderConfirmationPage({
 
 function Metric({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/42">
+    <div className="rounded-2xl border border-black/[0.06] bg-[#fbfbfd] p-4.5">
+      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#86868b]">
         {label}
       </p>
-      <p className="mt-2 text-sm font-semibold text-foreground">{value}</p>
+      <p className="mt-1.5 truncate text-sm font-bold text-[#1d1d1f]">{value}</p>
     </div>
   );
 }
@@ -172,9 +189,9 @@ function SummaryRow({
   price: { amount: number; currency: string };
 }) {
   return (
-    <div className="mb-2 flex items-center justify-between text-sm text-foreground/58">
-      <p>{label}</p>
-      <p>{formatSaleorMoney(price)}</p>
+    <div className="mb-2.5 flex items-center justify-between text-sm text-[#6e6e73]">
+      <p className="font-normal">{label}</p>
+      <p className="font-medium text-[#1d1d1f]">{formatSaleorMoney(price)}</p>
     </div>
   );
 }
