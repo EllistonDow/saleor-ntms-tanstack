@@ -127,14 +127,19 @@ export function NtmsSaleorCheckoutPage() {
 
       return result.checkout;
     },
-    onSuccess: (nextCheckout) => {
-      syncCheckout(nextCheckout);
-      toast.success("Checkout details saved");
+    onSuccess: (updatedCheckout) => {
+      syncCheckout(updatedCheckout);
+      toast.success("Delivery details saved");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Unable to save");
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to save delivery details",
+      );
     },
   });
+
   const deliveryMutation = useMutation({
     mutationFn: async (deliveryMethodId: string) => {
       if (!checkout) {
@@ -154,24 +159,19 @@ export function NtmsSaleorCheckoutPage() {
 
       return result.checkout;
     },
-    onSuccess: (nextCheckout) => {
-      syncCheckout(nextCheckout);
-      toast.success("Delivery method saved");
+    onSuccess: (updatedCheckout) => {
+      syncCheckout(updatedCheckout);
+      toast.success("Shipping method updated");
     },
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Unable to save delivery",
+        error instanceof Error
+          ? error.message
+          : "Unable to update shipping method",
       );
     },
   });
-  const handleOrderPlaced = async (order: NtmsSaleorOrder) => {
-    clearCartSession();
-    toast.success("Order placed");
-    await navigate({
-      to: "/checkout/confirmation/$code",
-      params: { code: encodeNtmsSaleorOrderRouteId(order.id) },
-    });
-  };
+
   const completeMutation = useMutation({
     mutationFn: async () => {
       if (!checkout) {
@@ -181,7 +181,7 @@ export function NtmsSaleorCheckoutPage() {
       const result = await completeSaleorCheckout({
         data: {
           checkoutId: checkout.id,
-          gatewayId: selectedGatewayId,
+          gatewayId: selectedGatewayId || undefined,
         },
       });
 
@@ -191,7 +191,9 @@ export function NtmsSaleorCheckoutPage() {
 
       return result.order;
     },
-    onSuccess: handleOrderPlaced,
+    onSuccess: async (order) => {
+      await handleOrderPlaced(order);
+    },
     onError: (error) => {
       toast.error(
         error instanceof Error ? error.message : "Unable to place order",
@@ -200,66 +202,106 @@ export function NtmsSaleorCheckoutPage() {
   });
 
   useEffect(() => {
-    if (checkout) {
-      setFormValues(getInitialFormValues(checkout));
-    }
+    if (!checkout) return;
+    setFormValues((current) => {
+      const next = getInitialFormValues(checkout);
+      return {
+        ...next,
+        email: current.email || next.email,
+        firstName: current.firstName || next.firstName,
+        lastName: current.lastName || next.lastName,
+        companyName: current.companyName || next.companyName,
+        streetAddress1: current.streetAddress1 || next.streetAddress1,
+        streetAddress2: current.streetAddress2 || next.streetAddress2,
+        city: current.city || next.city,
+        postalCode: current.postalCode || next.postalCode,
+        country: current.country || next.country,
+        countryArea: current.countryArea || next.countryArea,
+        phone: current.phone || next.phone,
+      };
+    });
   }, [checkout]);
 
   useEffect(() => {
-    if (!checkout || checkout.paymentGateways.length === 0) {
+    if (!checkout) {
       setSelectedGatewayId("");
       return;
     }
 
-    if (!selectedGatewayId) {
-      return;
-    }
-
-    const currentGatewayStillAvailable = checkout.paymentGateways.some(
-      (gateway) => gateway.id === selectedGatewayId && gateway.supported,
+    const selectableGateways = checkout.paymentGateways.filter(
+      (gateway) => gateway.supported,
     );
-    if (currentGatewayStillAvailable) {
+    if (selectableGateways.length === 0) {
+      setSelectedGatewayId("");
       return;
     }
 
-    setSelectedGatewayId("");
+    const isCurrentValid = selectableGateways.some(
+      (gateway) => gateway.id === selectedGatewayId,
+    );
+    if (!isCurrentValid) {
+      const preferredGateway =
+        selectableGateways.find((gateway) => gateway.kind === "stripe") ??
+        selectableGateways.find((gateway) => gateway.kind === "paypal") ??
+        selectableGateways[0];
+      setSelectedGatewayId(preferredGateway?.id ?? "");
+    }
   }, [checkout, selectedGatewayId]);
 
-  const countryOptions = getCheckoutCountryOptions(formValues.country);
-  const selectedGateway = checkout?.paymentGateways.find(
-    (gateway) => gateway.id === selectedGatewayId,
-  );
-  const requiresStripeForm =
-    selectedGateway?.kind === "stripe" ||
-    selectedGateway?.kind === "legacy-stripe";
-  const requiresPayPalButtons = selectedGateway?.kind === "paypal";
-  const requiresPaymentPanel = requiresStripeForm || requiresPayPalButtons;
-  const canPlaceOrder = Boolean(
-    checkout?.selectedShippingMethod &&
-      checkout.shippingAddress &&
-      checkout.billingAddress &&
-      selectedGateway?.supported &&
-      !requiresPaymentPanel,
-  );
-  const canUseStripeForm = Boolean(
-    checkout?.selectedShippingMethod &&
-      checkout.shippingAddress &&
-      checkout.billingAddress &&
-      requiresStripeForm,
-  );
-  const canUsePayPalButtons = Boolean(
-    checkout?.selectedShippingMethod &&
-      checkout.shippingAddress &&
-      checkout.billingAddress &&
-      requiresPayPalButtons,
+  const selectedGateway = useMemo(() => {
+    if (!checkout) return null;
+    return (
+      checkout.paymentGateways.find(
+        (gateway) => gateway.id === selectedGatewayId,
+      ) ?? null
+    );
+  }, [checkout, selectedGatewayId]);
+
+  const countryOptions = useMemo(
+    () => getCheckoutCountryOptions(formValues.country),
+    [formValues.country],
   );
 
+  const canUseStripeForm = Boolean(
+    checkout?.shippingAddress && checkout.selectedShippingMethod,
+  );
+  const canUsePayPalButtons = Boolean(
+    checkout?.shippingAddress && checkout.selectedShippingMethod,
+  );
+  const requiresPaymentPanel = Boolean(
+    selectedGateway &&
+      (selectedGateway.kind === "stripe" ||
+        selectedGateway.kind === "legacy-stripe" ||
+        selectedGateway.kind === "paypal"),
+  );
+
+  const canPlaceOrder = Boolean(
+    checkout &&
+      checkout.shippingAddress &&
+      checkout.selectedShippingMethod &&
+      !requiresPaymentPanel,
+  );
+
+  const handleOrderPlaced: CheckoutOrderPlacedHandler = async (order) => {
+    clearCartSession();
+    toast.success("Order placed successfully");
+    const routeId = encodeNtmsSaleorOrderRouteId({
+      orderId: order.id,
+      token: order.token,
+    });
+    await navigate({
+      to: "/order-confirmation/$orderId",
+      params: { orderId: routeId },
+    });
+  };
+
   const handleChange =
-    (field: keyof CheckoutFormValues) =>
+    (field: CheckoutFormValues[keyof CheckoutFormValues] extends string ? keyof CheckoutFormValues : never) =>
     (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { value } = event.target;
       setFormValues((current) => ({
         ...current,
-        [field]: event.target.value,
+        [field]: value,
       }));
       setAddressErrors((current) => {
         if (!current[field]) return current;
@@ -293,17 +335,18 @@ export function NtmsSaleorCheckoutPage() {
 
   if (isLoading && !checkout) {
     return (
-      <main className="min-h-screen bg-background px-4 py-10 text-foreground">
+      <main className="min-h-screen bg-[#fbfbfd] px-4 py-16 text-[#1d1d1f]">
         <div className="mx-auto max-w-screen-md">
           <Link
             to="/"
-            className="text-sm font-black uppercase text-foreground transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-semibold tracking-tight text-[#1d1d1f] transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <div className="mt-8 border border-[color:var(--cyber-gold)]/12 bg-card p-8 text-center">
-            <p className="text-sm font-semibold text-foreground/58">
-              Loading checkout
+          <div className="mt-8 rounded-[1.5rem] border border-black/[0.06] bg-white p-12 text-center shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+            <Loader2 className="mx-auto h-7 w-7 animate-spin text-[#0071e3]" />
+            <p className="mt-4 text-sm font-medium text-[#6e6e73]">
+              Loading checkout...
             </p>
           </div>
         </div>
@@ -313,27 +356,34 @@ export function NtmsSaleorCheckoutPage() {
 
   if (!checkout || checkout.lines.length === 0) {
     return (
-      <main className="min-h-screen bg-background px-4 py-10 text-foreground">
+      <main className="min-h-screen bg-[#fbfbfd] px-4 py-16 text-[#1d1d1f]">
         <div className="mx-auto max-w-screen-md">
           <Link
             to="/"
-            className="text-sm font-black uppercase text-foreground transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-semibold tracking-tight text-[#1d1d1f] transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <div className="mt-8 border border-[color:var(--cyber-gold)]/12 bg-card p-8 text-center">
-            <Package2 className="mx-auto h-9 w-9 text-[color:var(--cyber-gold-soft)]" />
-            <h1 className="mt-4 text-3xl font-semibold tracking-tight">
+          <div className="mt-8 rounded-[1.5rem] border border-black/[0.06] bg-white p-12 text-center shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+            <Package2 className="mx-auto h-10 w-10 text-[#86868b]" />
+            <h1 className="mt-4 text-2xl font-bold tracking-tight text-[#1d1d1f]">
               Your cart is empty
             </h1>
-            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-foreground/58">
-              Add products before returning to checkout.
+            <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#6e6e73]">
+              Add products to your cart before returning to checkout.
             </p>
             <div className="mt-6 flex justify-center gap-3">
-              <Button asChild>
+              <Button
+                asChild
+                className="rounded-full bg-[#0071e3] px-6 text-white hover:bg-[#0077ed]"
+              >
                 <Link to="/search">Search products</Link>
               </Button>
-              <Button asChild variant="outline">
+              <Button
+                asChild
+                variant="outline"
+                className="rounded-full border-black/10 text-[#1d1d1f] hover:bg-black/[0.03]"
+              >
                 <Link to="/">Catalog</Link>
               </Button>
             </div>
@@ -345,24 +395,26 @@ export function NtmsSaleorCheckoutPage() {
 
   return (
     <main
-      className="min-h-screen bg-background text-foreground"
+      className="min-h-screen bg-gradient-to-b from-[#ffffff] via-[#fbfbfd] to-[#f5f5f7] text-[#1d1d1f]"
       data-saleor-checkout-page
     >
-      <header className="border-b border-[color:var(--cyber-gold)]/10 bg-background">
-        <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-4">
+      <header className="sticky top-0 z-30 border-b border-black/[0.06] bg-[#ffffff]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-6 py-4">
           <Link
             to="/"
-            className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/68 transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-base font-semibold tracking-tight text-[#1d1d1f] transition hover:opacity-70"
           >
             Nuclear Tattoo Supply
           </Link>
-          <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
-            Checkout
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="rounded-full bg-black/[0.05] px-3.5 py-1 text-xs font-semibold tracking-wide text-[#6e6e73]">
+              Secure Checkout
+            </span>
+          </div>
         </div>
       </header>
 
-      <div className="mx-auto grid max-w-screen-2xl gap-6 px-4 py-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-start">
+      <div className="mx-auto grid max-w-screen-2xl gap-8 px-6 py-8 lg:grid-cols-[minmax(0,1fr)_440px] lg:items-start">
         <div className="space-y-6">
           <section className="grid gap-3 sm:grid-cols-3">
             <CheckoutStepPill
@@ -389,29 +441,29 @@ export function NtmsSaleorCheckoutPage() {
             />
           </section>
 
-          <section className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-            <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-              <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+          <section className="overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+            <div className="border-b border-black/[0.06] px-6 py-5">
+              <div className="flex items-center gap-2 text-[#0071e3]">
                 <MapPinned className="h-4 w-4" />
-                <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+                <p className="text-xs font-semibold uppercase tracking-[0.16em]">
                   Contact and address
                 </p>
               </div>
-              <h1 className="mt-2 text-3xl font-semibold tracking-tight">
+              <h1 className="mt-2 text-2xl font-bold tracking-tight text-[#1d1d1f]">
                 Delivery details
               </h1>
             </div>
 
             <form
               aria-busy={addressMutation.isPending}
-              className="p-5"
+              className="p-6"
               data-saleor-checkout-address-form
               noValidate
               onSubmit={handleSubmit}
             >
               {!isNtmsCheckoutAddressValid(addressErrors) ? (
                 <p
-                  className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+                  className="mb-4 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm leading-6 text-destructive"
                   data-saleor-checkout-validation-error
                   role="alert"
                 >
@@ -420,7 +472,7 @@ export function NtmsSaleorCheckoutPage() {
               ) : null}
               {addressMutation.error ? (
                 <p
-                  className="mb-4 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+                  className="mb-4 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm leading-6 text-destructive"
                   data-saleor-checkout-address-error
                   role="alert"
                 >
@@ -527,7 +579,7 @@ export function NtmsSaleorCheckoutPage() {
                   value={formValues.postalCode}
                 />
                 <Field data-invalid={Boolean(addressErrors.country)}>
-                  <FieldLabel htmlFor="country">
+                  <FieldLabel htmlFor="country" className="text-xs font-semibold text-[#1d1d1f]">
                     Country
                     <select
                       aria-describedby={
@@ -535,7 +587,7 @@ export function NtmsSaleorCheckoutPage() {
                       }
                       aria-invalid={Boolean(addressErrors.country)}
                       autoComplete="country"
-                      className="mt-2 h-10 w-full rounded-md border border-[color:var(--cyber-gold)]/20 bg-background px-3 text-sm text-foreground focus:border-[color:var(--cyber-gold)]/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyber-gold)]/35"
+                      className="mt-2 h-11 w-full rounded-xl border border-black/10 bg-[#fbfbfd] px-3.5 text-sm text-[#1d1d1f] transition focus:border-[#0071e3] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0071e3]/20"
                       id="country"
                       name="country"
                       onChange={handleChange("country")}
@@ -550,23 +602,24 @@ export function NtmsSaleorCheckoutPage() {
                     </select>
                   </FieldLabel>
                   {addressErrors.country ? (
-                    <p className="text-sm text-destructive" id="country-error">
+                    <p className="mt-1 text-sm text-destructive" id="country-error">
                       {addressErrors.country}
                     </p>
                   ) : null}
                 </Field>
               </FieldGroup>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--cyber-gold)]/10 pt-5">
-                <p className="text-sm text-foreground/52">
+              <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-black/[0.06] pt-5">
+                <p className="text-xs text-[#86868b]">
                   Billing address will match delivery address.
                 </p>
                 <Button
                   data-saleor-checkout-save-address
                   disabled={addressMutation.isPending}
                   type="submit"
+                  className="rounded-full bg-[#1d1d1f] px-6 text-sm font-semibold text-white hover:bg-[#333336]"
                 >
-                  {addressMutation.isPending ? "Saving" : "Save details"}
+                  {addressMutation.isPending ? "Saving..." : "Save details"}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
               </div>
@@ -619,24 +672,24 @@ function DeliverySection({
 }) {
   return (
     <section
-      className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card"
+      className="overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]"
       data-saleor-checkout-shipping-section
     >
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="border-b border-black/[0.06] px-6 py-5">
+        <div className="flex items-center gap-2 text-[#0071e3]">
           <Truck className="h-4 w-4" />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em]">
             Delivery
           </p>
         </div>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+        <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#1d1d1f]">
           Shipping method
         </h2>
       </div>
-      <div className="space-y-3 p-5">
+      <div className="space-y-3 p-6">
         {error ? (
           <p
-            className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+            className="rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm leading-6 text-destructive"
             data-saleor-checkout-shipping-error
             role="alert"
           >
@@ -655,10 +708,10 @@ function DeliverySection({
             );
             return (
               <button
-                className={`w-full rounded-md border p-4 text-left transition ${
+                className={`w-full rounded-2xl border p-4.5 text-left transition-all duration-200 ${
                   selected
-                    ? "border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/10"
-                    : "border-[color:var(--cyber-gold)]/12 bg-background hover:border-[color:var(--cyber-gold)]/28"
+                    ? "border-[#0071e3] bg-[#0071e3]/[0.04] shadow-[0_2px_12px_rgba(0,113,227,0.08)]"
+                    : "border-black/[0.06] bg-[#fbfbfd] hover:border-black/20 hover:bg-white"
                 }`}
                 data-saleor-shipping-method-button
                 data-saleor-shipping-method-id={method.id}
@@ -674,24 +727,24 @@ function DeliverySection({
               >
                 <span className="flex items-start justify-between gap-4">
                   <span>
-                    <span className="block font-semibold text-foreground">
+                    <span className="block text-sm font-semibold text-[#1d1d1f]">
                       {method.name}
                     </span>
                     {method.description || method.message ? (
-                      <span className="mt-1 block text-sm text-foreground/55">
+                      <span className="mt-1 block text-xs text-[#6e6e73]">
                         {method.description || method.message}
                       </span>
                     ) : null}
                     {deliveryEstimate ? (
                       <span
-                        className="mt-1 block text-sm text-foreground/55"
+                        className="mt-1 block text-xs font-medium text-[#86868b]"
                         data-saleor-shipping-method-delivery
                       >
                         {deliveryEstimate}
                       </span>
                     ) : null}
                   </span>
-                  <span className="font-semibold text-[color:var(--cyber-gold-soft)]">
+                  <span className="shrink-0 text-sm font-bold text-[#1d1d1f]">
                     {formatSaleorMoney(method.price)}
                   </span>
                 </span>
@@ -699,7 +752,7 @@ function DeliverySection({
             );
           })
         ) : (
-          <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+          <p className="rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm leading-6 text-[#6e6e73]">
             Save a delivery address to load shipping methods.
           </p>
         )}
@@ -733,31 +786,31 @@ function PaymentSection({
 
   return (
     <section
-      className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card"
+      className="overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]"
       data-saleor-blocked-payment-gateway-count={blockedGatewayCount}
       data-saleor-checkout-payment-section
     >
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="border-b border-black/[0.06] px-6 py-5">
+        <div className="flex items-center gap-2 text-[#0071e3]">
           <CreditCard className="h-4 w-4" />
-          <p className="text-xs font-semibold uppercase tracking-[0.2em]">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em]">
             Payment
           </p>
         </div>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">
+        <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#1d1d1f]">
           Payment method
         </h2>
       </div>
-      <div className="space-y-3 p-5">
+      <div className="space-y-3 p-6">
         {selectableGateways.length > 0 ? (
           selectableGateways.map((gateway) => {
             const selected = selectedGatewayId === gateway.id;
             return (
               <button
-                className={`w-full rounded-md border p-4 text-left transition ${
+                className={`w-full rounded-2xl border p-4.5 text-left transition-all duration-200 ${
                   selected
-                    ? "border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/10"
-                    : "border-[color:var(--cyber-gold)]/12 bg-background hover:border-[color:var(--cyber-gold)]/28"
+                    ? "border-[#0071e3] bg-[#0071e3]/[0.04] shadow-[0_2px_12px_rgba(0,113,227,0.08)]"
+                    : "border-black/[0.06] bg-[#fbfbfd] hover:border-black/20 hover:bg-white"
                 }`}
                 data-saleor-payment-gateway-button
                 data-saleor-payment-gateway-id={gateway.id}
@@ -775,14 +828,14 @@ function PaymentSection({
               >
                 <span className="flex items-start justify-between gap-4">
                   <span>
-                    <span className="block font-semibold text-foreground">
+                    <span className="block text-sm font-semibold text-[#1d1d1f]">
                       {gateway.name}
                     </span>
-                    <p className="mt-1 text-sm text-foreground/52">
+                    <p className="mt-1 text-xs text-[#6e6e73]">
                       {gateway.currencies.join(", ")}
                     </p>
                   </span>
-                  <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--cyber-gold-soft)]">
+                  <span className="rounded-full bg-black/[0.05] px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-[#6e6e73]">
                     {gateway.supportLabel}
                   </span>
                 </span>
@@ -791,7 +844,7 @@ function PaymentSection({
           })
         ) : (
           <p
-            className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56"
+            className="rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm leading-6 text-[#6e6e73]"
             data-saleor-payment-unavailable
             role="status"
           >
@@ -873,27 +926,36 @@ function StripePaymentPanel({
         throw new Error(result.error);
       }
 
-      return result.payment;
+      return {
+        key: variables.sessionKey,
+        requestId: variables.requestId,
+        value: result.paymentSession,
+      };
     },
-    onSuccess: (payment, variables) => {
+    onSuccess: (data) => {
       if (
-        activePaymentSessionKeyRef.current !== variables.sessionKey ||
-        paymentSessionRequestIdRef.current !== variables.requestId
+        data.requestId !== paymentSessionRequestIdRef.current ||
+        data.key !== activePaymentSessionKeyRef.current
       ) {
         return;
       }
+
+      setPaymentSession({
+        key: data.key,
+        value: data.value,
+      });
       setFailedPaymentSessionKey(null);
-      setPaymentSession({ key: variables.sessionKey, value: payment });
     },
-    onError: (_error, variables) => {
-      if (
-        activePaymentSessionKeyRef.current !== variables.sessionKey ||
-        paymentSessionRequestIdRef.current !== variables.requestId
-      ) {
-        return;
-      }
-      setPaymentSession(null);
-      setFailedPaymentSessionKey(variables.sessionKey);
+    onError: (error) => {
+      const isLatestRequest =
+        activePaymentSessionKeyRef.current === paymentSessionKey;
+      if (!isLatestRequest) return;
+      setFailedPaymentSessionKey(paymentSessionKey);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to initialize Stripe payment",
+      );
     },
   });
 
@@ -923,7 +985,7 @@ function StripePaymentPanel({
 
   if (!canUseStripeForm) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm leading-6 text-[#6e6e73]">
         Save delivery details and select a shipping method before entering card
         details.
       </p>
@@ -957,8 +1019,9 @@ function StripePaymentPanel({
     paymentSession.key !== paymentSessionKey
   ) {
     return (
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm font-semibold text-foreground/58">
-        Initializing secure card form
+      <div className="flex items-center gap-2.5 rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm font-medium text-[#6e6e73]">
+        <Loader2 className="h-4 w-4 animate-spin text-[#0071e3]" />
+        Initializing secure card form...
       </div>
     );
   }
@@ -1000,6 +1063,7 @@ function PayPalPaymentPanel({
       transactionId: string;
     };
   } | null>(null);
+
   const initializeMutation = useMutation({
     mutationFn: async (variables: {
       checkoutId: string;
@@ -1018,27 +1082,36 @@ function PayPalPaymentPanel({
         throw new Error(result.error);
       }
 
-      return result.payment;
+      return {
+        key: variables.sessionKey,
+        requestId: variables.requestId,
+        value: result.paymentSession,
+      };
     },
-    onSuccess: (payment, variables) => {
+    onSuccess: (data) => {
       if (
-        activePaymentSessionKeyRef.current !== variables.sessionKey ||
-        paymentSessionRequestIdRef.current !== variables.requestId
+        data.requestId !== paymentSessionRequestIdRef.current ||
+        data.key !== activePaymentSessionKeyRef.current
       ) {
         return;
       }
+
+      setPaymentSession({
+        key: data.key,
+        value: data.value,
+      });
       setFailedPaymentSessionKey(null);
-      setPaymentSession({ key: variables.sessionKey, value: payment });
     },
-    onError: (_error, variables) => {
-      if (
-        activePaymentSessionKeyRef.current !== variables.sessionKey ||
-        paymentSessionRequestIdRef.current !== variables.requestId
-      ) {
-        return;
-      }
-      setPaymentSession(null);
-      setFailedPaymentSessionKey(variables.sessionKey);
+    onError: (error) => {
+      const isLatestRequest =
+        activePaymentSessionKeyRef.current === paymentSessionKey;
+      if (!isLatestRequest) return;
+      setFailedPaymentSessionKey(paymentSessionKey);
+      toast.error(
+        error instanceof Error
+          ? error.message
+          : "Unable to initialize PayPal payment",
+      );
     },
   });
 
@@ -1068,7 +1141,7 @@ function PayPalPaymentPanel({
 
   if (!canUsePayPalButtons) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm leading-6 text-[#6e6e73]">
         Save delivery details and select a shipping method before using PayPal.
       </p>
     );
@@ -1101,8 +1174,9 @@ function PayPalPaymentPanel({
     paymentSession.key !== paymentSessionKey
   ) {
     return (
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm font-semibold text-foreground/58">
-        Initializing PayPal Checkout
+      <div className="flex items-center gap-2.5 rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm font-medium text-[#6e6e73]">
+        <Loader2 className="h-4 w-4 animate-spin text-[#0071e3]" />
+        Initializing PayPal Checkout...
       </div>
     );
   }
@@ -1135,36 +1209,65 @@ function SaleorPayPalButtons({
   };
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const onOrderPlacedRef = useRef(onOrderPlaced);
-  const paypalButtonsRef = useRef<PayPalButtonsInstance | null>(null);
-  const [isApproving, setIsApproving] = useState(false);
+  const buttonInstanceRef = useRef<PayPalButtonsInstance | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isApproving, setIsApproving] = useState(false);
   const [paymentError, setPaymentError] = useState<string | null>(null);
 
-  useEffect(() => {
-    onOrderPlacedRef.current = onOrderPlaced;
-  }, [onOrderPlaced]);
+  const processMutation = useMutation({
+    mutationFn: async () => {
+      const result = await processSaleorPayPalPayment({
+        data: {
+          transactionId: paymentSession.transactionId,
+        },
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+    },
+  });
+
+  const completeMutation = useMutation({
+    mutationFn: async () => {
+      const result = await completeSaleorCheckout({
+        data: {
+          checkoutId,
+          gatewayId,
+        },
+      });
+
+      if (!result.success) {
+        throw new Error(result.error);
+      }
+
+      return result.order;
+    },
+    onSuccess: onOrderPlaced,
+    onError: (error) => {
+      toast.error(
+        error instanceof Error ? error.message : "Unable to place order",
+      );
+    },
+  });
 
   useEffect(() => {
     let cancelled = false;
     const container = containerRef.current;
 
-    async function teardown() {
-      if (paypalButtonsRef.current?.close) {
+    const teardown = async () => {
+      if (buttonInstanceRef.current?.close) {
         try {
-          await paypalButtonsRef.current.close();
-        } catch (error) {
-          console.error(error);
-        }
+          await buttonInstanceRef.current.close();
+        } catch {}
       }
-
-      paypalButtonsRef.current = null;
+      buttonInstanceRef.current = null;
       if (container) {
         container.innerHTML = "";
       }
-    }
+    };
 
-    async function initialize() {
+    const setupButtons = async () => {
       setIsLoading(true);
       setPaymentError(null);
       await teardown();
@@ -1198,69 +1301,52 @@ function SaleorPayPalButtons({
             }
 
             setIsApproving(true);
-            setPaymentError(null);
             try {
-              const processResult = await processSaleorPayPalPayment({
-                data: { transactionId: paymentSession.transactionId },
-              });
-              if (!processResult.success) {
-                throw new Error(processResult.error);
-              }
-
-              const completeResult = await completeSaleorCheckout({
-                data: {
-                  checkoutId,
-                  gatewayId,
-                },
-              });
-              if (!completeResult.success) {
-                throw new Error(completeResult.error);
-              }
-
-              await onOrderPlacedRef.current(completeResult.order);
+              await processMutation.mutateAsync();
+              await completeMutation.mutateAsync();
             } catch (error) {
-              setPaymentError(
-                error instanceof Error && error.message
+              const message =
+                error instanceof Error
                   ? error.message
-                  : "PayPal payment failed.",
-              );
+                  : "Unable to process PayPal payment";
+              setPaymentError(message);
+              toast.error(message);
             } finally {
               setIsApproving(false);
             }
           },
           onCancel: () => {
-            setPaymentError(null);
+            toast.info("PayPal checkout was cancelled.");
           },
           onError: (error) => {
-            console.error(error);
-            setPaymentError(
-              error instanceof Error && error.message
+            const message =
+              error instanceof Error
                 ? error.message
-                : "PayPal Checkout is currently unavailable.",
-            );
+                : "PayPal checkout encountered an error.";
+            setPaymentError(message);
+            toast.error(message);
           },
         });
 
-        paypalButtonsRef.current = buttons;
+        buttonInstanceRef.current = buttons;
         await buttons.render(container);
-
-        if (!cancelled) {
-          setIsLoading(false);
-        }
       } catch (error) {
-        console.error(error);
         if (!cancelled) {
-          setPaymentError(
-            error instanceof Error && error.message
+          const message =
+            error instanceof Error
               ? error.message
-              : "Unable to initialize PayPal Checkout.",
-          );
+              : "Unable to load PayPal Checkout.";
+          setPaymentError(message);
+          toast.error(message);
+        }
+      } finally {
+        if (!cancelled) {
           setIsLoading(false);
         }
       }
-    }
+    };
 
-    void initialize();
+    void setupButtons();
 
     return () => {
       cancelled = true;
@@ -1277,7 +1363,7 @@ function SaleorPayPalButtons({
 
   return (
     <div
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-2xl border border-black/[0.06] bg-[#fbfbfd] p-5"
       data-saleor-paypal-payment-panel
       data-saleor-paypal-payment-ready={
         !isLoading && !paymentError ? "true" : "false"
@@ -1285,28 +1371,28 @@ function SaleorPayPalButtons({
     >
       <div className={isApproving ? "pointer-events-none opacity-50" : ""}>
         {isLoading ? (
-          <div className="mb-3 rounded-md border border-[color:var(--cyber-gold)]/10 bg-card p-3 text-sm font-semibold text-foreground/58">
-            Loading PayPal Checkout
+          <div className="mb-3 rounded-xl border border-black/[0.06] bg-white p-3.5 text-sm font-medium text-[#6e6e73]">
+            Loading PayPal Checkout...
           </div>
         ) : null}
         <div ref={containerRef} />
       </div>
       {isApproving ? (
-        <div className="mt-3 flex items-center gap-2 rounded-md border border-[color:var(--cyber-gold)]/10 bg-card p-3 text-sm font-semibold text-foreground/58">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          Capturing PayPal payment
+        <div className="mt-3 flex items-center gap-2 rounded-xl border border-black/[0.06] bg-white p-3.5 text-sm font-medium text-[#6e6e73]">
+          <Loader2 className="h-4 w-4 animate-spin text-[#0071e3]" />
+          Capturing PayPal payment...
         </div>
       ) : null}
       {paymentError ? (
         <p
-          className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+          className="mt-3 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm leading-6 text-destructive"
           data-saleor-paypal-payment-error
           role="alert"
         >
           {paymentError}
         </p>
       ) : null}
-      <p className="mt-3 text-xs leading-5 text-foreground/45">
+      <p className="mt-3 text-xs leading-5 text-[#86868b]">
         PayPal opens a secure approval window and returns to Nuclear Tattoo
         Supply to place the order.
       </p>
@@ -1337,13 +1423,14 @@ function StripeElementsForm({
     () => ({
       amount: paymentSession.amount,
       appearance: {
-        theme: "night",
+        theme: "stripe",
         variables: {
-          colorPrimary: "#f5b51b",
-          colorBackground: "#101010",
-          colorText: "#f6f0df",
-          colorDanger: "#ff6b6b",
-          borderRadius: "8px",
+          colorPrimary: "#0071e3",
+          colorBackground: "#ffffff",
+          colorText: "#1d1d1f",
+          colorDanger: "#df1b41",
+          borderRadius: "12px",
+          fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
         },
       },
       currency: paymentSession.currency,
@@ -1374,58 +1461,38 @@ function LegacyStripePaymentPanel({
   gateway: NtmsSaleorCheckout["paymentGateways"][number];
   onOrderPlaced: CheckoutOrderPlacedHandler;
 }) {
-  const publishableKey =
-    getGatewayConfigValue(gateway, "public_api_key") ??
-    getGatewayConfigValue(gateway, "api_key");
+  const publishableKey = getGatewayConfigValue(gateway, "publishableKey");
+  const stripePromise = useMemo(
+    () => (publishableKey ? loadStripe(publishableKey) : null),
+    [publishableKey],
+  );
+
+  if (!publishableKey || !stripePromise) {
+    return (
+      <p
+        className="rounded-xl border border-destructive/20 bg-destructive/10 p-4 text-sm leading-6 text-destructive"
+        data-saleor-legacy-stripe-missing-key
+        role="alert"
+      >
+        Legacy Stripe publishable key is missing from gateway configuration.
+      </p>
+    );
+  }
 
   if (!canUseStripeForm) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-xl border border-black/[0.06] bg-[#fbfbfd] p-4 text-sm leading-6 text-[#6e6e73]">
         Save delivery details and select a shipping method before entering card
         details.
       </p>
     );
   }
 
-  if (!publishableKey) {
-    return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
-        Stripe is enabled, but the public key is missing.
-      </p>
-    );
-  }
-
-  return (
-    <LegacyStripeElementsForm
-      checkout={checkout}
-      gatewayId={gateway.id}
-      onOrderPlaced={onOrderPlaced}
-      publishableKey={publishableKey}
-    />
-  );
-}
-
-function LegacyStripeElementsForm({
-  checkout,
-  gatewayId,
-  onOrderPlaced,
-  publishableKey,
-}: {
-  checkout: NtmsSaleorCheckout;
-  gatewayId: string;
-  onOrderPlaced: CheckoutOrderPlacedHandler;
-  publishableKey: string;
-}) {
-  const stripePromise = useMemo(
-    () => loadStripe(publishableKey),
-    [publishableKey],
-  );
-
   return (
     <Elements stripe={stripePromise}>
       <LegacyStripeCardForm
         checkout={checkout}
-        gatewayId={gatewayId}
+        gatewayId={gateway.id}
         onOrderPlaced={onOrderPlaced}
       />
     </Elements>
@@ -1443,56 +1510,38 @@ function LegacyStripeCardForm({
 }) {
   const elements = useElements();
   const stripe = useStripe();
+
   const completeMutation = useMutation({
     mutationFn: async () => {
       if (!stripe || !elements) {
-        throw new Error("Stripe card form is not ready");
+        throw new Error("Stripe is not ready");
       }
 
       const cardElement = elements.getElement(CardElement);
       if (!cardElement) {
-        throw new Error("Stripe card form is not ready");
+        throw new Error("Card form is not loaded");
       }
 
-      const initializeResult = await initializeSaleorLegacyStripePayment({
+      const tokenResult = await stripe.createToken(cardElement, {
+        name: `${checkout.billingAddress?.firstName ?? ""} ${
+          checkout.billingAddress?.lastName ?? ""
+        }`.trim(),
+      });
+
+      if (tokenResult.error || !tokenResult.token) {
+        throw new Error(tokenResult.error?.message ?? "Card token generation failed");
+      }
+
+      const initResult = await initializeSaleorLegacyStripePayment({
         data: {
           checkoutId: checkout.id,
           gatewayId,
+          token: tokenResult.token.id,
         },
       });
 
-      if (!initializeResult.success) {
-        throw new Error(initializeResult.error);
-      }
-
-      const billingAddress =
-        checkout.billingAddress ?? checkout.shippingAddress;
-      const paymentResult = await stripe.confirmCardPayment(
-        initializeResult.payment.clientSecret,
-        {
-          payment_method: {
-            card: cardElement,
-            billing_details: {
-              address: {
-                city: billingAddress?.city ?? "",
-                country: billingAddress?.countryCode ?? "US",
-                line1: billingAddress?.streetAddress1 ?? "",
-                line2: billingAddress?.streetAddress2 ?? "",
-                postal_code: billingAddress?.postalCode ?? "",
-                state: billingAddress?.countryArea ?? "",
-              },
-              email: checkout.email,
-              name: `${billingAddress?.firstName ?? ""} ${
-                billingAddress?.lastName ?? ""
-              }`.trim(),
-              phone: billingAddress?.phone || undefined,
-            },
-          },
-        },
-      );
-
-      if (paymentResult.error) {
-        throw new Error(paymentResult.error.message ?? "Stripe payment failed");
+      if (!initResult.success) {
+        throw new Error(initResult.error);
       }
 
       const completeResult = await completeSaleorCheckout({
@@ -1511,7 +1560,7 @@ function LegacyStripeCardForm({
     onSuccess: onOrderPlaced,
     onError: (error) => {
       toast.error(
-        error instanceof Error ? error.message : "Unable to place order",
+        error instanceof Error ? error.message : "Unable to process card payment",
       );
     },
   });
@@ -1528,15 +1577,15 @@ function LegacyStripeCardForm({
 
   return (
     <form
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-2xl border border-black/[0.06] bg-[#fbfbfd] p-5"
       data-saleor-legacy-stripe-payment-form
       onSubmit={handleSubmit}
     >
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-card p-3">
+      <div className="rounded-xl border border-black/10 bg-white p-3.5 shadow-sm">
         <CardElement options={legacyStripeCardElementOptions} />
       </div>
       <Button
-        className="mt-4 h-11 w-full gap-2 font-semibold"
+        className="mt-4 h-12 w-full gap-2 rounded-full bg-[#0071e3] font-semibold text-white hover:bg-[#0077ed]"
         disabled={!stripe || !elements || completeMutation.isPending}
         type="submit"
       >
@@ -1545,7 +1594,7 @@ function LegacyStripeCardForm({
         ) : (
           <ShieldCheck className="h-4 w-4" />
         )}
-        {completeMutation.isPending ? "Placing order" : "Pay by card"}
+        {completeMutation.isPending ? "Placing order..." : "Pay by card"}
       </Button>
     </form>
   );
@@ -1703,13 +1752,15 @@ function StripeCardForm({
 
   return (
     <form
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-2xl border border-black/[0.06] bg-[#fbfbfd] p-5"
       data-saleor-stripe-payment-form
       onSubmit={handleSubmit}
     >
-      <PaymentElement options={stripePaymentElementOptions} />
+      <div className="rounded-xl border border-black/10 bg-white p-4 shadow-sm">
+        <PaymentElement options={stripePaymentElementOptions} />
+      </div>
       <Button
-        className="mt-4 h-11 w-full gap-2 font-semibold"
+        className="mt-4 h-12 w-full gap-2 rounded-full bg-[#0071e3] font-semibold text-white hover:bg-[#0077ed]"
         disabled={!stripe || !elements || isSubmitting}
         type="submit"
       >
@@ -1718,34 +1769,33 @@ function StripeCardForm({
         ) : (
           <ShieldCheck className="h-4 w-4" />
         )}
-        {isSubmitting ? "Placing order" : "Pay by card"}
+        {isSubmitting ? "Placing order..." : "Place order"}
       </Button>
     </form>
   );
 }
 
-function loadSaleorPayPalSdk({
-  clientId,
-  currencyCode,
-}: {
+async function loadSaleorPayPalSdk(options: {
   clientId: string;
   currencyCode: string;
 }) {
   const sdkSrc = `https://www.paypal.com/sdk/js?client-id=${encodeURIComponent(
-    clientId,
-  )}&components=buttons&currency=${encodeURIComponent(currencyCode)}&intent=capture`;
+    options.clientId,
+  )}&currency=${encodeURIComponent(options.currencyCode)}&intent=capture`;
 
-  if (
-    (window as PayPalSdkWindow).paypal &&
-    activeSaleorPayPalSdkSrc === sdkSrc &&
-    activeSaleorPayPalSdkPromise
-  ) {
+  if (activeSaleorPayPalSdkPromise && activeSaleorPayPalSdkSrc === sdkSrc) {
     return activeSaleorPayPalSdkPromise;
   }
 
-  if (activeSaleorPayPalSdkSrc !== sdkSrc) {
+  const existingScript = document.querySelector<HTMLScriptElement>(
+    'script[data-paypal-sdk="true"]',
+  );
+  if (existingScript) {
+    existingScript.remove();
     document
-      .querySelectorAll('script[data-paypal-sdk="true"]')
+      .querySelectorAll<HTMLElement>(
+        ".paypal-buttons, .paypal-buttons-context-iframe",
+      )
       .forEach((element) => {
         element.remove();
       });
@@ -1777,13 +1827,13 @@ function PaymentInitializationError({
 }) {
   return (
     <div
-      className="rounded-md border border-destructive/20 bg-destructive/10 p-4"
+      className="rounded-2xl border border-destructive/20 bg-destructive/10 p-5"
       data-saleor-payment-initialization-error
       role="alert"
     >
-      <p className="text-sm leading-6 text-foreground/76">{message}</p>
+      <p className="text-sm leading-6 text-foreground">{message}</p>
       <Button
-        className="mt-3 gap-2"
+        className="mt-3.5 gap-2 rounded-full border-destructive/30 hover:bg-destructive/10"
         data-saleor-retry-payment-initialization
         onClick={onRetry}
         type="button"
@@ -1812,42 +1862,42 @@ function CheckoutSummary({
   requiresPaymentPanel: boolean;
 }) {
   return (
-    <aside className="sticky top-6 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
+    <aside className="sticky top-24 overflow-hidden rounded-[1.5rem] border border-black/[0.06] bg-white shadow-[0_4px_30px_rgba(0,0,0,0.04)]">
+      <div className="border-b border-black/[0.06] px-6 py-5">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#0071e3]">
           Order summary
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-          {checkout.quantity} item{checkout.quantity === 1 ? "" : "s"}
+        <h2 className="mt-2 text-2xl font-bold tracking-tight text-[#1d1d1f]">
+          {checkout.quantity} {checkout.quantity === 1 ? "item" : "items"}
         </h2>
       </div>
-      <ul className="max-h-[42vh] space-y-3 overflow-auto p-5">
+      <ul className="max-h-[42vh] space-y-3.5 overflow-auto p-6">
         {checkout.lines.map((line) => (
-          <li className="flex gap-3" key={line.id}>
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/10 bg-background">
+          <li className="flex items-center gap-3.5" key={line.id}>
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-black/[0.06] bg-[#fbfbfd]">
               {line.imageUrl ? (
                 <img
                   alt={line.imageAlt}
-                  className="h-full w-full object-contain p-1.5"
+                  className="h-full w-full object-contain p-1.5 mix-blend-multiply"
                   src={line.imageUrl}
                 />
               ) : null}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="line-clamp-2 text-sm font-semibold">
+              <p className="line-clamp-2 text-sm font-semibold text-[#1d1d1f]">
                 {line.productName}
               </p>
-              <p className="mt-1 text-xs text-foreground/45">
+              <p className="mt-0.5 text-xs text-[#86868b]">
                 Qty {line.quantity}
               </p>
             </div>
-            <p className="shrink-0 text-sm font-semibold text-[color:var(--cyber-gold-soft)]">
+            <p className="shrink-0 text-sm font-bold text-[#1d1d1f]">
               {formatSaleorMoney(line.totalPrice)}
             </p>
           </li>
         ))}
       </ul>
-      <div className="border-t border-[color:var(--cyber-gold)]/10 p-5">
+      <div className="border-t border-black/[0.06] p-6">
         <div className="mb-5">
           <NtmsSaleorPromoCode />
         </div>
@@ -1867,15 +1917,15 @@ function CheckoutSummary({
           />
         ) : null}
         <SummaryRow label="Shipping" price={checkout.shippingPrice} />
-        <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-3">
-          <p className="font-semibold">Total</p>
-          <p className="text-2xl font-semibold text-[color:var(--cyber-gold-soft)]">
+        <div className="mt-4 flex items-center justify-between border-t border-black/[0.06] pt-4">
+          <p className="text-base font-bold text-[#1d1d1f]">Total</p>
+          <p className="text-2xl font-bold tracking-tight text-[#1d1d1f]">
             {formatSaleorMoney(checkout.totalPrice)}
           </p>
         </div>
         <Button
           aria-busy={isPlacingOrder}
-          className="mt-5 h-12 w-full gap-2 font-semibold"
+          className="mt-6 h-12 w-full gap-2 rounded-full bg-[#0071e3] font-semibold text-white shadow-sm hover:bg-[#0077ed]"
           data-saleor-place-order-button
           disabled={!canPlaceOrder || isPlacingOrder}
           onClick={onPlaceOrder}
@@ -1886,11 +1936,11 @@ function CheckoutSummary({
           ) : (
             <ShieldCheck className="h-4 w-4" />
           )}
-          {isPlacingOrder ? "Placing order" : "Place order"}
+          {isPlacingOrder ? "Placing order..." : "Place order"}
         </Button>
         {error ? (
           <p
-            className="mt-3 rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
+            className="mt-3.5 rounded-xl border border-destructive/20 bg-destructive/10 p-3.5 text-sm leading-6 text-destructive"
             data-saleor-checkout-completion-error
             role="alert"
           >
@@ -1901,14 +1951,14 @@ function CheckoutSummary({
           </p>
         ) : null}
         {!canPlaceOrder ? (
-          <p className="mt-3 text-xs leading-5 text-foreground/45">
+          <p className="mt-3 text-xs leading-5 text-[#86868b]">
             {requiresPaymentPanel
               ? "Complete the selected payment method above to place the order."
               : "Save delivery details and select a shipping method before placing the order."}
           </p>
         ) : (
-          <p className="mt-3 text-xs leading-5 text-foreground/45">
-            Payment will be handled by the configured Saleor gateway.
+          <p className="mt-3 text-xs leading-5 text-[#86868b]">
+            Payment will be securely processed by the selected gateway.
           </p>
         )}
       </div>
@@ -1928,16 +1978,16 @@ const legacyStripeCardElementOptions = {
   style: {
     base: {
       "::placeholder": {
-        color: "rgba(246, 240, 223, 0.42)",
+        color: "#86868b",
       },
-      color: "#f6f0df",
-      fontFamily: "Inter, system-ui, sans-serif",
+      color: "#1d1d1f",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif",
       fontSize: "16px",
-      iconColor: "#f5b51b",
+      iconColor: "#0071e3",
     },
     invalid: {
-      color: "#ff6b6b",
-      iconColor: "#ff6b6b",
+      color: "#df1b41",
+      iconColor: "#df1b41",
     },
   },
 };
@@ -1962,19 +2012,19 @@ function CheckoutStepPill({
 }) {
   return (
     <div
-      className={`rounded-md border p-4 ${
+      className={`rounded-2xl border p-4.5 transition-all duration-200 ${
         active
-          ? "border-[color:var(--cyber-gold)]/24 bg-[color:var(--cyber-gold)]/9"
-          : "border-[color:var(--cyber-gold)]/10 bg-card"
+          ? "border-[#0071e3] bg-[#0071e3]/[0.04] shadow-[0_2px_12px_rgba(0,113,227,0.06)]"
+          : "border-black/[0.06] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
       }`}
     >
-      <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className={`flex items-center gap-2 ${active ? "text-[#0071e3]" : "text-[#86868b]"}`}>
         {icon}
-        <p className="text-[11px] font-semibold uppercase tracking-[0.18em]">
+        <p className="text-xs font-semibold uppercase tracking-[0.14em]">
           {label}
         </p>
       </div>
-      <p className="mt-2 line-clamp-1 text-sm font-semibold text-foreground">
+      <p className="mt-1.5 truncate text-sm font-bold text-[#1d1d1f]">
         {value}
       </p>
     </div>
@@ -1995,16 +2045,16 @@ function CheckoutInput({
 
   return (
     <Field className={className} data-invalid={Boolean(error)}>
-      <FieldLabel htmlFor={inputId}>{label}</FieldLabel>
+      <FieldLabel htmlFor={inputId} className="text-xs font-semibold text-[#1d1d1f]">{label}</FieldLabel>
       <Input
         {...props}
         aria-describedby={error ? errorId : props["aria-describedby"]}
         aria-invalid={Boolean(error)}
-        className="mt-2 h-10"
+        className="mt-2 h-11 rounded-xl border border-black/10 bg-[#fbfbfd] px-3.5 text-sm text-[#1d1d1f] transition focus:border-[#0071e3] focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#0071e3]/20"
         id={inputId}
       />
       {error ? (
-        <p className="text-sm text-destructive" id={errorId}>
+        <p className="mt-1 text-sm text-destructive" id={errorId}>
           {error}
         </p>
       ) : null}
@@ -2022,9 +2072,9 @@ function SummaryRow({
   price: { amount: number; currency: string };
 }) {
   return (
-    <div className="mb-2 flex items-center justify-between text-sm text-foreground/58">
-      <p>{label}</p>
-      <p className={discount ? "font-semibold text-emerald-300" : undefined}>
+    <div className="mb-2.5 flex items-center justify-between text-sm text-[#6e6e73]">
+      <p className="font-normal">{label}</p>
+      <p className={discount ? "font-semibold text-[#34c759]" : "font-medium text-[#1d1d1f]"}>
         {discount ? "-" : ""}
         {formatSaleorMoney(price)}
       </p>
