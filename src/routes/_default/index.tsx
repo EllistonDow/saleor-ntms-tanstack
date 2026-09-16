@@ -133,16 +133,16 @@ function App() {
 
   return (
     <>
-      <section className="relative overflow-hidden border-b border-[color:var(--cyber-gold)]/10">
+      <section className="relative overflow-hidden border-b border-black/10/10">
         <div className="mx-auto grid max-w-screen-2xl gap-6 px-4 py-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-stretch lg:py-10 xl:grid-cols-[minmax(0,1fr)_500px]">
           <div className="flex min-h-[560px] min-w-0 flex-col justify-between py-4 lg:py-8">
             <div>
               <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/18 bg-background/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
+                <span className="inline-flex items-center gap-2 rounded-full border border-black/10/18 bg-background/65 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#0071e3]">
                   <Sparkles className="h-3.5 w-3.5" />
                   Golden supply grid
                 </span>
-                <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-cyan)]/18 bg-background/65 px-3 py-1 text-xs text-foreground/60">
+                <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--apple-blue)]/18 bg-background/65 px-3 py-1 text-xs text-foreground/60">
                   <Layers3 className="h-3.5 w-3.5" />
                   Live studio catalog
                 </span>
@@ -158,7 +158,7 @@ function App() {
                 <Link
                   to="/collections/$collection"
                   params={{ collection: "machines" }}
-                  className="inline-flex items-center gap-2 rounded-lg bg-[color:var(--cyber-gold)] px-5 py-3 text-sm font-semibold text-black shadow-[0_14px_32px_rgba(247,200,31,.18)] transition hover:bg-[color:var(--cyber-gold-soft)]"
+                  className="inline-flex items-center gap-2 rounded-lg bg-[#0071e3] px-5 py-3 text-sm font-semibold text-black shadow-[0_14px_32px_rgba(247,200,31,.18)] transition hover:bg-[color:var(--apple-blue)]"
                 >
                   Shop machines
                   <ArrowRight className="h-4 w-4" />
@@ -166,7 +166,7 @@ function App() {
                 <Link
                   to="/search"
                   search={{ q: undefined }}
-                  className="inline-flex items-center rounded-lg border border-[color:var(--cyber-gold)]/16 bg-background/72 px-5 py-3 text-sm font-semibold text-foreground transition hover:border-[color:var(--cyber-gold)]/36 hover:bg-[color:var(--cyber-gold)]/7"
+                  className="inline-flex items-center rounded-lg border border-black/10/16 bg-background/72 px-5 py-3 text-sm font-semibold text-foreground transition hover:border-black/10/36 hover:bg-[#0071e3]/7"
                 >
                   Browse catalog
                 </Link>
@@ -196,7 +196,7 @@ function App() {
           </div>
 
           {heroProduct ? (
-            <div className="min-h-full min-w-0 overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/86 shadow-[0_24px_72px_rgba(0,0,0,.12)] backdrop-blur-xl">
+            <div className="min-h-full min-w-0 overflow-hidden rounded-2xl border border-black/10/12 bg-card/86 shadow-[0_24px_72px_rgba(0,0,0,.12)] backdrop-blur-xl">
               <ProductCard
                 className="min-h-full border-0 bg-transparent shadow-none hover:translate-y-0 hover:shadow-none"
                 currencyCode={activeChannel.defaultCurrencyCode}
@@ -212,14 +212,14 @@ function App() {
           <div className="mx-auto max-w-screen-2xl px-4 pb-8">
             <nav
               aria-label="Featured collections"
-              className="flex gap-2 overflow-x-auto border-y border-[color:var(--cyber-gold)]/10 py-2"
+              className="flex gap-2 overflow-x-auto border-y border-black/10/10 py-2"
             >
               {topCollections.map((collection) => (
                 <Link
                   key={collection.slug}
                   to="/collections/$collection"
                   params={{ collection: collection.slug }}
-                  className="whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium text-foreground/62 transition hover:bg-[color:var(--cyber-gold)]/8 hover:text-foreground"
+                  className="whitespace-nowrap rounded-lg px-3.5 py-2 text-sm font-medium text-foreground/62 transition hover:bg-black/5 hover:text-foreground"
                 >
                   {collection.name}
                 </Link>
@@ -232,7 +232,7 @@ function App() {
         <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <div className="flex flex-wrap gap-2">
-              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+              <span className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
                 Featured machines
               </span>
             </div>
@@ -243,7 +243,7 @@ function App() {
           <Link
             to="/collections/$collection"
             params={{ collection: "machines" }}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/62 transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="inline-flex items-center gap-2 text-sm font-semibold text-foreground/62 transition hover:text-[#0071e3]"
           >
             View all machines
             <ArrowRight className="h-4 w-4" />
@@ -276,8 +276,8 @@ function HeroMetric({
   value: ReactNode;
 }) {
   return (
-    <div className="rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/52 p-4">
-      <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+    <div className="rounded-xl border border-black/10/10 bg-background/52 p-4">
+      <div className="flex items-center gap-2 text-[#0071e3]">
         {icon}
         <span className="text-[11px] font-semibold uppercase tracking-[0.18em]">
           {label}

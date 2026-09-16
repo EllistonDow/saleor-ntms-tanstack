@@ -35,14 +35,14 @@ export function CartItem({
     .join(", ");
 
   return (
-    <li className="overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/54 shadow-[0_12px_28px_rgba(0,0,0,.08)] transition hover:border-[color:var(--cyber-gold)]/18 hover:bg-background/64">
+    <li className="overflow-hidden rounded-3xl border border-black/5 bg-white p-1 shadow-[0_2px_12px_rgba(0,0,0,0.03)] transition hover:shadow-[0_4px_20px_rgba(0,0,0,0.06)]">
       <div className="flex w-full gap-3 p-3">
         <Link
           to={"/product/$productId"}
           params={{ productId: product.slug }}
           search={merchandiseSearchParams}
           onClick={closeCart}
-          className="relative h-[88px] w-[88px] flex-none overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/75"
+          className="relative h-[88px] w-[88px] flex-none overflow-hidden rounded-2xl border border-black/5 bg-[#f5f5f7]"
           aria-label={`Open ${product.name}`}
         >
           {featuredAsset ? (
@@ -72,11 +72,11 @@ export function CartItem({
             onClick={closeCart}
             className="z-30 min-w-0"
           >
-            <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition hover:text-[color:var(--cyber-gold-soft)]">
+            <span className="line-clamp-2 text-sm font-semibold leading-5 text-foreground transition hover:text-[#0071e3]">
               {product.name}
             </span>
             {selectedOptions ? (
-              <p className="mt-1 line-clamp-1 text-xs text-[color:var(--cyber-gold-soft)]">
+              <p className="mt-1 line-clamp-1 text-xs text-[#0071e3]">
                 {selectedOptions}
               </p>
             ) : null}
@@ -91,14 +91,14 @@ export function CartItem({
                 Line total
               </p>
               <Price
-                className="mt-1 text-sm font-semibold text-[color:var(--cyber-gold-soft)]"
+                className="mt-1 text-sm font-semibold text-[#0071e3]"
                 amount={item.linePriceWithTax}
                 currencyCode={cart.currencyCode}
                 currencyCodeClassName="text-[10px] text-foreground/38"
               />
             </div>
             <div className="flex items-center gap-1.5">
-              <div className="ml-auto flex h-9 flex-row items-center rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/70 p-0.5">
+              <div className="ml-auto flex h-9 flex-row items-center rounded-full border border-black/5 bg-[#f5f5f7] p-0.5">
                 <EditItemQuantityButton item={item} type="minus" />
                 <p className="w-7 text-center">
                   <span className="w-full text-sm font-semibold">

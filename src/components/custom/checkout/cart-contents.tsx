@@ -103,13 +103,13 @@ export function CartContents({
           return (
             <li
               key={line.id}
-              className="overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/52 p-3 shadow-[0_12px_28px_rgba(0,0,0,.07)]"
+              className="overflow-hidden rounded-xl border border-black/10/10 bg-background/52 p-3 shadow-[0_12px_28px_rgba(0,0,0,.07)]"
             >
               <div className="flex gap-3">
                 <Link
                   to="/product/$productId"
                   params={{ productId: product.slug }}
-                  className="relative h-[82px] w-[82px] shrink-0 overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/75"
+                  className="relative h-[82px] w-[82px] shrink-0 overflow-hidden rounded-lg border border-black/10/12 bg-card/75"
                   aria-label={`Open ${product.name}`}
                 >
                   {featuredAsset ? (
@@ -140,13 +140,13 @@ export function CartContents({
                         <Link
                           to="/product/$productId"
                           params={{ productId: product.slug }}
-                          className="transition hover:text-[color:var(--cyber-gold-soft)]"
+                          className="transition hover:text-[#0071e3]"
                         >
                           {product.name}
                         </Link>
                       </h3>
                       {selectedOptions ? (
-                        <p className="mt-1 line-clamp-1 text-xs text-[color:var(--cyber-gold-soft)]">
+                        <p className="mt-1 line-clamp-1 text-xs text-[#0071e3]">
                           {selectedOptions}
                         </p>
                       ) : null}
@@ -157,7 +157,7 @@ export function CartContents({
                     <Price
                       amount={linePriceWithTax}
                       currencyCode={currencyCode}
-                      className="shrink-0 text-right text-sm font-semibold text-[color:var(--cyber-gold-soft)]"
+                      className="shrink-0 text-right text-sm font-semibold text-[#0071e3]"
                       currencyCodeClassName="text-[10px] text-foreground/38"
                     />
                   </div>
@@ -166,7 +166,7 @@ export function CartContents({
                     {editable ? (
                       <label
                         htmlFor={`quantity-${line.id}`}
-                        className="inline-flex items-center gap-2 rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/70 px-2 py-1 text-xs text-foreground/55"
+                        className="inline-flex items-center gap-2 rounded-lg border border-black/10/12 bg-card/70 px-2 py-1 text-xs text-foreground/55"
                       >
                         <span>Qty</span>
                         <select
@@ -180,7 +180,7 @@ export function CartContents({
                               Number(e.target.value),
                             );
                           }}
-                          className="rounded-md border border-[color:var(--cyber-gold)]/14 bg-background/70 px-2 py-1 text-left text-sm font-semibold leading-5 text-foreground focus:border-[color:var(--cyber-gold)]/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--cyber-gold)]/35 disabled:opacity-50"
+                          className="rounded-md border border-black/10/14 bg-background/70 px-2 py-1 text-left text-sm font-semibold leading-5 text-foreground focus:border-black/10/60 focus:outline-none focus:ring-1 focus:ring-[color:var(--apple-blue)]/35 disabled:opacity-50"
                         >
                           {[1, 2, 3, 4, 5, 6, 7, 8].map((num) => (
                             <option key={num} value={num}>
@@ -190,7 +190,7 @@ export function CartContents({
                         </select>
                       </label>
                     ) : (
-                      <div className="rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/70 px-2.5 py-1 text-xs text-foreground/55">
+                      <div className="rounded-lg border border-black/10/12 bg-card/70 px-2.5 py-1 text-xs text-foreground/55">
                         Qty{" "}
                         <span className="font-semibold text-foreground">
                           {line.quantity}
@@ -201,7 +201,7 @@ export function CartContents({
                       <button
                         type="button"
                         disabled={isUpdating}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-[color:var(--cyber-gold)]/12 bg-background/70 px-2.5 py-1.5 text-xs font-medium text-foreground/55 transition hover:border-rose-500/30 hover:bg-rose-500/12 hover:text-rose-200 disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-black/10/12 bg-background/70 px-2.5 py-1.5 text-xs font-medium text-foreground/55 transition hover:border-rose-500/30 hover:bg-rose-500/12 hover:text-rose-200 disabled:opacity-50"
                         onClick={() => handleRemove(line.id)}
                       >
                         <Trash2 className="h-3.5 w-3.5" />

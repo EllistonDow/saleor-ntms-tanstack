@@ -297,11 +297,11 @@ export function NtmsSaleorCheckoutPage() {
         <div className="mx-auto max-w-screen-md">
           <Link
             to="/"
-            className="text-sm font-black uppercase text-foreground transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-black uppercase text-foreground transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <div className="mt-8 border border-[color:var(--cyber-gold)]/12 bg-card p-8 text-center">
+          <div className="mt-8 border border-black/10/12 bg-card p-8 text-center">
             <p className="text-sm font-semibold text-foreground/58">
               Loading checkout
             </p>
@@ -317,12 +317,12 @@ export function NtmsSaleorCheckoutPage() {
         <div className="mx-auto max-w-screen-md">
           <Link
             to="/"
-            className="text-sm font-black uppercase text-foreground transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-black uppercase text-foreground transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <div className="mt-8 border border-[color:var(--cyber-gold)]/12 bg-card p-8 text-center">
-            <Package2 className="mx-auto h-9 w-9 text-[color:var(--cyber-gold-soft)]" />
+          <div className="mt-8 border border-black/10/12 bg-card p-8 text-center">
+            <Package2 className="mx-auto h-9 w-9 text-[#0071e3]" />
             <h1 className="mt-4 text-3xl font-semibold tracking-tight">
               Your cart is empty
             </h1>
@@ -345,18 +345,18 @@ export function NtmsSaleorCheckoutPage() {
 
   return (
     <main
-      className="min-h-screen bg-background text-foreground"
+      className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f]"
       data-saleor-checkout-page
     >
-      <header className="border-b border-[color:var(--cyber-gold)]/10 bg-background">
+      <header className="border-b border-black/5 bg-white/80 backdrop-blur-xl sticky top-0 z-30">
         <div className="mx-auto flex max-w-screen-2xl flex-wrap items-center justify-between gap-4 px-4 py-4">
           <Link
             to="/"
-            className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/68 transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="text-sm font-semibold uppercase tracking-[0.18em] text-foreground/68 transition hover:text-[#0071e3]"
           >
             Nuclear Tattoo Supply
           </Link>
-          <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+          <span className="rounded-full border border-black/5 bg-[#f5f5f7] px-3.5 py-1 text-xs font-semibold tracking-tight text-[#0071e3]">
             Checkout
           </span>
         </div>
@@ -389,9 +389,9 @@ export function NtmsSaleorCheckoutPage() {
             />
           </section>
 
-          <section className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-            <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-              <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+          <section className="overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+            <div className="border-b border-black/5 px-6 py-5 flex items-center justify-between">
+              <div className="flex items-center gap-2 text-[#0071e3]">
                 <MapPinned className="h-4 w-4" />
                 <p className="text-xs font-semibold uppercase tracking-[0.2em]">
                   Contact and address
@@ -404,7 +404,7 @@ export function NtmsSaleorCheckoutPage() {
 
             <form
               aria-busy={addressMutation.isPending}
-              className="p-5"
+              className="p-6"
               data-saleor-checkout-address-form
               noValidate
               onSubmit={handleSubmit}
@@ -535,7 +535,7 @@ export function NtmsSaleorCheckoutPage() {
                       }
                       aria-invalid={Boolean(addressErrors.country)}
                       autoComplete="country"
-                      className="mt-2 h-10 w-full rounded-md border border-[color:var(--cyber-gold)]/20 bg-background px-3 text-sm text-foreground focus:border-[color:var(--cyber-gold)]/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--cyber-gold)]/35"
+                      className="mt-2 h-10 w-full rounded-md border border-black/5 bg-[#f5f5f7] px-3 text-sm text-foreground focus:border-black/10/60 focus:outline-none focus:ring-2 focus:ring-[color:var(--apple-blue)]/35"
                       id="country"
                       name="country"
                       onChange={handleChange("country")}
@@ -557,7 +557,7 @@ export function NtmsSaleorCheckoutPage() {
                 </Field>
               </FieldGroup>
 
-              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[color:var(--cyber-gold)]/10 pt-5">
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-black/5 pt-5">
                 <p className="text-sm text-foreground/52">
                   Billing address will match delivery address.
                 </p>
@@ -619,11 +619,11 @@ function DeliverySection({
 }) {
   return (
     <section
-      className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card"
+      className="overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
       data-saleor-checkout-shipping-section
     >
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="border-b border-black/5 px-6 py-5 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[#0071e3]">
           <Truck className="h-4 w-4" />
           <p className="text-xs font-semibold uppercase tracking-[0.2em]">
             Delivery
@@ -633,7 +633,7 @@ function DeliverySection({
           Shipping method
         </h2>
       </div>
-      <div className="space-y-3 p-5">
+      <div className="space-y-3 p-6">
         {error ? (
           <p
             className="rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm leading-6 text-destructive"
@@ -655,10 +655,10 @@ function DeliverySection({
             );
             return (
               <button
-                className={`w-full rounded-md border p-4 text-left transition ${
+                className={`w-full rounded-2xl border p-4 text-left transition ${
                   selected
-                    ? "border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/10"
-                    : "border-[color:var(--cyber-gold)]/12 bg-background hover:border-[color:var(--cyber-gold)]/28"
+                    ? "border-[#0071e3] bg-[#0071e3]/5 shadow-sm ring-1 ring-[#0071e3]"
+                    : "border-black/5 bg-[#f5f5f7]/60 hover:bg-[#f5f5f7] hover:border-black/10"
                 }`}
                 data-saleor-shipping-method-button
                 data-saleor-shipping-method-id={method.id}
@@ -691,7 +691,7 @@ function DeliverySection({
                       </span>
                     ) : null}
                   </span>
-                  <span className="font-semibold text-[color:var(--cyber-gold-soft)]">
+                  <span className="font-semibold text-[#0071e3]">
                     {formatSaleorMoney(method.price)}
                   </span>
                 </span>
@@ -699,7 +699,7 @@ function DeliverySection({
             );
           })
         ) : (
-          <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+          <p className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56">
             Save a delivery address to load shipping methods.
           </p>
         )}
@@ -733,12 +733,12 @@ function PaymentSection({
 
   return (
     <section
-      className="overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card"
+      className="overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]"
       data-saleor-blocked-payment-gateway-count={blockedGatewayCount}
       data-saleor-checkout-payment-section
     >
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="border-b border-black/5 px-6 py-5 flex items-center justify-between">
+        <div className="flex items-center gap-2 text-[#0071e3]">
           <CreditCard className="h-4 w-4" />
           <p className="text-xs font-semibold uppercase tracking-[0.2em]">
             Payment
@@ -748,16 +748,16 @@ function PaymentSection({
           Payment method
         </h2>
       </div>
-      <div className="space-y-3 p-5">
+      <div className="space-y-3 p-6">
         {selectableGateways.length > 0 ? (
           selectableGateways.map((gateway) => {
             const selected = selectedGatewayId === gateway.id;
             return (
               <button
-                className={`w-full rounded-md border p-4 text-left transition ${
+                className={`w-full rounded-2xl border p-4 text-left transition ${
                   selected
-                    ? "border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/10"
-                    : "border-[color:var(--cyber-gold)]/12 bg-background hover:border-[color:var(--cyber-gold)]/28"
+                    ? "border-[#0071e3] bg-[#0071e3]/5 shadow-sm ring-1 ring-[#0071e3]"
+                    : "border-black/5 bg-[#f5f5f7]/60 hover:bg-[#f5f5f7] hover:border-black/10"
                 }`}
                 data-saleor-payment-gateway-button
                 data-saleor-payment-gateway-id={gateway.id}
@@ -782,7 +782,7 @@ function PaymentSection({
                       {gateway.currencies.join(", ")}
                     </p>
                   </span>
-                  <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card px-2 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[color:var(--cyber-gold-soft)]">
+                  <span className="rounded-full border border-black/5 bg-white px-3 py-1 text-[11px] font-semibold tracking-tight text-[#0071e3]">
                     {gateway.supportLabel}
                   </span>
                 </span>
@@ -791,7 +791,7 @@ function PaymentSection({
           })
         ) : (
           <p
-            className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56"
+            className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56"
             data-saleor-payment-unavailable
             role="status"
           >
@@ -923,7 +923,7 @@ function StripePaymentPanel({
 
   if (!canUseStripeForm) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56">
         Save delivery details and select a shipping method before entering card
         details.
       </p>
@@ -957,7 +957,7 @@ function StripePaymentPanel({
     paymentSession.key !== paymentSessionKey
   ) {
     return (
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm font-semibold text-foreground/58">
+      <div className="rounded-md border border-black/10/10 bg-background p-4 text-sm font-semibold text-foreground/58">
         Initializing secure card form
       </div>
     );
@@ -1068,7 +1068,7 @@ function PayPalPaymentPanel({
 
   if (!canUsePayPalButtons) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56">
         Save delivery details and select a shipping method before using PayPal.
       </p>
     );
@@ -1101,7 +1101,7 @@ function PayPalPaymentPanel({
     paymentSession.key !== paymentSessionKey
   ) {
     return (
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm font-semibold text-foreground/58">
+      <div className="rounded-md border border-black/10/10 bg-background p-4 text-sm font-semibold text-foreground/58">
         Initializing PayPal Checkout
       </div>
     );
@@ -1277,7 +1277,7 @@ function SaleorPayPalButtons({
 
   return (
     <div
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-md border border-black/10/12 bg-background p-4"
       data-saleor-paypal-payment-panel
       data-saleor-paypal-payment-ready={
         !isLoading && !paymentError ? "true" : "false"
@@ -1285,14 +1285,14 @@ function SaleorPayPalButtons({
     >
       <div className={isApproving ? "pointer-events-none opacity-50" : ""}>
         {isLoading ? (
-          <div className="mb-3 rounded-md border border-[color:var(--cyber-gold)]/10 bg-card p-3 text-sm font-semibold text-foreground/58">
+          <div className="mb-3 rounded-md border border-black/5 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-3 text-sm font-semibold text-foreground/58">
             Loading PayPal Checkout
           </div>
         ) : null}
         <div ref={containerRef} />
       </div>
       {isApproving ? (
-        <div className="mt-3 flex items-center gap-2 rounded-md border border-[color:var(--cyber-gold)]/10 bg-card p-3 text-sm font-semibold text-foreground/58">
+        <div className="mt-3 flex items-center gap-2 rounded-md border border-black/5 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)] p-3 text-sm font-semibold text-foreground/58">
           <Loader2 className="h-4 w-4 animate-spin" />
           Capturing PayPal payment
         </div>
@@ -1380,7 +1380,7 @@ function LegacyStripePaymentPanel({
 
   if (!canUseStripeForm) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56">
         Save delivery details and select a shipping method before entering card
         details.
       </p>
@@ -1389,7 +1389,7 @@ function LegacyStripePaymentPanel({
 
   if (!publishableKey) {
     return (
-      <p className="rounded-md border border-[color:var(--cyber-gold)]/10 bg-background p-4 text-sm leading-6 text-foreground/56">
+      <p className="rounded-md border border-black/10/10 bg-background p-4 text-sm leading-6 text-foreground/56">
         Stripe is enabled, but the public key is missing.
       </p>
     );
@@ -1528,11 +1528,11 @@ function LegacyStripeCardForm({
 
   return (
     <form
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-md border border-black/10/12 bg-background p-4"
       data-saleor-legacy-stripe-payment-form
       onSubmit={handleSubmit}
     >
-      <div className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-card p-3">
+      <div className="rounded-md border border-black/10/12 bg-card p-3">
         <CardElement options={legacyStripeCardElementOptions} />
       </div>
       <Button
@@ -1703,7 +1703,7 @@ function StripeCardForm({
 
   return (
     <form
-      className="rounded-md border border-[color:var(--cyber-gold)]/12 bg-background p-4"
+      className="rounded-md border border-black/10/12 bg-background p-4"
       data-saleor-stripe-payment-form
       onSubmit={handleSubmit}
     >
@@ -1812,19 +1812,19 @@ function CheckoutSummary({
   requiresPaymentPanel: boolean;
 }) {
   return (
-    <aside className="sticky top-6 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/12 bg-card">
-      <div className="border-b border-[color:var(--cyber-gold)]/10 px-5 py-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
+    <aside className="sticky top-6 overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+      <div className="border-b border-black/5 px-6 py-5 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0071e3]">
           Order summary
         </p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight">
           {checkout.quantity} item{checkout.quantity === 1 ? "" : "s"}
         </h2>
       </div>
-      <ul className="max-h-[42vh] space-y-3 overflow-auto p-5">
+      <ul className="max-h-[42vh] space-y-3 overflow-auto p-6">
         {checkout.lines.map((line) => (
           <li className="flex gap-3" key={line.id}>
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-md border border-[color:var(--cyber-gold)]/10 bg-background">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-2xl border border-black/5 bg-[#f5f5f7]">
               {line.imageUrl ? (
                 <img
                   alt={line.imageAlt}
@@ -1841,13 +1841,13 @@ function CheckoutSummary({
                 Qty {line.quantity}
               </p>
             </div>
-            <p className="shrink-0 text-sm font-semibold text-[color:var(--cyber-gold-soft)]">
+            <p className="shrink-0 text-sm font-semibold text-[#0071e3]">
               {formatSaleorMoney(line.totalPrice)}
             </p>
           </li>
         ))}
       </ul>
-      <div className="border-t border-[color:var(--cyber-gold)]/10 p-5">
+      <div className="border-t border-black/5 p-6">
         <div className="mb-5">
           <NtmsSaleorPromoCode />
         </div>
@@ -1867,15 +1867,15 @@ function CheckoutSummary({
           />
         ) : null}
         <SummaryRow label="Shipping" price={checkout.shippingPrice} />
-        <div className="mt-3 flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-3">
+        <div className="mt-3 flex items-center justify-between border-t border-black/5 pt-4">
           <p className="font-semibold">Total</p>
-          <p className="text-2xl font-semibold text-[color:var(--cyber-gold-soft)]">
+          <p className="text-2xl font-semibold text-[#0071e3]">
             {formatSaleorMoney(checkout.totalPrice)}
           </p>
         </div>
         <Button
           aria-busy={isPlacingOrder}
-          className="mt-5 h-12 w-full gap-2 font-semibold"
+          className="mt-5 h-12 w-full rounded-full bg-[#0071e3] text-white hover:bg-[#0077ed] shadow-md hover:shadow-lg font-medium text-base gap-2 transition"
           data-saleor-place-order-button
           disabled={!canPlaceOrder || isPlacingOrder}
           onClick={onPlaceOrder}
@@ -1962,13 +1962,13 @@ function CheckoutStepPill({
 }) {
   return (
     <div
-      className={`rounded-md border p-4 ${
+      className={`rounded-2xl border p-4 ${
         active
-          ? "border-[color:var(--cyber-gold)]/24 bg-[color:var(--cyber-gold)]/9"
-          : "border-[color:var(--cyber-gold)]/10 bg-card"
+          ? "border-[#0071e3]/30 bg-[#0071e3]/5 shadow-sm"
+          : "border-black/5 bg-white shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
       }`}
     >
-      <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <div className="flex items-center gap-2 text-[#0071e3]">
         {icon}
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em]">
           {label}
@@ -2000,7 +2000,7 @@ function CheckoutInput({
         {...props}
         aria-describedby={error ? errorId : props["aria-describedby"]}
         aria-invalid={Boolean(error)}
-        className="mt-2 h-10"
+        className="mt-2 h-11 rounded-xl border-black/5 bg-[#f5f5f7] text-[#1d1d1f] focus:border-[#0071e3] focus:ring-2 focus:ring-[#0071e3]/20"
         id={inputId}
       />
       {error ? (

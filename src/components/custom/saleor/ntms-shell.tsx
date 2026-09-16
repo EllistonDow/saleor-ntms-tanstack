@@ -106,7 +106,7 @@ function NtmsSaleorHeader({
   categories: ReturnType<typeof getNtmsSaleorNavigationCategories>;
 }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/80 backdrop-blur-2xl transition-all">
+    <header className="sticky top-0 z-50 border-b border-black/[0.06] bg-white/80 backdrop-blur-2xl saturate-150 transition-[background-color,backdrop-filter] duration-200">
       {/* 1. Global Announcement / Studio Bar */}
       <div className="border-b border-black/[0.04] bg-[#f5f5f7] px-4 py-1.5 text-center text-[11px] font-medium tracking-tight text-[#6e6e73]">
         <span>
@@ -183,7 +183,7 @@ function NtmsLogo() {
 }
 
 const appleHeaderIconButtonClass =
-  "relative flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f5f7] text-[#1d1d1f] transition-all hover:bg-[#e8e8ed] hover:scale-105 active:scale-95";
+  "relative flex h-9 w-9 items-center justify-center rounded-full bg-[#f5f5f7] text-[#1d1d1f] transition-[transform,background-color,color] duration-160 ease-out hover:bg-[#e8e8ed] [@media(hover:hover)]:hover:scale-[1.04] active:scale-[0.97] motion-reduce:transition-none motion-reduce:transform-none";
 
 function NtmsHeaderActions({
   categories,
@@ -256,7 +256,7 @@ function NtmsMobileNavigation({
       <SheetContent
         side="left"
         showCloseButton={false}
-        className="flex h-full w-[min(22rem,92vw)] flex-col gap-0 border-r border-black/[0.06] bg-white/95 backdrop-blur-2xl p-6 shadow-[0_30px_90px_rgba(0,0,0,0.15)]"
+        className="flex h-full w-[min(22rem,92vw)] flex-col gap-0 border-r border-black/[0.06] bg-white/85 backdrop-blur-3xl saturate-150 p-6 shadow-[0_30px_90px_rgba(0,0,0,0.15)]"
       >
         <SheetTitle className="sr-only">Browse categories</SheetTitle>
         <SheetDescription className="sr-only">
@@ -405,6 +405,17 @@ function NtmsSaleorFooter({
           <p suppressHydrationWarning>
             &copy; {year} Nuclear Tattoo Supply Inc. All rights reserved.
           </p>
+
+          <div className="flex items-center gap-3">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-emerald-600 border border-emerald-500/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              <span>Apple Build v1.0.45-PROD</span>
+            </span>
+            <span className="text-[10px] text-[#86868b] font-mono">
+              Release 20260830-apple-1.0.45
+            </span>
+          </div>
+
           <div className="flex items-center gap-6">
             <span>Privacy Policy</span>
             <span>Terms of Sale</span>

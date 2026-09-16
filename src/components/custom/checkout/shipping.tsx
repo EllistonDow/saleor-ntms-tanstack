@@ -121,7 +121,7 @@ export function Shipping() {
             />
           ) : null}
 
-          <section className="rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 p-6 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
+          <section className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
             <form.Field
               name="shippingMethodId"
               children={(field) => {
@@ -135,8 +135,8 @@ export function Shipping() {
                           key={method.id}
                           className={`flex cursor-pointer items-start rounded-2xl border p-6 transition-all ${
                             field.state.value === method.id
-                              ? "border-[color:var(--cyber-gold)]/24 bg-[color:var(--cyber-gold)]/6 shadow-[0_14px_30px_rgba(0,0,0,.06)]"
-                              : "border-[color:var(--cyber-gold)]/10 bg-background/58 hover:border-[color:var(--cyber-gold)]/20 hover:bg-[color:var(--cyber-gold)]/3"
+                              ? "border-black/10/24 bg-[#0071e3]/6 shadow-[0_14px_30px_rgba(0,0,0,.06)]"
+                              : "border-black/5 bg-background/58 hover:border-black/10 hover:bg-[#0071e3]/3"
                           }`}
                         >
                           <input
@@ -147,7 +147,7 @@ export function Shipping() {
                             onChange={(e) => field.handleChange(e.target.value)}
                             onBlur={field.handleBlur}
                             aria-invalid={isInvalid}
-                            className="mt-1 h-4 w-4 border-[color:var(--cyber-gold)]/40 text-[color:var(--cyber-gold)] focus:ring-[color:var(--cyber-gold)]/35"
+                            className="mt-1 h-4 w-4 border-black/15 text-[#1d1d1f] focus:ring-[color:var(--apple-blue)]/35"
                           />
                           <div className="ml-4 flex-1">
                             <div className="flex items-start justify-between gap-4">
@@ -178,7 +178,7 @@ export function Shipping() {
             />
           </section>
 
-          <div className="flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-6">
+          <div className="flex items-center justify-between border-t border-black/5 pt-6">
             <Button
               type="button"
               variant="outline"

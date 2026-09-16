@@ -14,10 +14,10 @@ export function FooterMenuItem({
         to={"/collections/$collection"}
         params={{ collection: item.slug }}
         className={clsx(
-          "block p-2 text-lg underline-offset-4 transition hover:text-[color:var(--cyber-gold-soft)] hover:underline md:inline-block md:text-sm",
+          "block p-2 text-lg underline-offset-4 transition hover:text-[#0071e3] hover:underline md:inline-block md:text-sm",
         )}
         activeProps={{
-          className: "text-[color:var(--cyber-gold-soft)]",
+          className: "text-[#0071e3]",
         }}
         activeOptions={{
           exact: true,

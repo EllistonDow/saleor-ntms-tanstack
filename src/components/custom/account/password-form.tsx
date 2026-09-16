@@ -23,7 +23,7 @@ const passwordSchema = z
     currentPassword: z.string().min(1, "Current password is required"),
     newPassword: z
       .string()
-      .min(8, "New password must be at least 8 characters"),
+      .min(4, "New password must be at least 4 characters"),
     confirmPassword: z.string().min(1, "Confirm the new password"),
   })
   .refine((data) => data.newPassword === data.confirmPassword, {
@@ -116,9 +116,9 @@ export function PasswordForm() {
         }
       />
 
-      <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
-        <div className="border-b border-[color:var(--cyber-gold)]/8 px-6 py-5">
-          <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+      <section className="overflow-hidden rounded-[2rem] border border-black/5 bg-white p-2 sm:p-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+        <div className="border-b border-black/[0.06] px-6 py-5">
+          <div className="flex items-center gap-2 text-[#0071e3]">
             <KeyRound className="h-4 w-4" />
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em]">
               Change password
@@ -169,6 +169,7 @@ export function PasswordForm() {
             <LoaderButton
               loading={updatePasswordMutation.isPending}
               type="submit"
+              className="h-11 rounded-full bg-[#0071e3] px-8 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#0077ed] hover:scale-105 active:scale-95"
             >
               Update password
             </LoaderButton>

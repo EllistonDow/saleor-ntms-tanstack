@@ -18,13 +18,7 @@ import { useHydrated } from "@/hooks/use-hydrated";
 const formSchema = z
   .object({
     emailAddress: z.email("Enter a valid email address"),
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain at least one uppercase letter, one lowercase letter, and one number",
-      ),
+    password: z.string().min(4, "Password must be at least 4 characters"),
     confirmPassword: z.string().min(1, "Please confirm your password"),
     firstName: z.string().min(2, "First name must be at least 2 characters"),
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
@@ -77,7 +71,7 @@ function ClientRegisterForm() {
         });
 
         toast.success(
-          "Check your email for the confirmation link. If this email was already registered, sign in with the original password or reset it.",
+          "Account created successfully. Please sign in with your credentials.",
         );
         router.navigate({ to: "/sign-in" });
       } catch (error) {
@@ -95,7 +89,7 @@ function ClientRegisterForm() {
         e.preventDefault();
         form.handleSubmit();
       }}
-      className="space-y-4"
+      className="space-y-5"
     >
       {submitError ? (
         <StatusPanel
@@ -105,15 +99,20 @@ function ClientRegisterForm() {
           size="compact"
         />
       ) : null}
-      <FieldGroup>
+      <FieldGroup className="space-y-4">
         <form.Field
           name="emailAddress"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>E-Mail *</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-bold text-[#1d1d1f]"
+                >
+                  Studio Email *
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -122,23 +121,29 @@ function ClientRegisterForm() {
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
-                  placeholder="john.doe@acme.com"
+                  placeholder="artist@studio.com"
                   autoComplete="email"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
             );
           }}
         />
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-3 sm:grid-cols-2">
           <form.Field
             name="firstName"
             children={(field) => {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>First Name *</FieldLabel>
+                <Field data-invalid={isInvalid} className="space-y-1.5">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-[#1d1d1f]"
+                  >
+                    First Name *
+                  </FieldLabel>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -146,8 +151,9 @@ function ClientRegisterForm() {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     aria-invalid={isInvalid}
-                    placeholder="John"
+                    placeholder="Alex"
                     autoComplete="given-name"
+                    className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -160,8 +166,13 @@ function ClientRegisterForm() {
               const isInvalid =
                 field.state.meta.isTouched && !field.state.meta.isValid;
               return (
-                <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Last Name *</FieldLabel>
+                <Field data-invalid={isInvalid} className="space-y-1.5">
+                  <FieldLabel
+                    htmlFor={field.name}
+                    className="text-xs font-bold text-[#1d1d1f]"
+                  >
+                    Last Name *
+                  </FieldLabel>
                   <Input
                     id={field.name}
                     name={field.name}
@@ -169,8 +180,9 @@ function ClientRegisterForm() {
                     onBlur={field.handleBlur}
                     onChange={(e) => field.handleChange(e.target.value)}
                     aria-invalid={isInvalid}
-                    placeholder="Doe"
+                    placeholder="Morgan"
                     autoComplete="family-name"
+                    className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                   />
                   {isInvalid && <FieldError errors={field.state.meta.errors} />}
                 </Field>
@@ -184,8 +196,13 @@ function ClientRegisterForm() {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Phone Number</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-bold text-[#1d1d1f]"
+                >
+                  Phone (Optional)
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -196,6 +213,7 @@ function ClientRegisterForm() {
                   aria-invalid={isInvalid}
                   placeholder="+1 (555) 000-0000"
                   autoComplete="tel"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
@@ -208,8 +226,13 @@ function ClientRegisterForm() {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Password *</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-bold text-[#1d1d1f]"
+                >
+                  Password *
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -219,6 +242,8 @@ function ClientRegisterForm() {
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
                   autoComplete="new-password"
+                  placeholder="Password"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
@@ -231,8 +256,13 @@ function ClientRegisterForm() {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Confirm Password *</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-bold text-[#1d1d1f]"
+                >
+                  Confirm Password *
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -242,6 +272,8 @@ function ClientRegisterForm() {
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
                   autoComplete="new-password"
+                  placeholder="Repeat password"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06] text-sm focus:bg-white focus:border-[#0071e3]"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
@@ -251,10 +283,10 @@ function ClientRegisterForm() {
       </FieldGroup>
       <LoaderButton
         loading={registerAccountMutation.isPending}
-        className="w-full"
+        className="w-full h-12 rounded-full bg-[#0071e3] text-sm font-bold text-white shadow-[0_4px_14px_rgba(0,113,227,0.3)] transition-all duration-300 hover:scale-[1.01] hover:bg-[#0077ed]"
         type="submit"
       >
-        Create Account
+        Create Studio Profile
       </LoaderButton>
     </form>
   );
@@ -270,43 +302,66 @@ function RegisterFormSkeleton() {
   const confirmPasswordId = `${fallbackId}-confirm-password`;
 
   return (
-    <form className="space-y-4" aria-busy="true">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor={emailId}>E-Mail *</FieldLabel>
+    <form className="space-y-5" aria-busy="true">
+      <FieldGroup className="space-y-4">
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={emailId}
+            className="text-xs font-bold text-[#1d1d1f]"
+          >
+            Studio Email *
+          </FieldLabel>
           <Input
             id={emailId}
             name="emailAddress"
             type="email"
-            placeholder="john.doe@acme.com"
+            placeholder="artist@studio.com"
             autoComplete="email"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
           />
         </Field>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Field>
-            <FieldLabel htmlFor={firstNameId}>First Name *</FieldLabel>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Field className="space-y-1.5">
+            <FieldLabel
+              htmlFor={firstNameId}
+              className="text-xs font-bold text-[#1d1d1f]"
+            >
+              First Name *
+            </FieldLabel>
             <Input
               id={firstNameId}
               name="firstName"
-              placeholder="John"
+              placeholder="Alex"
               autoComplete="given-name"
               disabled
+              className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
             />
           </Field>
-          <Field>
-            <FieldLabel htmlFor={lastNameId}>Last Name *</FieldLabel>
+          <Field className="space-y-1.5">
+            <FieldLabel
+              htmlFor={lastNameId}
+              className="text-xs font-bold text-[#1d1d1f]"
+            >
+              Last Name *
+            </FieldLabel>
             <Input
               id={lastNameId}
               name="lastName"
-              placeholder="Doe"
+              placeholder="Morgan"
               autoComplete="family-name"
               disabled
+              className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
             />
           </Field>
         </div>
-        <Field>
-          <FieldLabel htmlFor={phoneNumberId}>Phone Number</FieldLabel>
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={phoneNumberId}
+            className="text-xs font-bold text-[#1d1d1f]"
+          >
+            Phone
+          </FieldLabel>
           <Input
             id={phoneNumberId}
             name="phoneNumber"
@@ -314,20 +369,30 @@ function RegisterFormSkeleton() {
             placeholder="+1 (555) 000-0000"
             autoComplete="tel"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
           />
         </Field>
-        <Field>
-          <FieldLabel htmlFor={passwordId}>Password *</FieldLabel>
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={passwordId}
+            className="text-xs font-bold text-[#1d1d1f]"
+          >
+            Password *
+          </FieldLabel>
           <Input
             id={passwordId}
             name="password"
             type="password"
             autoComplete="new-password"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
           />
         </Field>
-        <Field>
-          <FieldLabel htmlFor={confirmPasswordId}>
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={confirmPasswordId}
+            className="text-xs font-bold text-[#1d1d1f]"
+          >
             Confirm Password *
           </FieldLabel>
           <Input
@@ -336,11 +401,16 @@ function RegisterFormSkeleton() {
             type="password"
             autoComplete="new-password"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border-black/[0.06]"
           />
         </Field>
       </FieldGroup>
-      <LoaderButton disabled className="w-full" type="submit">
-        Create Account
+      <LoaderButton
+        disabled
+        className="w-full h-12 rounded-full bg-[#0071e3] text-white opacity-50"
+        type="submit"
+      >
+        Create Studio Profile
       </LoaderButton>
     </form>
   );

@@ -278,6 +278,7 @@ function ProductPage() {
             to: ".",
             search: (previous) => ({ ...previous, variant: sku }),
             replace: true,
+            resetScroll: false,
           });
         }}
         page={loaderData.productPage}
@@ -303,18 +304,18 @@ function ProductPage() {
       <div className="mx-auto max-w-screen-2xl px-4 pt-5 sm:px-6 lg:px-8">
         <nav
           aria-label="Breadcrumb"
-          className="mb-5 flex min-w-0 items-center gap-2 overflow-hidden border-b border-[color:var(--cyber-gold)]/10 pb-4 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45"
+          className="mb-5 flex min-w-0 items-center gap-2 overflow-hidden border-b border-black/10/10 pb-4 text-xs font-semibold uppercase tracking-[0.18em] text-foreground/45"
         >
           <Link
             to="/"
-            className="shrink-0 whitespace-nowrap transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="shrink-0 whitespace-nowrap transition hover:text-[#0071e3]"
           >
             Home
           </Link>
           <ChevronRight className="h-3.5 w-3.5 shrink-0" />
           <Link
             to="/search"
-            className="shrink-0 whitespace-nowrap transition hover:text-[color:var(--cyber-gold-soft)]"
+            className="shrink-0 whitespace-nowrap transition hover:text-[#0071e3]"
           >
             Catalog
           </Link>
@@ -324,7 +325,7 @@ function ProductPage() {
               <Link
                 to="/collections/$collection"
                 params={{ collection: primaryCollection.slug }}
-                className="hidden shrink-0 whitespace-nowrap transition hover:text-[color:var(--cyber-gold-soft)] sm:inline"
+                className="hidden shrink-0 whitespace-nowrap transition hover:text-[#0071e3] sm:inline"
               >
                 {primaryCollection.name}
               </Link>
@@ -394,12 +395,12 @@ function ProductPairingSection({
 
   return (
     <section
-      className="border-t border-[color:var(--cyber-gold)]/10 py-10 sm:py-12"
+      className="border-t border-black/10/10 py-10 sm:py-12"
       aria-labelledby={headingId}
     >
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
             Frequently paired
           </p>
           <h2
@@ -445,12 +446,12 @@ function RelatedProductsRail({
 
   return (
     <section
-      className="border-t border-[color:var(--cyber-gold)]/10 py-10 sm:py-12"
+      className="border-t border-black/10/10 py-10 sm:py-12"
       aria-labelledby={headingId}
     >
       <div className="mb-5 flex items-end justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
             Complete the setup
           </p>
           <h2

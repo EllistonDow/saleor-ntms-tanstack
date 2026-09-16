@@ -3,7 +3,9 @@ import { z } from "zod";
 
 export const serverEnv = createEnv({
   server: {
-    VENDURE_SHOP_API_ENDPOINT: z.url("Must be a valid URL"),
+    VENDURE_SHOP_API_ENDPOINT: z
+      .url("Must be a valid URL")
+      .default("http://localhost:3000/shop-api"),
     SALEOR_API_ENDPOINT: z
       .url("Must be a valid URL")
       .default("http://localhost:8000/graphql/"),

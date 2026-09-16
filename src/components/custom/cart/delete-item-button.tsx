@@ -23,7 +23,7 @@ export function DeleteItemButton({
         onClick={handleRemoveItem}
         disabled={removeCartItemMutation.isPending}
         aria-label="Remove cart item"
-        className="flex h-8 w-8 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/12 bg-background/70 text-foreground/52 transition hover:border-rose-500/30 hover:bg-rose-500/12 hover:text-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex h-8 w-8 items-center justify-center rounded-lg border border-black/10/12 bg-background/70 text-foreground/52 transition hover:border-rose-500/30 hover:bg-rose-500/12 hover:text-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
       >
         {icon ?? <XIcon className="mx-px h-4 w-4" />}
       </button>

@@ -46,13 +46,15 @@ function SignInComponent() {
       description="Sign in before checkout to keep carts, orders, addresses, and payment state tied to the same customer profile."
       buildVersion={buildVersion}
     >
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
-          Customer login
+      <div className="mb-6 text-center">
+        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#0071e3]">
+          Professional Account
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">Sign in</h2>
-        <p className="mt-2 text-sm leading-6 text-foreground/55">
-          Continue to checkout, account settings, and order history.
+        <h1 className="mt-2 text-2xl font-black tracking-tight text-[#1d1d1f] sm:text-3xl">
+          Sign In
+        </h1>
+        <p className="mt-2 text-xs leading-relaxed text-[#6e6e73]">
+          Access order tracking, wholesale pricing, and saved studio addresses.
         </p>
       </div>
       <SignInForm />

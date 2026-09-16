@@ -42,8 +42,8 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
   }, []);
 
   return (
-    <section className="relative min-w-0 overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/88 shadow-[0_16px_46px_rgba(0,0,0,.09)] backdrop-blur-xl">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/55 to-transparent" />
+    <section className="relative min-w-0 overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/55 to-transparent" />
       <div
         className={cn(
           "grid min-w-0 gap-0",
@@ -54,11 +54,11 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
       >
         <div
           className={cn(
-            "min-w-0 border-b border-[color:var(--cyber-gold)]/8 px-4 py-4 sm:px-5",
+            "min-w-0 border-b border-black/[0.06] px-4 py-4 sm:px-6",
             compact ? "xl:border-b-0 xl:border-r" : "lg:border-b-0 lg:border-r",
           )}
         >
-          <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+          <div className="flex items-center gap-2 text-[#0071e3]">
             <Search className="h-4 w-4" />
             <p className="text-xs font-semibold uppercase tracking-[0.18em]">
               Quick search
@@ -70,7 +70,7 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
                 key={item.query}
                 to="/search"
                 search={{ q: item.query, sort: "name-a-z" }}
-                className="inline-flex min-w-0 items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/14 bg-background/62 px-3 py-2 text-sm font-semibold text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/34 hover:text-foreground"
+                className="inline-flex min-w-0 items-center gap-2 rounded-full border border-black/10/14 bg-background/62 px-3 py-2 text-sm font-semibold text-foreground/72 transition hover:border-black/10/34 hover:text-foreground"
               >
                 {item.label}
                 <ArrowRight className="h-3.5 w-3.5" />
@@ -78,8 +78,8 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
             ))}
           </div>
           {recentSearches.length > 0 && !compact ? (
-            <div className="mt-4 border-t border-[color:var(--cyber-gold)]/8 pt-4">
-              <div className="flex items-center justify-between gap-3 text-[color:var(--cyber-gold-soft)]">
+            <div className="mt-4 border-t border-black/10/8 pt-4">
+              <div className="flex items-center justify-between gap-3 text-[#0071e3]">
                 <div className="flex items-center gap-2">
                   <Clock className="h-4 w-4" />
                   <p className="text-xs font-semibold uppercase tracking-[0.18em]">
@@ -90,7 +90,7 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
                   type="button"
                   aria-label="Clear recent searches"
                   onClick={clearRecentSearches}
-                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[color:var(--cyber-gold)]/14 bg-background/52 text-foreground/55 transition hover:border-[color:var(--cyber-gold)]/30 hover:text-[color:var(--cyber-gold-soft)]"
+                  className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-black/10/14 bg-background/52 text-foreground/55 transition hover:border-black/10 hover:text-[#0071e3]"
                 >
                   <X className="h-3.5 w-3.5" />
                 </button>
@@ -101,7 +101,7 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
                     key={query}
                     to="/search"
                     search={{ q: query, sort: "name-a-z" }}
-                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/12 bg-background/46 px-3 py-2 text-sm font-medium text-foreground/65 transition hover:border-[color:var(--cyber-gold)]/30 hover:text-foreground"
+                    className="inline-flex shrink-0 items-center gap-2 rounded-full border border-black/10/12 bg-background/46 px-3 py-2 text-sm font-medium text-foreground/65 transition hover:border-black/10 hover:text-foreground"
                   >
                     {query}
                     <ArrowRight className="h-3.5 w-3.5" />
@@ -112,7 +112,7 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
           ) : null}
         </div>
         <div className="min-w-0 px-4 py-4 sm:px-5">
-          <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+          <div className="flex items-center gap-2 text-[#0071e3]">
             <Sparkles className="h-4 w-4" />
             <p className="text-xs font-semibold uppercase tracking-[0.18em]">
               Core collections
@@ -130,10 +130,10 @@ export function SearchDiscoveryBar({ compact = false }: { compact?: boolean }) {
                 to="/collections/$collection"
                 params={{ collection: item.slug }}
                 search={{ sort: "name-a-z" }}
-                className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/54 px-3 py-2.5 text-sm font-medium text-foreground/68 transition hover:border-[color:var(--cyber-gold)]/28 hover:text-foreground"
+                className="group flex min-w-0 items-center justify-between gap-3 rounded-xl border border-black/10/10 bg-background/54 px-3 py-2.5 text-sm font-medium text-foreground/68 transition hover:border-black/10/28 hover:text-foreground"
               >
                 <span className="inline-flex min-w-0 items-center gap-2">
-                  <BadgeCheck className="h-4 w-4 shrink-0 text-[color:var(--cyber-gold-soft)]" />
+                  <BadgeCheck className="h-4 w-4 shrink-0 text-[#0071e3]" />
                   <span className="truncate">{item.label}</span>
                 </span>
                 <ArrowRight className="h-3.5 w-3.5 shrink-0 transition group-hover:translate-x-0.5" />

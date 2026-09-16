@@ -158,17 +158,22 @@ export function NtmsSaleorVariantSelector({
   }
 
   return (
-    <div className="space-y-5" data-saleor-variant-attribute-selector>
+    <div className="space-y-6" data-saleor-variant-attribute-selector>
       {groups.map((group, groupIndex) => {
         const selectedValueId = getAttributeValueId(selectedVariant, group.id);
         const isColorAttribute = isSaleorColorAttribute(group);
 
         return (
           <div data-saleor-variant-attribute-name={group.name} key={group.id}>
-            <p className="mb-2 text-xs font-bold uppercase text-foreground/52">
-              {group.name}
-            </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="mb-2.5 flex items-baseline justify-between">
+              <span className="text-xs font-semibold uppercase tracking-wider text-[#86868b]">
+                {group.name}
+              </span>
+              <span className="text-xs text-[#1d1d1f] font-medium">
+                {group.values.find((v) => v.id === selectedValueId)?.name}
+              </span>
+            </div>
+            <div className="flex flex-wrap gap-2.5">
               {group.values.map((value) => {
                 const selected = selectedValueId === value.id;
                 const swatch = isColorAttribute
@@ -187,11 +192,11 @@ export function NtmsSaleorVariantSelector({
                     aria-label={`Select ${group.name}: ${value.name}`}
                     aria-pressed={selected}
                     className={clsx(
-                      "min-h-10 max-w-full border border-[color:var(--cyber-gold)]/20 bg-background px-3 py-2 text-left text-sm font-semibold text-foreground transition focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]/40 disabled:cursor-not-allowed disabled:opacity-35",
+                      "min-h-11 rounded-xl px-4 py-2 text-left text-sm font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]/40 disabled:cursor-not-allowed disabled:opacity-30",
                       {
-                        "border-[color:var(--cyber-gold)]/70 bg-[color:var(--cyber-gold)]/14 text-[color:var(--cyber-gold-soft)]":
+                        "border-2 border-[#0071e3] bg-white text-[#1d1d1f] shadow-sm":
                           selected,
-                        "hover:border-[color:var(--cyber-gold)]/45 hover:bg-[color:var(--cyber-gold)]/8":
+                        "border border-[#d2d2d7]/80 bg-[#f5f5f7]/60 text-[#1d1d1f] hover:border-[#86868b] hover:bg-white":
                           !selected && available,
                       },
                     )}
@@ -213,7 +218,7 @@ export function NtmsSaleorVariantSelector({
                     {isColorAttribute ? (
                       <span
                         aria-hidden="true"
-                        className="mr-2 inline-block h-4 w-4 shrink-0 border border-foreground/25 align-[-0.15em]"
+                        className="mr-2 inline-block h-4 w-4 shrink-0 rounded-full border border-black/10 shadow-inner align-[-0.15em]"
                         data-saleor-variant-color-swatch={
                           swatch ? "resolved" : "fallback"
                         }

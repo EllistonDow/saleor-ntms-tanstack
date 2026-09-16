@@ -254,12 +254,10 @@ function AddressCard({
   return (
     <article
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 p-5 shadow-[0_16px_42px_rgba(0,0,0,.08)] transition hover:border-[color:var(--cyber-gold)]/22 hover:shadow-[0_20px_52px_rgba(0,0,0,.1)]",
-        editing &&
-          "border-[color:var(--cyber-gold)]/38 bg-[color:var(--cyber-gold)]/5",
+        "group relative overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-5 shadow-[0_4px_20px_rgba(0,0,0,0.03)] transition hover:border-black/15 hover:shadow-[0_8px_30px_rgba(0,0,0,0.06)]",
+        editing && "border-[#0071e3] ring-1 ring-[#0071e3]/20 bg-[#f5f5f7]/30",
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/45 to-transparent opacity-0 transition group-hover:opacity-100" />
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0">
           <div className="flex flex-wrap gap-2">
@@ -270,14 +268,14 @@ function AddressCard({
               <AddressBadge>Default billing</AddressBadge>
             ) : null}
           </div>
-          <h2 className="mt-3 text-lg font-semibold text-foreground">
+          <h2 className="mt-3 text-lg font-semibold text-[#1d1d1f]">
             {address.fullName || "Saved address"}
           </h2>
           {address.company ? (
-            <p className="mt-1 text-sm text-foreground/55">{address.company}</p>
+            <p className="mt-1 text-sm text-[#86868b]">{address.company}</p>
           ) : null}
         </div>
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[color:var(--cyber-gold)]/12 bg-background/65 text-[color:var(--cyber-gold-soft)]">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-black/[0.06] bg-[#f5f5f7] text-[#0071e3]">
           <MapPinned className="h-4 w-4" />
         </span>
       </div>
@@ -318,7 +316,7 @@ function AddressCard({
 
 function AddressBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-[color:var(--cyber-gold)]/14 bg-[color:var(--cyber-gold)]/8 px-2.5 py-1 text-xs font-medium text-[color:var(--cyber-gold-soft)]">
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-[#0071e3]/20 bg-[#0071e3]/10 px-2.5 py-1 text-xs font-semibold text-[#0071e3]">
       <Star className="h-3.5 w-3.5" />
       {children}
     </span>
@@ -433,13 +431,13 @@ function AddressForm({
     <form.Field
       name={name}
       children={(field) => (
-        <label className="flex items-center gap-3 rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/48 px-3 py-3 text-sm font-medium text-foreground/72">
+        <label className="flex items-center gap-3 rounded-xl border border-black/[0.06] bg-[#f5f5f7]/60 px-3.5 py-3 text-sm font-medium text-[#1d1d1f] hover:bg-[#f5f5f7] transition-colors cursor-pointer">
           <input
             type="checkbox"
             checked={Boolean(field.state.value)}
             onBlur={field.handleBlur}
             onChange={(event) => field.handleChange(event.target.checked)}
-            className="h-4 w-4 rounded border-[color:var(--cyber-gold)]/30 bg-background accent-[color:var(--cyber-gold)]"
+            className="h-4 w-4 rounded border-black/20 text-[#0071e3] accent-[#0071e3]"
           />
           {label}
         </label>
@@ -448,13 +446,13 @@ function AddressForm({
   );
 
   return (
-    <section className="rounded-2xl border border-[color:var(--cyber-gold)]/14 bg-card/92 p-6 shadow-[0_18px_48px_rgba(0,0,0,.1)]">
+    <section className="rounded-2xl border border-black/[0.06] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
             {mode === "edit" ? "Edit address" : "New address"}
           </p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-foreground">
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[#1d1d1f]">
             {mode === "edit" ? "Update saved address" : "Add saved address"}
           </h2>
         </div>

@@ -45,11 +45,11 @@ function VendureCheckoutLayout() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <header className="sticky top-0 z-40 border-b border-[color:var(--cyber-gold)]/14 bg-background/82 px-4 py-3 backdrop-blur-2xl lg:px-6">
+      <header className="sticky top-0 z-40 border-b border-black/10/14 bg-background/82 px-4 py-3 backdrop-blur-2xl lg:px-6">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
           <Link
             to="/"
-            className="flex items-center gap-3 rounded-full border border-[color:var(--cyber-gold)]/12 bg-card/75 px-3 py-2 shadow-[0_10px_30px_rgba(0,0,0,.08)] transition hover:border-[color:var(--cyber-gold)]/22 hover:bg-card/90"
+            className="flex items-center gap-3 rounded-full border border-black/10/12 bg-card/75 px-3 py-2 shadow-[0_10px_30px_rgba(0,0,0,.08)] transition hover:border-black/10/22 hover:bg-card/90"
           >
             <LogoSquare />
             <div className="text-sm font-medium uppercase tracking-[0.16em]">
@@ -71,10 +71,10 @@ function VendureCheckoutLayout() {
           <Outlet />
         </div>
         {!isConfirmation && (
-          <aside className="relative min-w-0 self-start overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/16 bg-card/92 p-5 shadow-[0_24px_75px_rgba(0,0,0,.12)] backdrop-blur-xl lg:sticky lg:top-24">
-            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/75 to-transparent" />
-            <div className="mb-5 border-b border-[color:var(--cyber-gold)]/10 pb-4">
-              <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+          <aside className="relative min-w-0 self-start overflow-hidden rounded-2xl border border-black/10/16 bg-card/92 p-5 shadow-[0_24px_75px_rgba(0,0,0,.12)] backdrop-blur-xl lg:sticky lg:top-24">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/75 to-transparent" />
+            <div className="mb-5 border-b border-black/10/10 pb-4">
+              <div className="flex items-center gap-2 text-[#0071e3]">
                 <ReceiptText className="h-4 w-4" />
                 <h2 className="text-xs font-semibold uppercase tracking-[0.18em]">
                   Order Summary
@@ -97,13 +97,13 @@ function VendureCheckoutLayout() {
               <>
                 <CartContents order={activeOrder} editable={false} />
                 <CartTotals order={activeOrder} readonly />
-                <div className="mt-4 grid gap-2 border-t border-[color:var(--cyber-gold)]/10 pt-4 text-xs leading-5 text-foreground/48">
+                <div className="mt-4 grid gap-2 border-t border-black/10/10 pt-4 text-xs leading-5 text-foreground/48">
                   <p className="flex items-center gap-2">
-                    <LockKeyhole className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+                    <LockKeyhole className="h-3.5 w-3.5 text-[#0071e3]" />
                     Payment details stay on the secure checkout step.
                   </p>
                   <p className="flex items-center gap-2">
-                    <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+                    <ShieldCheck className="h-3.5 w-3.5 text-[#0071e3]" />
                     Totals come from the live Vendure order.
                   </p>
                 </div>

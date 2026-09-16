@@ -24,7 +24,7 @@ function SubmitButton({
   isOutOfStock: boolean;
 }) {
   const buttonClasses =
-    "group relative flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[color:var(--cyber-gold)] px-5 py-4 text-sm font-bold uppercase tracking-[0.12em] text-black shadow-[0_18px_42px_rgba(247,200,31,.2)] transition";
+    "group relative flex min-h-14 w-full items-center justify-center gap-3 rounded-xl bg-[#0071e3] px-5 py-4 text-sm font-bold uppercase tracking-[0.12em] text-black shadow-[0_18px_42px_rgba(247,200,31,.2)] transition";
   const disabledClasses = "cursor-not-allowed opacity-60 hover:opacity-60";
 
   if (!availableForSale || isOutOfStock) {
@@ -59,7 +59,7 @@ function SubmitButton({
       aria-label="Add to cart"
       disabled={isLoading || !isHydrated}
       className={clsx(buttonClasses, {
-        "hover:-translate-y-px hover:bg-[color:var(--cyber-gold-soft)] hover:shadow-[0_24px_52px_rgba(247,200,31,.25)]":
+        "hover:-translate-y-px hover:bg-[color:var(--apple-blue)] hover:shadow-[0_24px_52px_rgba(247,200,31,.25)]":
           !isLoading && isHydrated,
         "opacity-60 cursor-not-allowed": isLoading || !isHydrated,
       })}
@@ -145,10 +145,10 @@ export function AddToCart({
         </p>
       ) : null}
       <div className="grid gap-2 text-xs text-foreground/45 sm:grid-cols-2">
-        <p className="rounded-lg border border-[color:var(--cyber-gold)]/10 bg-background/42 px-3 py-2">
+        <p className="rounded-lg border border-black/10/10 bg-background/42 px-3 py-2">
           Opens cart after adding.
         </p>
-        <p className="rounded-lg border border-[color:var(--cyber-gold)]/10 bg-background/42 px-3 py-2">
+        <p className="rounded-lg border border-black/10/10 bg-background/42 px-3 py-2">
           Live price and stock checked.
         </p>
       </div>

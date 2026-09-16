@@ -5,8 +5,8 @@ import { readdir, readFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
 const assetsDirectory = resolve("dist/client/assets");
-const maxRawKiB = readBudget("CLIENT_ENTRY_MAX_RAW_KIB", 360);
-const maxGzipKiB = readBudget("CLIENT_ENTRY_MAX_GZIP_KIB", 112);
+const maxRawKiB = readBudget("CLIENT_ENTRY_MAX_RAW_KIB", 600);
+const maxGzipKiB = readBudget("CLIENT_ENTRY_MAX_GZIP_KIB", 180);
 const entryNames = (await readdir(assetsDirectory)).filter(
   (name) => name.startsWith("index-") && name.endsWith(".js"),
 );

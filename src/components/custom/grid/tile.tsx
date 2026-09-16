@@ -38,15 +38,14 @@ export function GridTileImage({
       className={clsx(
         "group flex h-full w-full items-center justify-center overflow-hidden bg-card/92 transition duration-300 dark:bg-black/78",
         frame
-          ? "rounded-xl border border-[color:var(--cyber-gold)]/10 shadow-[0_12px_32px_rgba(0,0,0,.08)] hover:border-[color:var(--cyber-gold)]/22 hover:shadow-[0_18px_40px_rgba(0,0,0,.14)]"
+          ? "rounded-xl border border-black/10/10 shadow-[0_12px_32px_rgba(0,0,0,.08)] hover:border-black/10/22 hover:shadow-[0_18px_40px_rgba(0,0,0,.14)]"
           : "",
         {
           relative: label,
-          "border-[color:var(--cyber-gold)]/42 shadow-[0_0_0_1px_rgba(247,200,31,.14),0_16px_36px_rgba(0,0,0,.16)]":
+          "border-[#0071e3] shadow-[0_0_0_1px_rgba(0,113,227,0.2),0_16px_36px_rgba(0,0,0,.12)]":
             frame && active,
-          "border-[color:var(--cyber-gold)]/12 dark:border-[color:var(--cyber-gold)]/25":
-            frame && !active,
-          "ring-1 ring-[color:var(--cyber-gold)]/42": !frame && active,
+          "border-black/10/12 dark:border-black/10/25": frame && !active,
+          "ring-1 ring-[color:var(--apple-blue)]/42": !frame && active,
         },
       )}
     >

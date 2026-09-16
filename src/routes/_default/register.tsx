@@ -12,7 +12,6 @@ export const Route = createFileRoute("/_default/register")({
     ),
   }),
   beforeLoad: ({ context }) => {
-    // Redirect to account if user is already logged in
     if (context.user) {
       throw redirect({ to: "/account" });
     }
@@ -28,15 +27,16 @@ function RegisterComponent() {
       title="Build your customer profile"
       description="Create a customer account for checkout access, order tracking, and a cleaner repeat ordering workflow for tattoo shop supplies."
     >
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
-          New customer
+      <div className="mb-6 text-center">
+        <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#0071e3]">
+          Artist & Studio Portal
         </p>
-        <h2 className="mt-2 text-2xl font-semibold tracking-tight">
-          Create account
-        </h2>
-        <p className="mt-2 text-sm leading-6 text-foreground/55">
-          Use a valid email so verification and order messages can reach you.
+        <h1 className="mt-2 text-2xl font-black tracking-tight text-[#1d1d1f] sm:text-3xl">
+          Create Studio Profile
+        </h1>
+        <p className="mt-2 text-xs leading-relaxed text-[#6e6e73]">
+          Join verified tattoo artists nationwide for priority dispatch and
+          direct wholesale.
         </p>
       </div>
       <RegisterForm />

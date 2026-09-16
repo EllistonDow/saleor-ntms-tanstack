@@ -1,16 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Package2, ReceiptText } from "lucide-react";
+import { ArrowRight, Package2, PackageOpen, ReceiptText } from "lucide-react";
 import {
   CommercePageHero,
   CommerceSignal,
 } from "@/components/custom/layout/commerce-surface";
-import { StatusPanel } from "@/components/custom/layout/status-panel";
-import { OrderStatusSummary } from "@/components/custom/order/order-status-summary";
 import { Button } from "@/components/ui/button";
 import { orderHistoryQueryOptions, useOrderHistory } from "@/hooks/use-orders";
-import { type AccountOrder, formatSaleorCurrency } from "@/lib/account-types";
 import { createBasicMeta } from "@/lib/metadata";
-import { formatCurrency, formatDate, getOrderStatusColor } from "@/lib/utils";
 
 export const Route = createFileRoute("/_account/account/orders/")({
   loader: async ({ context }) => {
@@ -43,91 +39,79 @@ function AccountOrdersComponent() {
   const orderCount = orders.length;
 
   return (
-    <div className="space-y-6 py-4">
+    <div className="space-y-6">
       <CommercePageHero
-        eyebrow="Account"
-        title="Order history"
-        description="Track recent orders, review totals, and open any order detail."
-        icon={<Package2 className="h-5 w-5" />}
+        eyebrow="Account Overview"
+        title="Order History"
+        description="Track live shipments, review receipts, and view order details."
         meta={
-          <CommerceSignal icon={<Package2 className="h-4 w-4" />}>
-            {orderCount} orders
+          <CommerceSignal
+            icon={<Package2 className="h-3.5 w-3.5 text-[#0071e3]" />}
+          >
+            {orderCount} {orderCount === 1 ? "order" : "orders"}
           </CommerceSignal>
         }
       />
 
       {orderCount === 0 ? (
-        <StatusPanel
-          icon={<Package2 className="h-5 w-5" />}
-          title="No orders yet"
-          description="Your first order will appear here once checkout completes."
-          actions={
-            <>
-              <Button asChild>
-                <Link to="/">
-                  Start shopping
-                  <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-              <Button asChild variant="outline">
-                <Link to="/search">Search products</Link>
-              </Button>
-            </>
-          }
-        />
+        <div className="flex flex-col items-center justify-center rounded-[2rem] border border-black/5 bg-white p-12 text-center shadow-[0_4px_24px_rgba(0,0,0,0.03)] sm:p-16">
+          <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#f5f5f7] text-[#0071e3] shadow-inner transition-transform duration-500 hover:scale-105">
+            <PackageOpen className="h-9 w-9 text-[#0071e3]" />
+          </div>
+          <h2 className="mt-6 text-xl font-bold tracking-tight text-[#1d1d1f] sm:text-2xl">
+            No Orders Yet
+          </h2>
+          <p className="mt-2 max-w-md text-xs sm:text-sm leading-relaxed text-[#86868b]">
+            Your completed studio hardware and supply orders will appear here
+            with live tracking numbers and PDF invoices.
+          </p>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <Button
+              asChild
+              className="h-11 rounded-full bg-[#0071e3] px-8 text-xs sm:text-sm font-semibold text-white shadow-md transition-all hover:bg-[#0077ed] hover:scale-105 active:scale-95"
+            >
+              <Link to="/">
+                <span>Start Shopping</span>
+                <ArrowRight className="ml-1.5 h-4 w-4" />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="outline"
+              className="h-11 rounded-full border border-black/10 bg-white px-7 text-xs sm:text-sm font-semibold text-[#1d1d1f] shadow-sm transition hover:bg-[#f5f5f7]"
+            >
+              <Link to="/search">Search Products</Link>
+            </Button>
+          </div>
+        </div>
       ) : (
-        <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
-          <div className="flex items-center justify-between gap-4 border-b border-[color:var(--cyber-gold)]/8 px-6 py-5">
-            <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+        <section className="overflow-hidden rounded-[2rem] border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.03)]">
+          <div className="flex items-center justify-between gap-4 border-b border-black/[0.06] px-6 py-5">
+            <div className="flex items-center gap-2 text-[#0071e3]">
               <ReceiptText className="h-4 w-4" />
-              <h2 className="text-xs font-semibold uppercase tracking-[0.18em]">
-                Recent orders
+              <h2 className="text-xs font-bold uppercase tracking-[0.18em] text-[#1d1d1f]">
+                Recent Orders
               </h2>
             </div>
-            <span className="rounded-full border border-[color:var(--cyber-gold)]/12 bg-background/60 px-2.5 py-1 text-xs text-foreground/55">
-              Live account
+            <span className="rounded-full border border-black/5 bg-[#f5f5f7] px-3.5 py-1 text-xs font-medium text-[#86868b]">
+              Live Records
             </span>
           </div>
-          <ul className="divide-y divide-[color:var(--cyber-gold)]/10">
+          <ul className="divide-y divide-black/[0.06]">
             {orders.map((order) => (
               <li key={order.id}>
                 <Link
                   to="/account/orders/$code"
                   params={{ code: order.code }}
-                  className="block px-6 py-5 transition hover:bg-[color:var(--cyber-gold)]/3"
+                  className="block px-6 py-5 transition hover:bg-[#f5f5f7]/60"
                 >
                   <div className="flex items-start justify-between gap-6">
                     <div className="min-w-0">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-sm font-medium text-foreground">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-bold text-[#1d1d1f]">
                           Order #{order.code}
-                        </p>
-                        <span
-                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${getOrderStatusColor(order.state)}`}
-                        >
-                          {order.stateLabel}
                         </span>
                       </div>
-                      <p className="mt-2 text-sm text-foreground/55">
-                        Placed on {formatDate(order.createdAt)} ·{" "}
-                        {order.totalQuantity}{" "}
-                        {order.totalQuantity === 1 ? "item" : "items"}
-                      </p>
-                      <OrderStatusSummary
-                        compact
-                        deliverySummary={getAccountDeliverySummary(order)}
-                        orderState={order.stateLabel}
-                        paymentSummary={getAccountPaymentSummary(order)}
-                      />
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p className="text-sm font-medium text-foreground">
-                        {formatAccountOrderCurrency(order, order.totalWithTax)}
-                      </p>
-                      <p className="mt-1 inline-flex items-center gap-1 text-sm text-foreground/55">
-                        View details
-                        <ArrowRight className="h-4 w-4" />
-                      </p>
                     </div>
                   </div>
                 </Link>
@@ -138,18 +122,4 @@ function AccountOrdersComponent() {
       )}
     </div>
   );
-}
-
-function formatAccountOrderCurrency(order: AccountOrder, amount: number) {
-  return order.isSaleor
-    ? formatSaleorCurrency(amount, order.currencyCode)
-    : formatCurrency(amount, order.currencyCode);
-}
-
-function getAccountPaymentSummary(order: AccountOrder) {
-  return order.paymentState || "Payment not recorded";
-}
-
-function getAccountDeliverySummary(order: AccountOrder) {
-  return order.shippingMethodName || "Shipping not recorded";
 }

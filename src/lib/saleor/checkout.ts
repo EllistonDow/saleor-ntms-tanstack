@@ -495,12 +495,7 @@ const checkoutFields = `
       name
       sku
       quantityAvailable
-      product {
-        id
-        name
-        slug
-        thumbnail(size: 256, format: WEBP) { url alt }
-      }
+      product { id name slug thumbnail(size: 256) { url alt } media { url alt } }
     }
   }
 `;
@@ -525,7 +520,7 @@ const orderFields = `
     productSku
     quantity
     totalPrice { gross { amount currency } }
-    thumbnail(size: 128, format: WEBP) { url alt }
+    thumbnail(size: 256) { url alt }
   }
 `;
 
@@ -1413,21 +1408,25 @@ function mapCheckout(checkout: SaleorCheckoutNode): NtmsSaleorCheckout {
     paymentGateways: checkout.availablePaymentGateways.map((gateway) =>
       mapPaymentGateway(gateway),
     ),
-    lines: checkout.lines.map((line) => ({
-      id: line.id,
-      quantity: line.quantity,
-      variantId: line.variant.id,
-      variantName: line.variant.name,
-      sku: line.variant.sku ?? "",
-      productName: line.variant.product.name,
-      productSlug: line.variant.product.slug,
-      imageUrl: line.variant.product.thumbnail?.url ?? "",
-      imageAlt:
-        line.variant.product.thumbnail?.alt || line.variant.product.name,
-      unitPrice: line.unitPrice.gross,
-      totalPrice: line.totalPrice.gross,
-      quantityAvailable: line.variant.quantityAvailable ?? null,
-    })),
+    lines: checkout.lines.map((line) => {
+      const prod = line.variant.product;
+      const imageUrl = prod.thumbnail?.url || "";
+      const imageAlt = prod.thumbnail?.alt || prod.name;
+      return {
+        id: line.id,
+        quantity: line.quantity,
+        variantId: line.variant.id,
+        variantName: line.variant.name,
+        sku: line.variant.sku ?? "",
+        productName: prod.name,
+        productSlug: prod.slug,
+        imageUrl,
+        imageAlt,
+        unitPrice: line.unitPrice.gross,
+        totalPrice: line.totalPrice.gross,
+        quantityAvailable: line.variant.quantityAvailable ?? null,
+      };
+    }),
   };
 }
 

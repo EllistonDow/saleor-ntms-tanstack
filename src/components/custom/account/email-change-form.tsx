@@ -158,6 +158,7 @@ export function EmailChangeForm({
       <LoaderButton
         loading={requestEmailChangeMutation.isPending}
         type="submit"
+        className="h-11 rounded-full bg-[#0071e3] px-8 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#0077ed] hover:scale-105 active:scale-95"
       >
         Request email change
       </LoaderButton>

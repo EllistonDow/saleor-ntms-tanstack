@@ -36,12 +36,12 @@ export default function FacetsFilterItem({
   const selectedCount = defaultValue.length;
 
   return (
-    <div className="min-w-0 w-full rounded-lg border border-[color:var(--cyber-gold)]/12 bg-background/52 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] transition hover:border-[color:var(--cyber-gold)]/22">
+    <div className="min-w-0 w-full rounded-lg border border-black/10/12 bg-background/52 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,.04)] transition hover:border-black/10/22">
       <div className="mb-3 flex items-center justify-between gap-3">
         <h3 className="block text-xs font-semibold uppercase tracking-[0.18em] text-foreground/55">
           {item.name}
         </h3>
-        <span className="rounded-full border border-[color:var(--cyber-gold)]/12 bg-card/70 px-2 py-0.5 text-[11px] text-foreground/55">
+        <span className="rounded-full border border-black/10/12 bg-card/70 px-2 py-0.5 text-[11px] text-foreground/55">
           {selectedCount > 0 ? `${selectedCount} selected` : "All"}
         </span>
       </div>

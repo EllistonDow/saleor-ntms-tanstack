@@ -22,11 +22,11 @@ function PathFilterItemComponent({ item }: { item: PathFilterItem }) {
         )}
         activeProps={{
           className:
-            "border-[color:var(--cyber-gold)]/16 bg-[color:var(--cyber-gold)]/9 font-medium text-foreground",
+            "border-black/10/16 bg-[#0071e3]/9 font-medium text-foreground",
         }}
         inactiveProps={{
           className:
-            "text-foreground/58 hover:border-[color:var(--cyber-gold)]/10 hover:bg-[color:var(--cyber-gold)]/5 hover:text-foreground",
+            "text-foreground/58 hover:border-black/10/10 hover:bg-[#0071e3]/5 hover:text-foreground",
         }}
       >
         <span>{item.name}</span>
@@ -61,7 +61,7 @@ function SortFilterItemComponent({
         )}
         activeProps={{
           className: clsx(
-            "border-[color:var(--cyber-gold)]/16 bg-[color:var(--cyber-gold)]/9 text-foreground",
+            "border-black/10/16 bg-[#0071e3]/9 text-foreground",
             isToolbar
               ? "font-semibold shadow-[0_10px_24px_rgba(0,0,0,.12)]"
               : "font-medium",
@@ -70,7 +70,7 @@ function SortFilterItemComponent({
         }}
         inactiveProps={{
           className: clsx(
-            "border-transparent text-foreground/58 hover:border-[color:var(--cyber-gold)]/10 hover:bg-[color:var(--cyber-gold)]/5 hover:text-foreground",
+            "border-transparent text-foreground/58 hover:border-black/10/10 hover:bg-[#0071e3]/5 hover:text-foreground",
             isToolbar && "bg-background/55",
           ),
         }}

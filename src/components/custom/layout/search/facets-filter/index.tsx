@@ -46,20 +46,20 @@ export default function FacetsFilter({
     <section
       id={id}
       className={cn(
-        "relative scroll-mt-28 overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/90 p-3 shadow-[0_18px_48px_rgba(0,0,0,.09)] backdrop-blur-xl sm:p-4",
+        "relative scroll-mt-28 overflow-hidden rounded-lg border border-black/10/12 bg-card/90 p-3 shadow-[0_18px_48px_rgba(0,0,0,.09)] backdrop-blur-xl sm:p-4",
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/50 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/50 to-transparent" />
       <div className="mb-4 flex items-center justify-between gap-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
             Filters
           </p>
           <p className="mt-1 text-sm text-foreground/55">
             Narrow collection results by facet.
           </p>
         </div>
-        <div className="rounded-full border border-[color:var(--cyber-gold)]/10 bg-background/62 px-3 py-1 text-xs text-foreground/55">
+        <div className="rounded-full border border-black/10/10 bg-background/62 px-3 py-1 text-xs text-foreground/55">
           {availableFacets.length} groups
         </div>
       </div>

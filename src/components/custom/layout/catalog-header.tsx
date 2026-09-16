@@ -21,14 +21,14 @@ export function CatalogHeader({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/14 bg-card/92 shadow-[0_22px_70px_rgba(0,0,0,.1)] backdrop-blur-xl",
+        "relative overflow-hidden rounded-2xl border border-black/10/14 bg-card/92 shadow-[0_22px_70px_rgba(0,0,0,.1)] backdrop-blur-xl",
         className,
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/75 to-transparent" />
-      <div className="absolute inset-y-0 left-0 w-1 bg-[color:var(--cyber-gold)]/70" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/75 to-transparent" />
+      <div className="absolute inset-y-0 left-0 w-1 bg-[#0071e3]/70" />
       <div className="px-4 py-5 sm:px-6 sm:py-6 lg:px-7">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
           {eyebrow}
         </p>
         <div className="mt-3 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">

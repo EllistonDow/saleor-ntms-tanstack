@@ -71,8 +71,13 @@ export function ResendVerificationForm() {
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>E-Mail</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-semibold text-[#1d1d1f]"
+                >
+                  E-Mail
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -83,6 +88,7 @@ export function ResendVerificationForm() {
                   aria-invalid={isInvalid}
                   autoComplete="email"
                   placeholder="john.doe@acme.com"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm text-[#1d1d1f] placeholder:text-[#86868b] focus:bg-white focus:border-[#0071e3] transition-all"
                 />
                 {isInvalid ? (
                   <FieldError errors={field.state.meta.errors} />
@@ -94,7 +100,7 @@ export function ResendVerificationForm() {
       </FieldGroup>
       <LoaderButton
         loading={refreshVerificationMutation.isPending}
-        className="w-full"
+        className="w-full h-12 rounded-full bg-[#0071e3] text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#0077ed] hover:scale-[1.01] active:scale-[0.99]"
         type="submit"
       >
         Send verification email

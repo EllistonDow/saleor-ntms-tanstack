@@ -61,10 +61,10 @@ export function Confirmation({ order }: ConfirmationProps) {
 
   return (
     <div className="mx-auto max-w-5xl space-y-8">
-      <section className="rounded-2xl border border-[color:var(--cyber-gold)]/15 bg-card/85 p-6 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
+      <section className="rounded-2xl border border-black/5 bg-card/85 p-6 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
         <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
               Checkout complete
             </p>
             <h2 className="mt-2 text-3xl font-semibold tracking-tight text-foreground">
@@ -75,15 +75,15 @@ export function Confirmation({ order }: ConfirmationProps) {
               been received! It is now moving through fulfillment.
             </p>
           </div>
-          <div className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/15 bg-background/65 px-3 py-1 text-xs text-foreground/55">
-            <CheckCircle2 className="h-4 w-4 text-[color:var(--cyber-gold-soft)]" />
+          <div className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-white px-3 py-1 text-xs text-foreground/55">
+            <CheckCircle2 className="h-4 w-4 text-[#0071e3]" />
             <span>Confirmed</span>
           </div>
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
-        <div className="border-b border-[color:var(--cyber-gold)]/12 px-4 py-4 sm:px-6">
+      <section className="rounded-2xl border border-black/5 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
+        <div className="border-b border-black/5 px-4 py-4 sm:px-6">
           <h3 className="text-lg font-medium text-foreground">Order status</h3>
         </div>
         <div className="px-4 py-5 sm:px-6">
@@ -97,15 +97,15 @@ export function Confirmation({ order }: ConfirmationProps) {
         </div>
       </section>
 
-      <section className="rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
-        <div className="flex items-center gap-2 border-b border-[color:var(--cyber-gold)]/12 px-4 py-4 sm:px-6">
-          <Package2 className="h-5 w-5 text-[color:var(--cyber-gold-soft)]" />
+      <section className="rounded-2xl border border-black/5 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
+        <div className="flex items-center gap-2 border-b border-black/5 px-4 py-4 sm:px-6">
+          <Package2 className="h-5 w-5 text-[#0071e3]" />
           <h3 className="text-lg font-medium text-foreground">Order summary</h3>
         </div>
         <div className="px-4 py-5 sm:px-6">
           <CartContents order={order} editable={false} />
         </div>
-        <div className="border-t border-[color:var(--cyber-gold)]/12 px-4 py-5 sm:px-6">
+        <div className="border-t border-black/5 px-4 py-5 sm:px-6">
           <CartTotals order={order} readonly />
         </div>
       </section>
@@ -113,9 +113,9 @@ export function Confirmation({ order }: ConfirmationProps) {
       {(shippingAddress || customer) && (
         <div className="grid gap-6 lg:grid-cols-2">
           {shippingAddress && (
-            <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
-              <div className="flex items-center gap-2 border-b border-[color:var(--cyber-gold)]/12 px-4 py-4 sm:px-6">
-                <MapPin className="h-5 w-5 text-[color:var(--cyber-gold-soft)]" />
+            <section className="overflow-hidden rounded-2xl border border-black/5 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
+              <div className="flex items-center gap-2 border-b border-black/5 px-4 py-4 sm:px-6">
+                <MapPin className="h-5 w-5 text-[#0071e3]" />
                 <h3 className="text-lg font-medium text-foreground">
                   Shipping address
                 </h3>
@@ -140,9 +140,9 @@ export function Confirmation({ order }: ConfirmationProps) {
           )}
 
           {customer && (
-            <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
-              <div className="flex items-center gap-2 border-b border-[color:var(--cyber-gold)]/12 px-4 py-4 sm:px-6">
-                <MapPin className="h-5 w-5 text-[color:var(--cyber-gold-soft)]" />
+            <section className="overflow-hidden rounded-2xl border border-black/5 bg-card/85 shadow-[0_24px_80px_rgba(0,0,0,.12)]">
+              <div className="flex items-center gap-2 border-b border-black/5 px-4 py-4 sm:px-6">
+                <MapPin className="h-5 w-5 text-[#0071e3]" />
                 <h3 className="text-lg font-medium text-foreground">
                   Contact information
                 </h3>

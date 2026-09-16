@@ -171,8 +171,8 @@ export function Payment() {
                 data-testid="payment-method-card"
                 className={`overflow-hidden rounded-2xl border transition ${
                   isSelected
-                    ? "border-[color:var(--cyber-gold)]/24 bg-card/92 shadow-[0_16px_36px_rgba(0,0,0,.08)]"
-                    : "border-[color:var(--cyber-gold)]/10 bg-card/84"
+                    ? "border-black/10/24 bg-card/92 shadow-[0_16px_36px_rgba(0,0,0,.08)]"
+                    : "border-black/5 bg-card/84"
                 }`}
               >
                 <button
@@ -215,7 +215,7 @@ export function Payment() {
                 </button>
 
                 {isSelected ? (
-                  <div className="border-t border-[color:var(--cyber-gold)]/10 px-6 py-5">
+                  <div className="border-t border-black/5 px-6 py-5">
                     {isStripeMethod ? (
                       <StripePaymentStatus
                         clientSecret={readiness?.stripePaymentIntent}
@@ -248,7 +248,7 @@ export function Payment() {
         </div>
       )}
 
-      <div className="flex items-center justify-between border-t border-[color:var(--cyber-gold)]/10 pt-6">
+      <div className="flex items-center justify-between border-t border-black/5 pt-6">
         <Button
           type="button"
           variant="outline"

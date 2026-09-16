@@ -15,13 +15,7 @@ import { useResetCustomerPasswordMutation } from "@/hooks/use-account-mutations"
 
 const resetPasswordSchema = z
   .object({
-    password: z
-      .string()
-      .min(8, "Password must be at least 8 characters")
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain uppercase, lowercase, and a number",
-      ),
+    password: z.string().min(4, "Password must be at least 4 characters"),
     confirmPassword: z.string().min(1, "Confirm the new password"),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -84,8 +78,13 @@ export function ResetPasswordForm({
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>New password</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-semibold text-[#1d1d1f]"
+                >
+                  New password
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -95,6 +94,8 @@ export function ResetPasswordForm({
                   onChange={(event) => field.handleChange(event.target.value)}
                   aria-invalid={isInvalid}
                   autoComplete="new-password"
+                  placeholder="Enter new password"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm text-[#1d1d1f] placeholder:text-[#86868b] focus:bg-white focus:border-[#0071e3] transition-all"
                 />
                 {isInvalid ? (
                   <FieldError errors={field.state.meta.errors} />
@@ -110,8 +111,11 @@ export function ResetPasswordForm({
               field.state.meta.isTouched && !field.state.meta.isValid;
 
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-semibold text-[#1d1d1f]"
+                >
                   Confirm new password
                 </FieldLabel>
                 <Input
@@ -123,6 +127,8 @@ export function ResetPasswordForm({
                   onChange={(event) => field.handleChange(event.target.value)}
                   aria-invalid={isInvalid}
                   autoComplete="new-password"
+                  placeholder="Confirm new password"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm text-[#1d1d1f] placeholder:text-[#86868b] focus:bg-white focus:border-[#0071e3] transition-all"
                 />
                 {isInvalid ? (
                   <FieldError errors={field.state.meta.errors} />
@@ -134,7 +140,7 @@ export function ResetPasswordForm({
       </FieldGroup>
       <LoaderButton
         loading={resetPasswordMutation.isPending}
-        className="w-full"
+        className="w-full h-12 rounded-full bg-[#0071e3] text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#0077ed] hover:scale-[1.01] active:scale-[0.99]"
         type="submit"
       >
         Reset password

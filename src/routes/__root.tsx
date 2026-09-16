@@ -145,11 +145,11 @@ export const Route = createRootRouteWithContext<RouterContext>()({
         // Additional SEO meta tags
         {
           name: "theme-color",
-          content: "#0b0b09",
+          content: "#fbfbfd",
         },
         {
           name: "msapplication-TileColor",
-          content: "#0b0b09",
+          content: "#fbfbfd",
         },
         {
           name: "format-detection",
@@ -285,7 +285,7 @@ const themeInitScript = `
   const storedPreference = window.localStorage.getItem(storageKey);
   const preference = storedPreference === "light" || storedPreference === "dark" || storedPreference === "system"
     ? storedPreference
-    : "dark";
+    : "light";
   const resolvedTheme = preference === "system"
     ? (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light")
     : preference;

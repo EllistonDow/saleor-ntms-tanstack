@@ -18,7 +18,7 @@ export function ThemeToggle() {
       aria-label={`Switch theme. Current: ${preferenceLabel[preference]}`}
       title={`Theme: ${preference}`}
       onClick={toggleTheme}
-      className="relative flex h-11 w-11 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/25 bg-background/70 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl transition-all hover:border-[color:var(--cyber-gold)]/60 hover:text-[color:var(--cyber-gold-soft)] dark:bg-black/35"
+      className="relative flex h-11 w-11 items-center justify-center rounded-2xl border border-black/5 bg-white text-[#1d1d1f] shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all hover:bg-[#f5f5f7] hover:text-[#0071e3]"
     >
       <Icon className="h-4 w-4" />
     </button>

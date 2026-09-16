@@ -35,17 +35,18 @@ function AccountLayoutComponent() {
   const { menu } = Route.useLoaderData();
   const accountContent = (
     <div className="mx-auto max-w-screen-2xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 border-b border-[color:var(--cyber-gold)]/10 pb-4">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-black/[0.06] pb-4">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
-            Customer account
+          <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-[#0071e3]">
+            Account Management
           </p>
-          <p className="mt-1 text-sm text-foreground/55">
-            Manage profile, saved addresses, orders, and account security.
+          <p className="mt-1 text-xs text-[#86868b]">
+            Manage profile, studio shipping addresses, orders, and account
+            security.
           </p>
         </div>
-        <span className="rounded-full border border-[color:var(--cyber-gold)]/14 bg-card/70 px-3 py-1 text-xs font-medium text-foreground/55">
-          Secure customer account
+        <span className="rounded-full border border-black/5 bg-white px-3.5 py-1 text-xs font-semibold text-[#86868b] shadow-sm">
+          Studio Portal
         </span>
       </div>
       <div className="gap-7 lg:grid lg:grid-cols-[300px_minmax(0,1fr)] lg:items-start">
@@ -64,7 +65,7 @@ function AccountLayoutComponent() {
   }
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-[#f5f5f7] text-[#1d1d1f]">
       <Navbar menu={menu} />
       {accountContent}
     </div>

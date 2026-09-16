@@ -35,10 +35,10 @@ function AccountOverviewComponent() {
 
   return (
     <div className="space-y-5 py-4">
-      <section className="rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/90 p-5 shadow-[0_18px_48px_rgba(0,0,0,.1)] sm:p-6">
+      <section className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)] sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-5">
           <div>
-            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#0071e3]">
               Your account
             </p>
             <h1 className="mt-3 text-3xl font-semibold tracking-tight text-foreground">
@@ -46,13 +46,13 @@ function AccountOverviewComponent() {
             </h1>
             {activeCustomer?.emailAddress ? (
               <p className="mt-3 flex items-center gap-2 text-sm text-foreground/58">
-                <Mail className="h-4 w-4 text-[color:var(--cyber-gold-soft)]" />
+                <Mail className="h-4 w-4 text-[#0071e3]" />
                 {activeCustomer.emailAddress}
               </p>
             ) : null}
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/14 bg-background/70 px-3 py-1.5 text-xs font-semibold text-foreground/60">
-            <ShieldCheck className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-[#f5f5f7] px-3.5 py-1.5 text-xs font-medium text-[#86868b]">
+            <ShieldCheck className="h-3.5 w-3.5 text-[#0071e3]" />
             Signed in
           </span>
         </div>
@@ -91,8 +91,8 @@ function AccountSummaryTile({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-[color:var(--cyber-gold)]/10 bg-card/76 p-5">
-      <div className="flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+    <div className="rounded-3xl border border-black/5 bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+      <div className="flex items-center gap-2 text-[#0071e3]">
         {icon}
         <p className="text-xs font-bold uppercase tracking-[0.18em]">{label}</p>
       </div>

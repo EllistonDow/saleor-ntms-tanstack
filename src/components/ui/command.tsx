@@ -18,7 +18,7 @@ function Command({
     <CommandPrimitive
       data-slot="command"
       className={cn(
-        "bg-popover/95 text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-xl border border-[color:var(--cyber-gold)]/15 shadow-[0_24px_80px_rgba(0,0,0,.28)] backdrop-blur-xl",
+        "bg-popover/95 text-popover-foreground flex h-full w-full flex-col overflow-hidden rounded-xl border border-black/5 shadow-[0_24px_80px_rgba(0,0,0,.28)] backdrop-blur-xl",
         className,
       )}
       {...props}
@@ -64,7 +64,7 @@ function CommandInput({
   return (
     <div
       data-slot="command-input-wrapper"
-      className="flex h-9 items-center gap-2 border-b border-[color:var(--cyber-gold)]/15 px-3"
+      className="flex h-9 items-center gap-2 border-b border-black/5 px-3"
     >
       <SearchIcon className="size-4 shrink-0 opacity-50" />
       <CommandPrimitive.Input

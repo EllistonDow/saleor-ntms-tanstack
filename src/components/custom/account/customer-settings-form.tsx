@@ -203,7 +203,11 @@ function ClientCustomerSettingsForm({ customer }: CustomerSettingsFormProps) {
         </Field>
       </FieldGroup>
 
-      <LoaderButton loading={updateCustomerMutation.isPending} type="submit">
+      <LoaderButton
+        loading={updateCustomerMutation.isPending}
+        type="submit"
+        className="h-11 rounded-full bg-[#0071e3] px-8 text-sm font-semibold text-white shadow-md transition-all hover:bg-[#0077ed] hover:scale-105 active:scale-95"
+      >
         Save changes
       </LoaderButton>
     </form>
@@ -287,7 +291,11 @@ function CustomerSettingsFormSkeleton({ customer }: CustomerSettingsFormProps) {
         </Field>
       </FieldGroup>
 
-      <LoaderButton disabled type="submit">
+      <LoaderButton
+        disabled
+        type="submit"
+        className="h-11 rounded-full bg-[#0071e3] px-8 text-sm font-semibold text-white shadow-md opacity-60"
+      >
         Save changes
       </LoaderButton>
     </form>

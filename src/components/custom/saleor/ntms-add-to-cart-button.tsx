@@ -42,7 +42,10 @@ export function NtmsSaleorAddToCartButton({
   if (size === "full") {
     return (
       <Button
-        className={cn("h-12 w-full gap-2 font-semibold", className)}
+        className={cn(
+          "h-12 w-full gap-2 font-semibold transition-[transform,background-color,box-shadow] duration-160 ease-out active:scale-[0.97] [@media(hover:hover)]:hover:scale-[1.01] motion-reduce:transition-none motion-reduce:transform-none",
+          className,
+        )}
         data-saleor-add-to-cart-button
         data-saleor-quantity={safeQuantity}
         data-saleor-variant-id={variantId}
@@ -70,7 +73,7 @@ export function NtmsSaleorAddToCartButton({
       disabled={!canAdd || isMutating}
       onClick={handleAdd}
       className={cn(
-        "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 bg-[color:var(--cyber-gold)] px-2.5 text-xs font-bold text-black transition hover:bg-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-3",
+        "inline-flex h-8 shrink-0 items-center justify-center gap-1.5 rounded-full border border-black/[0.08] bg-[#f5f5f7] px-3.5 text-xs font-semibold text-[#1d1d1f] shadow-none transition-[transform,background-color,color,border-color] duration-160 ease-out hover:border-black/20 hover:bg-[#1d1d1f] hover:text-white [@media(hover:hover)]:hover:scale-[1.04] active:scale-[0.97] motion-reduce:transition-none motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-60",
         className,
       )}
     >

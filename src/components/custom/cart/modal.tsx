@@ -42,17 +42,17 @@ export default function CartModal() {
           side="right"
           showCloseButton={false}
           overlayClassName="fixed inset-0 bg-black/65 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 transition-all ease-in-out duration-300 data-[state=open]:backdrop-blur-[2px] data-[state=closed]:backdrop-blur-none"
-          className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full flex-col gap-0 border-l border-[color:var(--cyber-gold)]/18 bg-card/96 p-0 text-foreground shadow-[0_30px_90px_rgba(0,0,0,.34)] backdrop-blur-2xl md:w-[440px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right transition-all ease-in-out duration-300 sm:max-w-none"
+          className="fixed bottom-0 right-0 top-0 z-50 flex h-full w-full flex-col gap-0 border-l border-black/5 bg-white/95 p-0 text-[#1d1d1f] shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop-blur-2xl md:w-[440px] data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right transition-all ease-in-out duration-300 sm:max-w-none"
         >
-          <div className="border-b border-[color:var(--cyber-gold)]/12 bg-background/42 px-5 py-5 sm:px-6">
+          <div className="border-b border-black/5 bg-white/80 px-6 py-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[color:var(--cyber-gold-soft)]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0071e3]">
                     Cart
                   </p>
                   {hasActiveCart ? (
-                    <span className="rounded-full border border-[color:var(--cyber-cyan)]/18 bg-background/70 px-2 py-0.5 text-[11px] font-semibold text-foreground/58">
+                    <span className="rounded-full border border-[color:var(--apple-blue)]/18 bg-background/70 px-2 py-0.5 text-[11px] font-semibold text-foreground/58">
                       {cart.totalQuantity} item
                       {cart.totalQuantity === 1 ? "" : "s"}
                     </span>
@@ -109,14 +109,14 @@ export default function CartModal() {
                   );
                 })}
               </ul>
-              <div className="rounded-xl border border-[color:var(--cyber-gold)]/14 bg-background/68 p-4 text-sm text-foreground/60 shadow-[0_18px_44px_rgba(0,0,0,.16)]">
-                <div className="mb-3 flex items-center gap-2 border-b border-[color:var(--cyber-gold)]/12 pb-3">
-                  <Sparkles className="h-4 w-4 text-[color:var(--cyber-gold-soft)]" />
-                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+              <div className="rounded-3xl border border-black/5 bg-[#f5f5f7] p-5 text-sm text-[#1d1d1f] shadow-[0_2px_12px_rgba(0,0,0,0.03)]">
+                <div className="mb-3 flex items-center gap-2 border-b border-black/5 pb-3">
+                  <Sparkles className="h-4 w-4 text-[#0071e3]" />
+                  <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
                     Order total
                   </p>
                 </div>
-                <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-2">
+                <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2">
                   <p>Subtotal</p>
                   <Price
                     className="text-right font-medium text-foreground"
@@ -125,7 +125,7 @@ export default function CartModal() {
                     currencyCodeClassName="text-foreground/40"
                   />
                 </div>
-                <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-2 pt-1">
+                <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2 pt-1">
                   <p>Estimated tax</p>
                   <Price
                     className="text-right font-medium text-foreground"
@@ -134,14 +134,14 @@ export default function CartModal() {
                     currencyCodeClassName="text-foreground/40"
                   />
                 </div>
-                <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-2 pt-1">
+                <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-2 pt-1">
                   <p>Shipping</p>
                   <p className="text-right">Calculated at checkout</p>
                 </div>
-                <div className="mb-3 flex items-center justify-between border-b border-[color:var(--cyber-gold)]/12 pb-3 pt-1">
+                <div className="mb-3 flex items-center justify-between border-b border-black/5 pb-3 pt-1">
                   <p className="font-medium text-foreground">Total</p>
                   <Price
-                    className="text-right text-xl font-semibold text-[color:var(--cyber-gold-soft)]"
+                    className="text-right text-xl font-semibold text-[#0071e3]"
                     amount={cart.totalWithTax}
                     currencyCode={cart.currencyCode}
                     currencyCodeClassName="text-xs text-foreground/42"
@@ -149,11 +149,11 @@ export default function CartModal() {
                 </div>
                 <div className="grid gap-2 text-xs text-foreground/45">
                   <p className="flex items-center gap-2">
-                    <PackageCheck className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+                    <PackageCheck className="h-3.5 w-3.5 text-[#0071e3]" />
                     Inventory and shipping are finalized at checkout.
                   </p>
                   <p className="flex items-center gap-2">
-                    <BadgeCheck className="h-3.5 w-3.5 text-[color:var(--cyber-cyan)]" />
+                    <BadgeCheck className="h-3.5 w-3.5 text-[color:var(--apple-blue)]" />
                     Order updates stay synced to this session.
                   </p>
                 </div>
@@ -165,7 +165,7 @@ export default function CartModal() {
                 <SheetClose asChild>
                   <Link
                     to="/search"
-                    className="mt-3 flex w-full items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/12 bg-card/55 px-4 py-3 text-sm font-semibold text-foreground/62 transition hover:border-[color:var(--cyber-gold)]/32 hover:text-foreground"
+                    className="mt-3 flex w-full items-center justify-center rounded-full border border-black/10 bg-white px-4 py-3 text-sm font-medium text-[#1d1d1f] transition hover:bg-[#f5f5f7]"
                   >
                     Continue shopping
                   </Link>
@@ -186,7 +186,7 @@ function CheckoutButton() {
     <Link
       to="/checkout/$step"
       params={{ step: checkoutSteps.at(0)?.identifier ?? "addresses" }}
-      className="flex w-full items-center justify-center gap-2 rounded-lg bg-[color:var(--cyber-gold)] px-5 py-3.5 text-sm font-semibold text-black shadow-[0_0_30px_rgba(248,201,33,.28)] transition hover:bg-[color:var(--cyber-gold-soft)]"
+      className="flex w-full items-center justify-center gap-2 rounded-full bg-[#0071e3] px-5 py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-[#0077ed]"
     >
       <LockKeyhole className="h-4 w-4" />
       Checkout

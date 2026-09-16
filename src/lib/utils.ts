@@ -54,12 +54,12 @@ export function getOrderStatusColor(state: string) {
       return "text-emerald-200 bg-emerald-500/10";
     case "arrangingpayment":
     case "arrangingadditionalpayment":
-      return "text-[color:var(--cyber-gold-soft)] bg-[color:var(--cyber-gold)]/10";
+      return "text-[#0071e3] bg-[#0071e3]/10";
     case "delivered":
       return "text-emerald-100 bg-emerald-500/12";
     case "shipped":
     case "fulfilled":
-      return "text-[color:var(--cyber-cyan)] bg-[color:var(--cyber-cyan)]/10";
+      return "text-[color:var(--apple-blue)] bg-[color:var(--apple-blue)]/10";
     case "cancelled":
       return "text-rose-100 bg-rose-500/10";
     default:

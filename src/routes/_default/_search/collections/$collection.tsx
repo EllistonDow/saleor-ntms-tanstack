@@ -327,7 +327,7 @@ function CollectionHero({
         ];
 
   return (
-    <section className="relative overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/14 bg-card/92 shadow-[0_22px_70px_rgba(0,0,0,.16)] backdrop-blur-xl lg:col-span-2 lg:-ml-[calc(200px+1.5rem)] xl:-ml-[calc(224px+1.5rem)]">
+    <section className="relative overflow-hidden rounded-lg border border-black/10/14 bg-card/92 shadow-[0_22px_70px_rgba(0,0,0,.16)] backdrop-blur-xl lg:col-span-2 lg:-ml-[calc(200px+1.5rem)] xl:-ml-[calc(224px+1.5rem)]">
       {heroAsset ? (
         <img
           src={heroAsset}
@@ -337,11 +337,11 @@ function CollectionHero({
         />
       ) : null}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_16%_12%,rgba(247,200,31,.18),transparent_32%),linear-gradient(135deg,rgba(247,200,31,.08),transparent_42%),rgba(0,0,0,.22)]" />
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/70 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/70 to-transparent" />
       <div className="relative grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(260px,0.42fr)_minmax(0,1fr)] lg:gap-7 lg:p-6 xl:p-7">
         <div className="flex min-w-0 flex-col justify-between gap-5">
           <div className="min-w-0">
-            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[color:var(--cyber-gold-soft)]">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-[#0071e3]">
               Collection
             </p>
             <h1 className="mt-3 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
@@ -381,7 +381,7 @@ function CollectionHero({
 
 function CollectionPill({ children }: { children: ReactNode }) {
   return (
-    <span className="inline-flex items-center rounded-full border border-[color:var(--cyber-gold)]/14 bg-background/58 px-3 py-1 text-xs font-medium text-foreground/58">
+    <span className="inline-flex items-center rounded-full border border-black/10/14 bg-background/58 px-3 py-1 text-xs font-medium text-foreground/58">
       {children}
     </span>
   );
@@ -405,7 +405,7 @@ function SubcategoryTile({
     <Link
       to="/collections/$collection"
       params={{ collection: subcategory.slug }}
-      className="group relative block min-w-0 overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/12 bg-background/52 shadow-[0_16px_38px_rgba(0,0,0,.16)] transition hover:-translate-y-0.5 hover:border-[color:var(--cyber-gold)]/34 hover:shadow-[0_22px_52px_rgba(0,0,0,.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
+      className="group relative block min-w-0 overflow-hidden rounded-lg border border-black/10/12 bg-background/52 shadow-[0_16px_38px_rgba(0,0,0,.16)] transition hover:-translate-y-0.5 hover:border-black/10/34 hover:shadow-[0_22px_52px_rgba(0,0,0,.22)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]"
     >
       <div className="relative aspect-square overflow-hidden bg-card/70">
         {image ? (
@@ -417,12 +417,12 @@ function SubcategoryTile({
           />
         ) : (
           <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(circle_at_70%_16%,rgba(247,200,31,.24),transparent_34%),linear-gradient(135deg,rgba(247,200,31,.12),rgba(0,0,0,.08)_42%,rgba(0,0,0,.22))]">
-            <div className="absolute inset-4 rounded-md border border-[color:var(--cyber-gold)]/10" />
-            <div className="absolute left-4 top-4 h-9 w-9 rounded-full border border-[color:var(--cyber-gold)]/16 bg-black/22" />
+            <div className="absolute inset-4 rounded-md border border-black/10/10" />
+            <div className="absolute left-4 top-4 h-9 w-9 rounded-full border border-black/10/16 bg-black/22" />
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-black/82 via-black/18 to-transparent" />
-        <span className="absolute right-2.5 top-2.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--cyber-gold)]/20 bg-black/48 text-[color:var(--cyber-gold-soft)] backdrop-blur-xl transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
+        <span className="absolute right-2.5 top-2.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-black/48 text-[#0071e3] backdrop-blur-xl transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
           <ArrowRight className="h-4 w-4" />
         </span>
         <div className="absolute inset-x-0 bottom-0 p-3">
@@ -430,7 +430,7 @@ function SubcategoryTile({
             {label}
           </p>
           <div className="mt-2 flex items-center justify-between gap-2 border-t border-white/12 pt-2">
-            <p className="text-xs font-semibold text-[color:var(--cyber-gold-soft)]">
+            <p className="text-xs font-semibold text-[#0071e3]">
               {subcategory.productVariantCount} items
             </p>
             {description ? (
@@ -467,9 +467,9 @@ function CollectionToolbar({
   hasFilters: boolean;
 }) {
   return (
-    <div className="hidden rounded-lg border border-[color:var(--cyber-gold)]/10 bg-card/88 p-3 shadow-[0_14px_34px_rgba(0,0,0,.08)] backdrop-blur-xl lg:sticky lg:top-32 lg:z-20 lg:flex lg:items-center lg:justify-between lg:gap-4">
+    <div className="hidden rounded-lg border border-black/10/10 bg-card/88 p-3 shadow-[0_14px_34px_rgba(0,0,0,.08)] backdrop-blur-xl lg:sticky lg:top-32 lg:z-20 lg:flex lg:items-center lg:justify-between lg:gap-4">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/14 bg-background/62 text-[color:var(--cyber-gold-soft)]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10/14 bg-background/62 text-[#0071e3]">
           <Filter className="h-4 w-4" />
         </span>
         <div className="min-w-0">
@@ -492,7 +492,7 @@ function CollectionToolbar({
         {hasFilters ? (
           <a
             href={`#${filterTargetId}`}
-            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-[color:var(--cyber-gold)]/16 bg-background/62 px-3 text-sm font-semibold text-foreground/68 transition hover:border-[color:var(--cyber-gold)]/34 hover:text-[color:var(--cyber-gold-soft)]"
+            className="inline-flex h-10 items-center justify-center gap-2 rounded-lg border border-black/10/16 bg-background/62 px-3 text-sm font-semibold text-foreground/68 transition hover:border-black/10/34 hover:text-[#0071e3]"
           >
             <SlidersHorizontal className="h-4 w-4" />
             Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
@@ -520,11 +520,11 @@ function CollectionFilterPanel({
     <details
       id={id}
       open={activeFilterCount > 0}
-      className="group scroll-mt-32 overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/10 bg-card/88 shadow-[0_14px_34px_rgba(0,0,0,.08)] backdrop-blur-xl"
+      className="group scroll-mt-32 overflow-hidden rounded-lg border border-black/10/10 bg-card/88 shadow-[0_14px_34px_rgba(0,0,0,.08)] backdrop-blur-xl"
     >
       <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 text-foreground [&::-webkit-details-marker]:hidden">
         <span className="flex min-w-0 items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/14 bg-background/62 text-[color:var(--cyber-gold-soft)]">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-black/10/14 bg-background/62 text-[#0071e3]">
             <SlidersHorizontal className="h-4 w-4" />
           </span>
           <span className="min-w-0">
@@ -541,7 +541,7 @@ function CollectionFilterPanel({
           <ChevronDown className="h-4 w-4 transition group-open:rotate-180" />
         </span>
       </summary>
-      <div className="border-t border-[color:var(--cyber-gold)]/8 px-4 py-4">
+      <div className="border-t border-black/10/8 px-4 py-4">
         <Facets collection={collection} facets={facets} variant="inline" />
       </div>
     </details>

@@ -36,8 +36,8 @@ export function StatusPanel({
           ? "p-4 shadow-[0_18px_55px_rgba(0,0,0,.1)]"
           : "p-6 shadow-[0_24px_80px_rgba(0,0,0,.12)]",
         isDestructive
-          ? "border-rose-500/20 bg-rose-500/10"
-          : "border-[color:var(--cyber-gold)]/12 bg-card/90",
+          ? "border-red-200 bg-red-50/90 text-red-950"
+          : "border-black/5 bg-[#f5f5f7] text-[#1d1d1f]",
         className,
       )}
     >
@@ -47,9 +47,7 @@ export function StatusPanel({
             <p
               className={cn(
                 "text-xs font-semibold uppercase tracking-[0.22em]",
-                isDestructive
-                  ? "text-rose-200/80"
-                  : "text-[color:var(--cyber-gold-soft)]",
+                isDestructive ? "text-red-600" : "text-[#0071e3]",
               )}
             >
               {eyebrow}
@@ -68,8 +66,8 @@ export function StatusPanel({
                   "mt-0.5 flex shrink-0 items-center justify-center rounded-xl border",
                   isCompact ? "h-9 w-9" : "h-11 w-11",
                   isDestructive
-                    ? "border-rose-500/25 bg-rose-500/12 text-rose-100"
-                    : "border-[color:var(--cyber-gold)]/12 bg-background/70 text-[color:var(--cyber-gold-soft)]",
+                    ? "border-red-200 bg-red-100 text-red-600"
+                    : "border-black/5 bg-white text-[#0071e3]",
                 )}
               >
                 {icon}
@@ -80,7 +78,7 @@ export function StatusPanel({
                 className={cn(
                   "font-semibold tracking-tight",
                   isCompact ? "text-lg" : "text-2xl",
-                  isDestructive ? "text-rose-50" : "text-foreground",
+                  isDestructive ? "text-red-900 font-bold" : "text-[#1d1d1f]",
                 )}
               >
                 {title}
@@ -89,7 +87,7 @@ export function StatusPanel({
                 className={cn(
                   isCompact ? "mt-2" : "mt-3",
                   "text-sm leading-6",
-                  isDestructive ? "text-rose-50/80" : "text-foreground/60",
+                  isDestructive ? "text-red-700 font-medium" : "text-[#86868b]",
                 )}
               >
                 {description}

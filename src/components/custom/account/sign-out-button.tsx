@@ -32,7 +32,7 @@ export function SignOutButton({
         type="button"
         disabled={signOutMutation.isPending}
         onClick={handleSignOut}
-        className="flex w-full items-center justify-center gap-2 rounded-xl border border-[color:var(--cyber-gold)]/12 bg-background/55 px-3 py-2.5 text-sm font-medium text-foreground/62 transition hover:border-rose-500/28 hover:bg-rose-500/10 hover:text-rose-100 disabled:cursor-not-allowed disabled:opacity-60"
+        className="flex w-full items-center justify-center gap-2 rounded-full border border-black/10 bg-white px-4 py-2.5 text-xs font-semibold text-[#1d1d1f] shadow-sm transition-all hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 disabled:cursor-not-allowed disabled:opacity-60"
       >
         <LogOut className="h-4 w-4" />
         {label}

@@ -50,17 +50,17 @@ export default function FilterList({
   return (
     <section
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/90 p-3 shadow-[0_16px_42px_rgba(0,0,0,.08)] backdrop-blur-xl sm:p-4",
+        "relative overflow-hidden rounded-2xl border border-black/10/12 bg-card/90 p-3 shadow-[0_16px_42px_rgba(0,0,0,.08)] backdrop-blur-xl sm:p-4",
         isToolbar && "mx-auto w-full p-4 sm:p-5",
         className,
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/45 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/45 to-transparent" />
       {title ? (
         isToolbar ? (
           <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
                 {title}
               </p>
               <p className="mt-1 text-sm text-foreground/50">{description}</p>
@@ -72,8 +72,8 @@ export default function FilterList({
             </div>
           </div>
         ) : (
-          <div className="mb-3 border-b border-[color:var(--cyber-gold)]/8 pb-3">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+          <div className="mb-3 border-b border-black/10/8 pb-3">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
               {title}
             </p>
             <p className="mt-1 text-sm text-foreground/50">{description}</p>

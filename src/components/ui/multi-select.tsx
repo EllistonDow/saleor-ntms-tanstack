@@ -34,9 +34,9 @@ const multiSelectVariants = cva("transition-all duration-200", {
   variants: {
     variant: {
       default:
-        "border-[color:var(--cyber-gold)]/18 bg-card/85 text-foreground hover:border-[color:var(--cyber-gold)]/35 hover:bg-[color:var(--cyber-gold)]/10",
+        "border-black/10/18 bg-card/85 text-foreground hover:border-black/10/35 hover:bg-[#0071e3]/10",
       secondary:
-        "border-[color:var(--cyber-cyan)]/18 bg-[color:var(--cyber-cyan)]/10 text-[color:var(--cyber-cyan)] hover:bg-[color:var(--cyber-cyan)]/14",
+        "border-[color:var(--apple-blue)]/18 bg-[color:var(--apple-blue)]/10 text-[color:var(--apple-blue)] hover:bg-[color:var(--apple-blue)]/14",
       destructive:
         "border-rose-500/30 bg-rose-500/12 text-rose-100 hover:bg-rose-500/18",
       inverted: "inverted",
@@ -196,7 +196,7 @@ export const MultiSelect = React.forwardRef<
             {...props}
             onClick={handleTogglePopover}
             className={cn(
-              "flex min-h-11 w-full items-center justify-between rounded-xl border border-[color:var(--cyber-gold)]/18 bg-background/70 px-3 py-2.5 text-left font-normal shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl hover:border-[color:var(--cyber-gold)]/35 hover:bg-[color:var(--cyber-gold)]/6 [&_svg]:pointer-events-auto",
+              "flex min-h-11 w-full items-center justify-between rounded-xl border border-black/10/18 bg-background/70 px-3 py-2.5 text-left font-normal shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl hover:border-black/10/35 hover:bg-[#0071e3]/6 [&_svg]:pointer-events-auto",
               className,
             )}
           >
@@ -233,7 +233,7 @@ export const MultiSelect = React.forwardRef<
                   {selectedValues.length > maxCount && (
                     <Badge
                       className={cn(
-                        "border-[color:var(--cyber-gold)]/18 bg-transparent text-foreground hover:bg-[color:var(--cyber-gold)]/8",
+                        "border-black/10/18 bg-transparent text-foreground hover:bg-black/5",
                         isAnimating ? "animate-bounce" : "",
                         multiSelectVariants({ variant }),
                       )}
@@ -276,7 +276,7 @@ export const MultiSelect = React.forwardRef<
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[320px] overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/15 bg-card/95 p-0 shadow-[0_24px_80px_rgba(0,0,0,.28)] backdrop-blur-xl"
+          className="w-[320px] overflow-hidden rounded-2xl border border-black/5 bg-card/95 p-0 shadow-[0_24px_80px_rgba(0,0,0,.28)] backdrop-blur-xl"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >
@@ -297,9 +297,9 @@ export const MultiSelect = React.forwardRef<
                 >
                   <div
                     className={cn(
-                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-[color:var(--cyber-gold)]/45",
+                      "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-black/20",
                       selectedValues.length === options.length
-                        ? "bg-[color:var(--cyber-gold)] text-black"
+                        ? "bg-[#0071e3] text-black"
                         : "opacity-50 [&_svg]:invisible",
                     )}
                   >
@@ -317,9 +317,9 @@ export const MultiSelect = React.forwardRef<
                     >
                       <div
                         className={cn(
-                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-[color:var(--cyber-gold)]/45",
+                          "mr-2 flex h-4 w-4 items-center justify-center rounded-sm border border-black/20",
                           isSelected
-                            ? "bg-[color:var(--cyber-gold)] text-black"
+                            ? "bg-[#0071e3] text-black"
                             : "opacity-50 [&_svg]:invisible",
                         )}
                       >

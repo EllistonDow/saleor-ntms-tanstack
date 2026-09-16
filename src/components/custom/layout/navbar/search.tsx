@@ -34,6 +34,22 @@ export default function Search() {
   useEffect(() => {
     setIsHydrated(true);
   }, []);
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
+        e.preventDefault();
+        const inputEl = document.querySelector<HTMLInputElement>(
+          'input[role="combobox"]',
+        );
+        if (inputEl) {
+          inputEl.focus();
+          setIsFocused(true);
+        }
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   return (
     <search className="relative w-full md:max-w-[560px]">
@@ -46,7 +62,7 @@ export default function Search() {
           aria-autocomplete="list"
           aria-controls={showSuggestions ? suggestionsId : undefined}
           aria-expanded={showSuggestions}
-          placeholder="Search for products..."
+          placeholder="Search products, gear... (⌘K)"
           autoComplete="off"
           disabled={!isHydrated}
           value={query}
@@ -55,23 +71,23 @@ export default function Search() {
           }}
           onChange={(event) => setQuery(event.target.value)}
           onFocus={() => setIsFocused(true)}
-          className="w-full rounded-xl border border-[color:var(--cyber-gold)]/18 bg-background/68 px-4 py-2.5 pr-10 text-sm text-foreground placeholder:text-foreground/45 transition focus:border-[color:var(--cyber-gold)]/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]/50 dark:bg-black/35 dark:text-white dark:placeholder:text-neutral-400"
+          className="w-full rounded-full border border-black/5 bg-[#f5f5f7] px-4 py-2.5 pr-10 text-sm text-[#1d1d1f] placeholder:text-[#86868b] transition focus:border-[#0071e3] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]/20"
         />
         <button
           type="submit"
           aria-label="Search"
           disabled={!isHydrated}
-          className="absolute right-0 top-0 mr-3 flex h-full cursor-pointer items-center justify-center border-none bg-transparent text-foreground/55 transition hover:text-[color:var(--cyber-gold-soft)] dark:text-neutral-300"
+          className="absolute right-0 top-0 mr-3 flex h-full cursor-pointer items-center justify-center border-none bg-transparent text-foreground/55 transition hover:text-[#0071e3] dark:text-neutral-300"
         >
           <SearchIcon className="h-4 w-4" />
         </button>
         {showSuggestions ? (
           <div
             id={suggestionsId}
-            className="absolute left-0 top-full z-40 mt-2 max-h-[min(64vh,32rem)] w-full overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/16 bg-card/96 text-foreground shadow-[0_22px_70px_rgba(0,0,0,.28)] backdrop-blur-2xl dark:text-white"
+            className="absolute left-0 top-full z-40 mt-2 max-h-[min(64vh,32rem)] w-full overflow-hidden rounded-3xl border border-black/5 bg-white/95 text-[#1d1d1f] shadow-[0_12px_40px_rgba(0,0,0,0.08)] backdrop-blur-2xl"
           >
-            <div className="border-b border-[color:var(--cyber-gold)]/10 px-4 py-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+            <div className="border-b border-black/5 px-5 py-3.5">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
                 Search suggestions
               </p>
               <p className="mt-1 truncate text-sm text-foreground/55">
@@ -92,17 +108,17 @@ export default function Search() {
                     <Link
                       to="/product/$productId"
                       params={{ productId: product.slug }}
-                      className="group flex items-center gap-3 px-4 py-3 text-sm transition hover:bg-[color:var(--cyber-gold)]/10 focus:bg-[color:var(--cyber-gold)]/10 focus:outline-none"
+                      className="group flex items-center gap-3 px-4 py-3 text-sm transition hover:bg-[#f5f5f7] focus:bg-[#f5f5f7] focus:outline-none"
                     >
                       {product.productAsset?.preview ? (
                         <img
                           src={product.productAsset.preview}
                           alt=""
-                          className="h-12 w-12 shrink-0 rounded-lg border border-[color:var(--cyber-gold)]/10 bg-background/55 object-contain p-1"
+                          className="h-12 w-12 shrink-0 rounded-2xl border border-black/5 bg-[#f5f5f7] object-contain p-1"
                           loading="lazy"
                         />
                       ) : (
-                        <span className="h-12 w-12 shrink-0 rounded-lg border border-[color:var(--cyber-gold)]/10 bg-[color:var(--cyber-gold)]/10 dark:bg-neutral-800" />
+                        <span className="h-12 w-12 shrink-0 rounded-lg border border-black/10/10 bg-[#0071e3]/10 dark:bg-neutral-800" />
                       )}
                       <span className="min-w-0 flex-1">
                         <span className="block truncate font-medium">
@@ -110,14 +126,14 @@ export default function Search() {
                         </span>
                         <span className="mt-1 flex items-center gap-2 text-xs text-foreground/55 dark:text-neutral-400">
                           <span className="truncate">SKU {product.sku}</span>
-                          <span className="h-1 w-1 rounded-full bg-[color:var(--cyber-gold)]/45" />
+                          <span className="h-1 w-1 rounded-full bg-[#0071e3]/45" />
                           {formatCurrency(
                             Number(getSearchResultPrice(product)),
                             product.currencyCode,
                           )}
                         </span>
                       </span>
-                      <ArrowRight className="h-4 w-4 shrink-0 text-foreground/35 transition group-hover:translate-x-0.5 group-hover:text-[color:var(--cyber-gold-soft)]" />
+                      <ArrowRight className="h-4 w-4 shrink-0 text-foreground/35 transition group-hover:translate-x-0.5 group-hover:text-[#0071e3]" />
                     </Link>
                   </li>
                 ))}
@@ -126,7 +142,7 @@ export default function Search() {
             <Link
               to="/search"
               search={{ q: query.trim(), sort: "name-a-z" }}
-              className="flex items-center justify-between gap-3 border-t border-[color:var(--cyber-gold)]/10 px-4 py-3 text-sm font-semibold text-[color:var(--cyber-gold-soft)] transition hover:bg-[color:var(--cyber-gold)]/8"
+              className="flex items-center justify-between gap-3 border-t border-black/5 px-5 py-3.5 text-sm font-semibold text-[#0071e3] transition hover:bg-[#f5f5f7]"
             >
               View all results
               <ArrowRight className="h-4 w-4" />

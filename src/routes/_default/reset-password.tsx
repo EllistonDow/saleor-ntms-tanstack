@@ -39,7 +39,7 @@ function ResetPasswordComponent() {
           Already changed it?{" "}
           <Link
             to="/sign-in"
-            className="font-semibold text-[color:var(--cyber-gold-soft)] underline underline-offset-4 hover:text-[color:var(--cyber-gold)]"
+            className="font-semibold text-[#0071e3] underline underline-offset-4 hover:text-[#1d1d1f]"
           >
             Sign in
           </Link>
@@ -47,7 +47,7 @@ function ResetPasswordComponent() {
       }
     >
       <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--cyber-gold-soft)]">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0071e3]">
           New password
         </p>
         <h2 className="mt-2 text-2xl font-semibold tracking-tight">

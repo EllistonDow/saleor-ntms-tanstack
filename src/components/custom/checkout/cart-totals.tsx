@@ -18,10 +18,10 @@ export function CartTotals({ order, readonly = false }: CartTotalsProps) {
   const currencyCode = order.currencyCode || "USD";
 
   return (
-    <section className="mt-5 border-t border-[color:var(--cyber-gold)]/12 pt-4">
-      <div className="mb-4 flex items-center gap-2 border-b border-[color:var(--cyber-gold)]/10 pb-3">
-        <ReceiptText className="h-4 w-4 text-[color:var(--cyber-gold-soft)]" />
-        <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+    <section className="mt-5 border-t border-black/5 pt-4">
+      <div className="mb-4 flex items-center gap-2 border-b border-black/5 pb-3">
+        <ReceiptText className="h-4 w-4 text-[#0071e3]" />
+        <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
           Total
         </h2>
       </div>
@@ -37,11 +37,11 @@ export function CartTotals({ order, readonly = false }: CartTotalsProps) {
               >
                 <dt>
                   Coupon{" "}
-                  <span className="font-medium text-[color:var(--cyber-gold-soft)]">
+                  <span className="font-medium text-[#0071e3]">
                     {discountData.description}
                   </span>
                 </dt>
-                <dd className="font-medium text-[color:var(--cyber-gold-soft)]">
+                <dd className="font-medium text-[#0071e3]">
                   {formatCurrency(discountData.amountWithTax, currencyCode)}
                 </dd>
               </div>
@@ -75,7 +75,7 @@ export function CartTotals({ order, readonly = false }: CartTotalsProps) {
             {order.couponCodes.map((code) => (
               <dd
                 key={code}
-                className="inline-flex items-center rounded-full border border-[color:var(--cyber-gold)]/15 bg-[color:var(--cyber-gold)]/8 px-2.5 py-1 text-xs font-medium text-[color:var(--cyber-gold-soft)]"
+                className="inline-flex items-center rounded-full border border-black/5 bg-black/5 px-2.5 py-1 text-xs font-medium text-[#0071e3]"
               >
                 {code}
               </dd>
@@ -83,15 +83,15 @@ export function CartTotals({ order, readonly = false }: CartTotalsProps) {
           </div>
         )}
 
-        <div className="flex items-center justify-between gap-4 border-t border-[color:var(--cyber-gold)]/12 pt-4">
+        <div className="flex items-center justify-between gap-4 border-t border-black/5 pt-4">
           <dt className="font-medium text-foreground">Order total</dt>
-          <dd className="text-xl font-semibold text-[color:var(--cyber-gold-soft)]">
+          <dd className="text-xl font-semibold text-[#0071e3]">
             {formatCurrency(order.totalWithTax, currencyCode)}
           </dd>
         </div>
       </dl>
-      <p className="mt-4 flex items-center gap-2 border-t border-[color:var(--cyber-gold)]/10 pt-3 text-xs text-foreground/45">
-        <LockKeyhole className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+      <p className="mt-4 flex items-center gap-2 border-t border-black/5 pt-3 text-xs text-foreground/45">
+        <LockKeyhole className="h-3.5 w-3.5 text-[#0071e3]" />
         Secure checkout total from the live NTMS order.
       </p>
     </section>

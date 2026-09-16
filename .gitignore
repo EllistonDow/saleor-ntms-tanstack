@@ -1,5 +1,8 @@
 node_modules/
 dist/
+.output/
+.nitro/
+.wrangler/
 .netlify/
 .env
 .env.*
@@ -8,4 +11,5 @@ coverage/
 playwright-report/
 test-results/
 *.log
+.DS_Store
 

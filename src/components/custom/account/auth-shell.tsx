@@ -27,26 +27,27 @@ export function AuthShell({
     <section
       aria-label={title}
       className={cn(
-        "mx-auto flex min-h-[calc(100vh-92px)] w-full max-w-screen-2xl items-start justify-center px-4 py-8 text-foreground sm:px-6 sm:py-10 lg:px-8",
+        "mx-auto flex min-h-[calc(100vh-92px)] w-full max-w-screen-2xl items-start justify-center px-4 py-8 text-[#1d1d1f] sm:px-6 sm:py-12 lg:px-8",
         className,
       )}
     >
-      <aside className="w-full max-w-xl rounded-lg border border-[color:var(--cyber-gold)]/14 bg-card/94 p-5 shadow-[0_18px_54px_rgba(0,0,0,.14)] backdrop-blur-xl sm:p-6">
+      <aside className="w-full max-w-lg rounded-[2rem] border border-black/[0.06] bg-white p-6 shadow-[0_4px_30px_rgba(0,0,0,0.04)] sm:p-8">
         {activeAuthTab ? <AuthTabs activeTab={activeAuthTab} /> : null}
         {children}
         {footer || buildVersion ? (
-          <div className="mt-5 border-t border-[color:var(--cyber-gold)]/10 pt-5">
+          <div className="mt-6 border-t border-black/[0.06] pt-6">
             {footer}
             {buildVersion ? (
-              <p
+              <div
                 className={cn(
-                  "text-center text-xs text-foreground/38",
+                  "flex items-center justify-center gap-1.5 text-center text-xs text-[#86868b]",
                   footer ? "mt-4" : "",
                 )}
                 data-testid="storefront-version"
               >
-                Build {buildVersion}
-              </p>
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
+                <span>Apple Build {buildVersion}</span>
+              </div>
             ) : null}
           </div>
         ) : null}
@@ -59,7 +60,7 @@ function AuthTabs({ activeTab }: { activeTab: AuthTab }) {
   return (
     <nav
       aria-label="Account access"
-      className="mb-6 grid grid-cols-2 rounded-lg border border-[color:var(--cyber-gold)]/14 bg-background/56 p-1"
+      className="mb-8 grid grid-cols-2 rounded-full border border-black/[0.04] bg-[#f5f5f7] p-1 shadow-inner"
     >
       <AuthTabLink
         active={activeTab === "sign-in"}
@@ -89,10 +90,10 @@ function AuthTabLink({
       to={to}
       aria-current={active ? "page" : undefined}
       className={cn(
-        "flex h-10 items-center justify-center rounded-md text-sm font-bold transition",
+        "flex h-9 items-center justify-center rounded-full text-xs font-semibold transition-all duration-200",
         active
-          ? "bg-[color:var(--cyber-gold)] text-black shadow-[0_10px_28px_rgba(245,184,0,.22)]"
-          : "text-foreground/55 hover:bg-card/80 hover:text-foreground",
+          ? "bg-white text-[#1d1d1f] shadow-sm"
+          : "text-[#86868b] hover:text-[#1d1d1f]",
       )}
     >
       {label}

@@ -49,8 +49,8 @@ function AccountSettingsComponent() {
         }
       />
 
-      <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
-        <div className="border-b border-[color:var(--cyber-gold)]/8 px-6 py-5">
+      <section className="overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+        <div className="border-b border-black/5 px-6 py-5">
           <h2 className="text-lg font-medium leading-6 text-foreground">
             Personal information
           </h2>
@@ -63,8 +63,8 @@ function AccountSettingsComponent() {
         </div>
       </section>
 
-      <section className="overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
-        <div className="border-b border-[color:var(--cyber-gold)]/8 px-6 py-5">
+      <section className="overflow-hidden rounded-3xl border border-black/5 bg-white shadow-[0_4px_24px_rgba(0,0,0,0.04)]">
+        <div className="border-b border-black/5 px-6 py-5">
           <h2 className="text-lg font-medium leading-6 text-foreground">
             Email address
           </h2>

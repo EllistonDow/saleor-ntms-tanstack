@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ResultOf } from "gql.tada";
-import { ArrowRight, CircleAlert, Loader2 } from "lucide-react";
+import { ArrowRight, CircleAlert, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/components/custom/cart/cart-context";
 import { GridTileImage } from "@/components/custom/grid/tile";
@@ -50,10 +50,10 @@ export function ProductCard({
     try {
       await addCartItemMutation.mutateAsync(product.productVariantId);
       openCart();
-      toast.success("Item added to cart");
+      toast.success("Added to Studio Bag");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Error adding item to cart",
+        error instanceof Error ? error.message : "Error adding item to bag",
       );
     }
   };
@@ -61,18 +61,17 @@ export function ProductCard({
   return (
     <article
       className={cn(
-        "group relative flex h-full min-h-[244px] flex-col overflow-hidden rounded-lg border border-[color:var(--cyber-gold)]/10 bg-card/90 shadow-[0_12px_30px_rgba(0,0,0,.07)] transition duration-300 hover:-translate-y-0.5 hover:border-[color:var(--cyber-gold)]/28 hover:bg-card/96 hover:shadow-[0_20px_46px_rgba(0,0,0,.12)] focus-within:border-[color:var(--cyber-gold)]/34 sm:min-h-[286px]",
-        isFeatured && "min-h-full",
-        isRail && "min-h-[272px] sm:min-h-[306px]",
+        "group relative flex h-full flex-col overflow-hidden rounded-[2rem] bg-white border border-black/[0.04] p-3 sm:p-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_16px_36px_rgba(0,0,0,0.08)] hover:border-black/[0.08]",
+        isFeatured && "min-h-full p-5 sm:p-6",
+        isRail && "min-h-[270px] sm:min-h-[310px]",
         className,
       )}
     >
-      <div className="absolute inset-x-0 top-0 z-10 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/40 to-transparent opacity-0 transition group-hover:opacity-100" />
       <Link
         aria-label={`${product.productName} - ${price.label}`}
         className={cn(
-          "relative block overflow-hidden border-b border-[color:var(--cyber-gold)]/8 bg-background/48 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[color:var(--cyber-gold)]",
-          isFeatured ? "aspect-[1.12]" : "aspect-[1.08]",
+          "relative flex items-center justify-center overflow-hidden rounded-[1.5rem] bg-[#fbfbfd] transition-colors group-hover:bg-[#f5f5f7]",
+          isFeatured ? "aspect-[1.15]" : "aspect-square",
         )}
         to="/product/$productId"
         params={{ productId: product.slug }}
@@ -80,7 +79,7 @@ export function ProductCard({
         {asset ? (
           <GridTileImage
             alt={product.productName}
-            className="object-contain p-3.5 sm:p-5"
+            className="object-contain p-4 sm:p-6 mix-blend-multiply drop-shadow-[0_8px_16px_rgba(0,0,0,0.06)] transition-transform duration-700 ease-out group-hover:scale-105"
             frame={false}
             priority={priority}
             src={asset}
@@ -94,84 +93,77 @@ export function ProductCard({
             layout="fullWidth"
           />
         ) : (
-          <div className="flex h-full w-full items-center justify-center text-sm font-semibold uppercase tracking-[0.2em] text-foreground/35">
-            NTMS
+          <div className="flex h-full w-full items-center justify-center text-xs font-bold uppercase tracking-[0.2em] text-[#86868b]">
+            NTMS Studio
           </div>
         )}
         {!product.inStock ? (
-          <span className="absolute left-2.5 top-2.5 inline-flex h-7 items-center gap-1.5 rounded-full border border-amber-300/20 bg-amber-400/10 px-2 text-[10px] font-semibold uppercase tracking-[0.12em] text-amber-100 shadow-[0_8px_18px_rgba(0,0,0,.1)] backdrop-blur-xl">
+          <span className="absolute left-3 top-3 inline-flex h-6 items-center gap-1 rounded-full bg-white/90 px-2.5 text-[10px] font-bold uppercase tracking-wider text-amber-700 shadow-sm backdrop-blur-md border border-amber-200/50">
             <CircleAlert className="h-3 w-3" />
-            <span>Check stock</span>
+            <span>Low Stock</span>
           </span>
-        ) : null}
-        <span className="absolute right-2.5 top-2.5 inline-flex h-8 w-8 items-center justify-center rounded-full border border-[color:var(--cyber-gold)]/14 bg-card/82 text-[color:var(--cyber-gold-soft)] shadow-[0_8px_20px_rgba(0,0,0,.12)] backdrop-blur-xl transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5">
-          <ArrowRight className="h-4 w-4" />
-        </span>
-      </Link>
-      <div
-        className={cn(
-          "flex flex-1 flex-col p-3 sm:p-4",
-          isFeatured && "sm:p-5",
+        ) : (
+          <span className="absolute left-3 top-3 inline-flex h-6 items-center gap-1 rounded-full bg-white/90 px-2.5 text-[10px] font-bold uppercase tracking-wider text-[#0071e3] opacity-0 transition-opacity duration-300 group-hover:opacity-100 shadow-sm backdrop-blur-md border border-black/[0.04]">
+            <Sparkles className="h-3 w-3" />
+            <span>Pro Gear</span>
+          </span>
         )}
-      >
+      </Link>
+
+      <div className="flex flex-1 flex-col pt-3.5 sm:pt-4">
         <div>
           <Link
             to="/product/$productId"
             params={{ productId: product.slug }}
-            className="block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]"
+            className="block"
           >
             <h3
               className={cn(
-                "line-clamp-2 font-semibold text-foreground transition group-hover:text-[color:var(--cyber-gold-soft)]",
+                "line-clamp-2 font-bold tracking-tight text-[#1d1d1f] transition-colors group-hover:text-[#0071e3]",
                 isFeatured
-                  ? "text-base leading-6 sm:text-lg"
-                  : "min-h-10 text-sm leading-5",
+                  ? "text-lg sm:text-xl leading-tight"
+                  : "min-h-10 text-xs sm:text-sm leading-snug",
               )}
             >
               {product.productName}
             </h3>
           </Link>
           {variantName ? (
-            <p className="mt-1 line-clamp-1 text-xs font-medium text-[color:var(--cyber-gold-soft)]">
+            <p className="mt-1 line-clamp-1 text-[11px] font-medium text-[#86868b]">
               {variantName}
             </p>
           ) : null}
           {description ? (
             <p
               className={cn(
-                "mt-2 hidden text-foreground/50",
-                isFeatured
-                  ? "sm:line-clamp-3 sm:text-sm sm:leading-6"
-                  : "lg:line-clamp-1 lg:text-xs lg:leading-5",
+                "mt-1.5 hidden text-xs leading-relaxed text-[#6e6e73]",
+                isFeatured ? "sm:line-clamp-2 sm:block" : "lg:line-clamp-1",
               )}
             >
               {description}
             </p>
           ) : null}
         </div>
-        <div className="mt-auto flex items-end justify-between gap-2 border-t border-[color:var(--cyber-gold)]/8 pt-2.5 sm:pt-3">
+
+        <div className="mt-auto flex items-center justify-between gap-2 border-t border-black/[0.04] pt-3">
           <div className="min-w-0">
-            {isFeatured ? (
-              <p className="hidden text-[10px] font-semibold uppercase tracking-[0.16em] text-foreground/38 sm:block">
-                {price.caption}
-              </p>
-            ) : null}
             <p
               className={cn(
-                "font-semibold leading-none text-[color:var(--cyber-gold-soft)] sm:mt-1",
-                isFeatured ? "text-xl" : "text-[17px] sm:text-lg",
+                "font-extrabold tracking-tight text-[#1d1d1f]",
+                isFeatured ? "text-xl sm:text-2xl" : "text-sm sm:text-base",
               )}
             >
               {price.label}
             </p>
           </div>
+
           {canQuickAdd ? (
             <button
               type="button"
-              aria-label={`Add ${product.productName} to cart`}
+              aria-label={`Add ${product.productName} to bag`}
               disabled={addCartItemMutation.isPending}
               onClick={handleQuickAdd}
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/22 bg-[color:var(--cyber-gold)] px-2.5 text-xs font-bold text-black shadow-[0_10px_24px_rgba(247,200,31,.16)] transition hover:-translate-y-px hover:bg-[color:var(--cyber-gold-soft)] disabled:cursor-not-allowed disabled:opacity-60 sm:px-3"
+              className="inline-flex h-8 sm:h-9 shrink-0 items-center justify-center gap-1.5 rounded-full bg-[#0071e3] px-3 sm:px-4 text-[11px] sm:text-xs font-bold text-white shadow-sm transition-all hover:bg-[#0077ed] hover:scale-105 active:scale-95 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {addCartItemMutation.isPending ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -189,10 +181,10 @@ export function ProductCard({
                   ? `Select options for ${product.productName}`
                   : `View details for ${product.productName}`
               }
-              className="inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-md border border-[color:var(--cyber-gold)]/14 bg-background/60 px-2.5 text-xs font-semibold text-foreground/68 transition hover:border-[color:var(--cyber-gold)]/30 hover:bg-[color:var(--cyber-gold)]/7 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)] sm:px-3"
+              className="inline-flex h-8 sm:h-9 shrink-0 items-center justify-center gap-1 rounded-full bg-[#f5f5f7] px-3 sm:px-4 text-[11px] sm:text-xs font-semibold text-[#1d1d1f] transition-all hover:bg-[#e8e8ed] hover:scale-105 active:scale-95"
             >
-              <span>{product.inStock ? "View" : "Details"}</span>
-              <ArrowRight className="h-3.5 w-3.5" />
+              <span>{product.inStock ? "Select" : "Details"}</span>
+              <ArrowRight className="h-3 w-3" />
             </Link>
           )}
         </div>
@@ -211,20 +203,20 @@ function getPriceSummary(
     const min = formatCurrency(price.min, currencyCode);
 
     return {
-      caption: price.min === price.max ? "Live price" : "Price range",
+      caption: price.min === price.max ? "Standard price" : "Price range",
       label: price.min === price.max ? min : `From ${min}`,
     };
   }
 
   if (price.__typename === "SinglePrice") {
     return {
-      caption: "Live price",
+      caption: "Standard price",
       label: formatCurrency(price.value, currencyCode),
     };
   }
 
   return {
-    caption: "Live price",
+    caption: "Standard price",
     label: formatCurrency(0, currencyCode),
   };
 }

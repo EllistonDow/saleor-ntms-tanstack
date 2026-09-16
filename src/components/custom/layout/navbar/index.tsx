@@ -23,7 +23,7 @@ export function Navbar({ menu }: NavbarProps) {
   const { activeCustomer } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 border-b border-[color:var(--cyber-gold)]/12 bg-background/82 backdrop-blur-2xl">
+    <header className="sticky top-0 z-40 border-b border-black/5 bg-white/80 backdrop-blur-2xl">
       <nav className="mx-auto max-w-screen-2xl px-3 py-3 sm:px-4 lg:px-6">
         <div className="grid items-center gap-3 md:grid-cols-[auto_minmax(0,1fr)_auto]">
           <div className="flex items-center gap-3">
@@ -70,7 +70,7 @@ export function Navbar({ menu }: NavbarProps) {
       {menu.length ? (
         <nav
           aria-label="Product collections"
-          className="hidden border-t border-[color:var(--cyber-gold)]/10 bg-background/62 md:block"
+          className="hidden border-t border-black/5 bg-white/60 backdrop-blur-xl md:block"
         >
           <div className="mx-auto flex max-w-screen-2xl justify-center px-4 py-2.5 lg:px-6">
             <ul className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-base font-semibold">
@@ -81,7 +81,7 @@ export function Navbar({ menu }: NavbarProps) {
                     <Link
                       to={"/collections/$collection"}
                       params={{ collection: item.slug }}
-                      className="whitespace-nowrap rounded-full border border-transparent px-3.5 py-2 text-foreground/72 transition hover:border-[color:var(--cyber-gold)]/18 hover:bg-[color:var(--cyber-gold)]/8 hover:text-foreground"
+                      className="whitespace-nowrap rounded-full border border-transparent px-3.5 py-2 text-[#1d1d1f]/75 transition hover:bg-black/5 hover:text-[#1d1d1f]"
                     >
                       {item.name}
                     </Link>

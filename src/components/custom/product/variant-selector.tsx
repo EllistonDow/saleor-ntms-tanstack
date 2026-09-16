@@ -88,13 +88,13 @@ export function VariantSelector({
                       !isAvailableForSale ? " (Out of Stock)" : ""
                     }`}
                     className={clsx(
-                      "flex min-w-12 items-center justify-center rounded-full border border-[color:var(--cyber-gold)]/12 bg-background/55 px-3.5 py-2 text-sm transition-all duration-200",
+                      "flex min-w-12 items-center justify-center rounded-full border border-black/10/12 bg-background/55 px-3.5 py-2 text-sm transition-all duration-200",
                       {
-                        "cursor-default border-[color:var(--cyber-gold)]/36 bg-[color:var(--cyber-gold)]/14 text-foreground shadow-[0_8px_20px_rgba(247,200,31,.08)]":
+                        "cursor-default border-black/10/36 bg-[#0071e3]/10 text-foreground shadow-[0_8px_20px_rgba(247,200,31,.08)]":
                           isSelected,
-                        "hover:border-[color:var(--cyber-gold)]/24 hover:bg-[color:var(--cyber-gold)]/7":
+                        "hover:border-black/10/24 hover:bg-[#0071e3]/7":
                           !isSelected && isAvailableForSale,
-                        "relative z-10 cursor-not-allowed overflow-hidden bg-foreground/6 text-foreground/45 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-[color:var(--cyber-gold)]/18":
+                        "relative z-10 cursor-not-allowed overflow-hidden bg-foreground/6 text-foreground/45 before:absolute before:inset-x-0 before:-z-10 before:h-px before:-rotate-45 before:bg-[#0071e3]/18":
                           !isAvailableForSale,
                       },
                     )}

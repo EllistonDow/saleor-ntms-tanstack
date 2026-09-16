@@ -29,13 +29,13 @@ export function ResultStatus({
   return (
     <div
       className={cn(
-        "relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/88 px-4 py-3 shadow-[0_14px_38px_rgba(0,0,0,.08)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between",
+        "relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-black/10/12 bg-card/88 px-4 py-3 shadow-[0_14px_38px_rgba(0,0,0,.08)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between",
         className,
       )}
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/45 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/45 to-transparent" />
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/15 bg-background/70 text-[color:var(--cyber-gold-soft)]">
+        <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-black/5 bg-background/70 text-[#0071e3]">
           {kind === "search" ? (
             <Search className="h-4 w-4" />
           ) : (
@@ -52,12 +52,12 @@ export function ResultStatus({
         </div>
       </div>
       <div className="flex flex-wrap gap-2 sm:justify-end">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/15 bg-background/70 px-3 py-1 text-xs text-foreground/55">
-          <Sparkles className="h-3.5 w-3.5 text-[color:var(--cyber-gold-soft)]" />
+        <span className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/70 px-3 py-1 text-xs text-foreground/55">
+          <Sparkles className="h-3.5 w-3.5 text-[#0071e3]" />
           Live results
         </span>
         {sortLabel ? (
-          <span className="inline-flex items-center gap-2 rounded-full border border-[color:var(--cyber-gold)]/15 bg-background/70 px-3 py-1 text-xs text-foreground/55">
+          <span className="inline-flex items-center gap-2 rounded-full border border-black/5 bg-background/70 px-3 py-1 text-xs text-foreground/55">
             <ArrowDownAZ className="h-3.5 w-3.5" />
             {sortLabel}
           </span>

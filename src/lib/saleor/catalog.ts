@@ -1,3 +1,17 @@
+export function normalizeSaleorImageUrl(url?: string | null): string {
+  if (!url) return "";
+  let canonical = url;
+  if (canonical.includes("/thumbnails/products/")) {
+    canonical = canonical.replace("/thumbnails/products/", "/products/");
+  } else if (canonical.includes("/thumbnails/")) {
+    canonical = canonical.replace("/thumbnails/", "/");
+  }
+  return canonical
+    .replace(/_thumbnail_\d+\.(jpg|jpeg|png|webp)$/i, ".$1")
+    .replace(/_thu_[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/i, ".$1")
+    .replace(/_thum_[a-zA-Z0-9_-]+\.(jpg|jpeg|png|webp)$/i, ".$1");
+}
+
 import { defaultSort, type SortFilterItem, sorting } from "@/lib/constants";
 import {
   getSaleorChannel,
@@ -43,6 +57,11 @@ type SaleorCategoryNode = {
           url: string;
           alt?: string | null;
         } | null;
+        media?: {
+          url: string;
+          alt?: string | null;
+          type?: string | null;
+        }[];
       };
     }[];
   } | null;
@@ -103,6 +122,8 @@ type SaleorProductNode = {
       } | null;
     } | null;
     attributes?: SaleorVariantAttributeNode[] | null;
+    selectionAttributes?: SaleorVariantAttributeNode[] | null;
+    nonSelectionAttributes?: SaleorVariantAttributeNode[] | null;
     media?: SaleorVariantMediaNode[] | null;
   }[];
 };
@@ -110,6 +131,7 @@ type SaleorProductNode = {
 type NtmsSaleorCatalogResponse = {
   shop: {
     name: string;
+    useLegacyShippingZoneStockAvailability?: boolean | null;
   };
   category?: {
     id: string;
@@ -321,6 +343,8 @@ export type NtmsSaleorProductVariant = {
   priorPrice: SaleorMoney | null;
   quantityAvailable: number | null;
   attributes: NtmsSaleorVariantAttribute[];
+  selectionAttributes?: NtmsSaleorVariantAttribute[];
+  nonSelectionAttributes?: NtmsSaleorVariantAttribute[];
   media?: NtmsSaleorProductMedia[];
 };
 
@@ -332,6 +356,8 @@ export type NtmsSaleorCatalogPreview = {
   curatedCollections: NtmsSaleorCategory[];
   products: NtmsSaleorProduct[];
   totalProducts: number;
+  stockAvailabilityMode?: "legacy" | "direct";
+  useLegacyShippingZoneStockAvailability?: boolean;
 };
 
 export type NtmsSaleorCategoryPage = {
@@ -395,7 +421,10 @@ const saleorProductOrderBySlug: Record<
 
 const ntmsSaleorCatalogQuery = `
   query NtmsSaleorCatalogPreview($channel: String!, $rootSlug: String!) {
-    shop { name }
+    shop {
+      name
+      useLegacyShippingZoneStockAvailability
+    }
     categories(first: 48, level: 0) {
       edges {
         node {
@@ -407,7 +436,8 @@ const ntmsSaleorCatalogQuery = `
             edges {
               node {
                 name
-                thumbnail(size: 384, format: WEBP) { url alt }
+                thumbnail(size: 384) { url alt }
+                media { url alt type }
               }
             }
           }
@@ -430,7 +460,8 @@ const ntmsSaleorCatalogQuery = `
               edges {
                 node {
                   name
-                  thumbnail(size: 384, format: WEBP) { url alt }
+                  thumbnail(size: 384) { url alt }
+                media { url alt type }
                 }
               }
             }
@@ -445,7 +476,8 @@ const ntmsSaleorCatalogQuery = `
           id
           name
           slug
-          thumbnail(size: 512, format: WEBP) { url alt }
+          thumbnail(size: 512) { url alt }
+          media { url alt type }
           category { name slug }
           pricing {
             priceRange { start { gross { amount currency } } }
@@ -466,7 +498,8 @@ const ntmsSaleorCatalogQuery = `
             edges {
               node {
                 name
-                thumbnail(size: 384, format: WEBP) { url alt }
+                thumbnail(size: 384) { url alt }
+                media { url alt type }
               }
             }
           }
@@ -488,7 +521,8 @@ const ntmsSaleorCatalogQuery = `
             edges {
               node {
                 name
-                thumbnail(size: 384, format: WEBP) { url alt }
+                thumbnail(size: 384) { url alt }
+                media { url alt type }
               }
             }
           }
@@ -517,7 +551,8 @@ const saleorProductBaseFields = `
   id
   name
   slug
-  thumbnail(size: 512, format: WEBP) { url alt }
+  thumbnail(size: 512) { url alt }
+          media { url alt type }
   category {
     id
     name
@@ -552,6 +587,14 @@ const saleorProductDetailFields = `
     ${saleorProductVariantFields}
     media { url alt type }
     attributes(variantSelection: ALL) {
+      attribute { id name slug }
+      values { id name }
+    }
+    selectionAttributes: attributes(variantSelection: VARIANT_SELECTION) {
+      attribute { id name slug }
+      values { id name }
+    }
+    nonSelectionAttributes: attributes(variantSelection: NOT_VARIANT_SELECTION) {
       attribute { id name slug }
       values { id name }
     }
@@ -591,7 +634,8 @@ const ntmsSaleorCategoryPageQuery = `
               edges {
                 node {
                   name
-                  thumbnail(size: 384, format: WEBP) { url alt }
+                  thumbnail(size: 384) { url alt }
+                media { url alt type }
                 }
               }
             }
@@ -668,7 +712,8 @@ const ntmsSaleorCategoryCollectionOverridesQuery = `
             edges {
               node {
                 name
-                thumbnail(size: 384, format: WEBP) { url alt }
+                thumbnail(size: 384) { url alt }
+                media { url alt type }
               }
             }
           }
@@ -782,6 +827,8 @@ export async function getNtmsSaleorCatalogPreview(): Promise<NtmsSaleorCatalogPr
   const categories =
     topLevelCategories.length > 0 ? topLevelCategories : rootChildCategories;
 
+  const useLegacy = data.shop.useLegacyShippingZoneStockAvailability ?? true;
+
   return {
     shopName: data.shop.name,
     channel,
@@ -792,6 +839,42 @@ export async function getNtmsSaleorCatalogPreview(): Promise<NtmsSaleorCatalogPr
       .filter((collection) => collection.productCount > 0),
     products: (data.products?.edges ?? []).map((edge) => mapProduct(edge.node)),
     totalProducts: data.products?.totalCount ?? 0,
+    stockAvailabilityMode: useLegacy ? "legacy" : "direct",
+    useLegacyShippingZoneStockAvailability: useLegacy,
+  };
+}
+
+const saleorStockAvailabilityModeQuery = `
+  query SaleorStockAvailabilityMode {
+    shop {
+      name
+      useLegacyShippingZoneStockAvailability
+    }
+  }
+`;
+
+type SaleorStockAvailabilityModeResponse = {
+  shop: {
+    name: string;
+    useLegacyShippingZoneStockAvailability?: boolean | null;
+  };
+};
+
+export async function getSaleorStockAvailabilityMode(): Promise<{
+  mode: "legacy" | "direct";
+  useLegacyShippingZoneStockAvailability: boolean;
+}> {
+  const data = await saleorFetch<
+    SaleorStockAvailabilityModeResponse,
+    Record<string, never>
+  >({
+    query: saleorStockAvailabilityModeQuery,
+    variables: {},
+  });
+  const useLegacy = data.shop.useLegacyShippingZoneStockAvailability ?? true;
+  return {
+    mode: useLegacy ? "legacy" : "direct",
+    useLegacyShippingZoneStockAvailability: useLegacy,
   };
 }
 
@@ -1239,14 +1322,21 @@ export async function getNtmsSaleorSitemapEntries(): Promise<
 
 function mapCategory(category: SaleorCategoryNode): NtmsSaleorCategory {
   const leadProduct = category.products?.edges?.[0]?.node;
+  const rawUrl =
+    leadProduct?.thumbnail?.url || leadProduct?.media?.[0]?.url || "";
+  const imageUrl = normalizeSaleorImageUrl(rawUrl);
 
   return {
     id: category.id,
     name: category.name,
     slug: category.slug,
     productCount: category.products?.totalCount ?? 0,
-    imageUrl: leadProduct?.thumbnail?.url ?? "",
-    imageAlt: leadProduct?.thumbnail?.alt || leadProduct?.name || category.name,
+    imageUrl,
+    imageAlt:
+      leadProduct?.thumbnail?.alt ||
+      leadProduct?.media?.[0]?.alt ||
+      leadProduct?.name ||
+      category.name,
   };
 }
 
@@ -1268,6 +1358,9 @@ function applyCollectionOverride(
 
 function mapProduct(product: SaleorProductNode): NtmsSaleorProduct {
   const firstVariant = product.variants?.[0];
+  const resolvedUrl = normalizeSaleorImageUrl(
+    product.thumbnail?.url || product.media?.[0]?.url || "",
+  );
 
   return {
     id: product.id,
@@ -1275,8 +1368,8 @@ function mapProduct(product: SaleorProductNode): NtmsSaleorProduct {
     slug: product.slug,
     variantId: firstVariant?.id ?? "",
     variantCount: product.variants?.length ?? 0,
-    imageUrl: product.thumbnail?.url ?? "",
-    imageAlt: product.thumbnail?.alt || product.name,
+    imageUrl: resolvedUrl,
+    imageAlt: product.thumbnail?.alt || product.media?.[0]?.alt || product.name,
     categoryName: product.category?.name ?? "Tattoo supply",
     price: product.pricing?.priceRange?.start?.gross ?? null,
     priorPrice: product.pricing?.priceRangePrior?.start?.gross ?? null,
@@ -1289,7 +1382,7 @@ function mapProductMedia(product: SaleorProductNode): NtmsSaleorProductMedia[] {
   const media = (product.media ?? [])
     .filter((item) => item.type === "IMAGE" && item.url)
     .map((item) => ({
-      url: item.url,
+      url: normalizeSaleorImageUrl(item.url),
       alt: item.alt || product.name,
     }));
 
@@ -1300,45 +1393,64 @@ function mapProductMedia(product: SaleorProductNode): NtmsSaleorProductMedia[] {
   return product.thumbnail?.url
     ? [
         {
-          url: product.thumbnail.url,
+          url: normalizeSaleorImageUrl(product.thumbnail.url),
           alt: product.thumbnail.alt || product.name,
         },
       ]
     : [];
 }
 
+function mapVariantAttributes(
+  assignments?: SaleorVariantAttributeNode[] | null,
+): NtmsSaleorVariantAttribute[] {
+  return (assignments ?? []).flatMap((assignment) => {
+    const attribute = assignment.attribute;
+    const values = assignment.values ?? [];
+    if (!attribute || values.length === 0) {
+      return [];
+    }
+    return [
+      {
+        id: attribute.id,
+        name: attribute.name,
+        slug: attribute.slug,
+        values: values.map((value) => ({ id: value.id, name: value.name })),
+      },
+    ];
+  });
+}
+
 function mapProductVariants(
   product: SaleorProductNode,
 ): NtmsSaleorProductVariant[] {
-  return (product.variants ?? []).map((variant) => ({
-    id: variant.id,
-    name: variant.name || product.name,
-    sku: variant.sku ?? "",
-    price: variant.pricing?.price?.gross ?? null,
-    priorPrice: variant.pricing?.pricePrior?.gross ?? null,
-    quantityAvailable: variant.quantityAvailable ?? null,
-    media: (variant.media ?? [])
-      .filter((media) => media.type === "IMAGE" && media.url)
-      .map((media) => ({
-        url: media.url,
-        alt: media.alt || variant.name || product.name,
-      })),
-    attributes: (variant.attributes ?? []).flatMap((assignment) => {
-      const attribute = assignment.attribute;
-      const values = assignment.values ?? [];
-      if (!attribute || values.length === 0) {
-        return [];
-      }
-      return [
-        {
-          id: attribute.id,
-          name: attribute.name,
-          slug: attribute.slug,
-          values: values.map((value) => ({ id: value.id, name: value.name })),
-        },
-      ];
-    }),
-  }));
+  return (product.variants ?? []).map((variant) => {
+    const defaultAttrs = mapVariantAttributes(variant.attributes);
+    const selectionAttrs = mapVariantAttributes(variant.selectionAttributes);
+    const nonSelectionAttrs = mapVariantAttributes(
+      variant.nonSelectionAttributes,
+    );
+
+    return {
+      id: variant.id,
+      name: variant.name || product.name,
+      sku: variant.sku ?? "",
+      price: variant.pricing?.price?.gross ?? null,
+      priorPrice: variant.pricing?.pricePrior?.gross ?? null,
+      quantityAvailable: variant.quantityAvailable ?? null,
+      media: (variant.media ?? [])
+        .filter((media) => media.type === "IMAGE" && media.url)
+        .map((media) => ({
+          url: media.url,
+          alt: media.alt || variant.name || product.name,
+        })),
+      attributes:
+        defaultAttrs.length > 0
+          ? defaultAttrs
+          : [...selectionAttrs, ...nonSelectionAttrs],
+      selectionAttributes: selectionAttrs,
+      nonSelectionAttributes: nonSelectionAttrs,
+    };
+  });
 }
 
 function parseSaleorDescription(description: string | null | undefined) {

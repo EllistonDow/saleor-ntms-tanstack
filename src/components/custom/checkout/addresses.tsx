@@ -296,8 +296,8 @@ export function Addresses() {
         />
       ) : null}
       {savedAddresses.length > 0 ? (
-        <section className="rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 p-5 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
-          <div className="mb-4 flex items-center gap-2 text-[color:var(--cyber-gold-soft)]">
+        <section className="rounded-[2rem] border border-black/5 bg-white p-5 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
+          <div className="mb-4 flex items-center gap-2 text-[#0071e3]">
             <MapPinned className="h-4 w-4" />
             <h2 className="text-xs font-semibold uppercase tracking-[0.18em]">
               Saved addresses
@@ -309,7 +309,7 @@ export function Addresses() {
                 key={address.id}
                 type="button"
                 onClick={() => applySavedAddress(address)}
-                className="rounded-xl border border-[color:var(--cyber-gold)]/10 bg-background/55 p-4 text-left text-sm transition hover:border-[color:var(--cyber-gold)]/30 hover:bg-[color:var(--cyber-gold)]/6"
+                className="rounded-xl border border-black/5 bg-background/55 p-4 text-left text-sm transition hover:border-black/10 hover:bg-[#0071e3]/6"
               >
                 <span className="block font-semibold text-foreground">
                   {address.fullName || "Saved address"}
@@ -330,7 +330,7 @@ export function Addresses() {
           </div>
         </section>
       ) : null}
-      <section className="rounded-2xl border border-[color:var(--cyber-gold)]/10 bg-card/90 p-6 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
+      <section className="rounded-[2rem] border border-black/5 bg-white p-6 shadow-[0_18px_48px_rgba(0,0,0,.08)]">
         <h2 className="mb-4 text-lg font-medium text-foreground">
           Contact information
         </h2>
@@ -423,7 +423,7 @@ export function Addresses() {
         </FieldGroup>
       </section>
 
-      <section className="rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-card/85 p-6 shadow-[0_24px_80px_rgba(0,0,0,.1)]">
+      <section className="rounded-2xl border border-black/5 bg-card/85 p-6 shadow-[0_24px_80px_rgba(0,0,0,.1)]">
         <h2 className="mb-4 text-lg font-medium text-foreground">
           Shipping information
         </h2>

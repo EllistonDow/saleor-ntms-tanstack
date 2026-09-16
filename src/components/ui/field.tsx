@@ -112,8 +112,8 @@ function FieldLabel({
       data-slot="field-label"
       className={cn(
         "group/field-label peer/field-label flex w-fit gap-2 leading-snug font-medium text-foreground group-data-[disabled=true]/field:opacity-50",
-        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:border-[color:var(--cyber-gold)]/15 [&>*]:data-[slot=field]:p-4",
-        "has-data-[state=checked]:bg-[color:var(--cyber-gold)]/8 has-data-[state=checked]:border-[color:var(--cyber-gold)]/40 dark:has-data-[state=checked]:bg-[color:var(--cyber-gold)]/12",
+        "has-[>[data-slot=field]]:w-full has-[>[data-slot=field]]:flex-col has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:border-black/5 [&>*]:data-[slot=field]:p-4",
+        "has-data-[state=checked]:bg-black/5 has-data-[state=checked]:border-black/15 dark:has-data-[state=checked]:bg-[#0071e3]/12",
         className,
       )}
       {...props}
@@ -141,7 +141,7 @@ function FieldDescription({ className, ...props }: React.ComponentProps<"p">) {
       className={cn(
         "text-muted-foreground text-sm leading-normal font-normal group-has-[[data-orientation=horizontal]]/field:text-balance",
         "last:mt-0 nth-last-2:-mt-1 [[data-variant=legend]+&]:-mt-1.5",
-        "[&>a:hover]:text-[color:var(--cyber-gold-soft)] [&>a]:underline [&>a]:underline-offset-4",
+        "[&>a:hover]:text-[#0071e3] [&>a]:underline [&>a]:underline-offset-4",
         className,
       )}
       {...props}

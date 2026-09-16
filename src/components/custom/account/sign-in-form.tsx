@@ -158,15 +158,20 @@ function ClientSignInForm() {
           size="compact"
         />
       ) : null}
-      <FieldGroup>
+      <FieldGroup className="space-y-4">
         <form.Field
           name="username"
           children={(field) => {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>E-Mail</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-semibold text-[#1d1d1f]"
+                >
+                  E-Mail
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -176,6 +181,7 @@ function ClientSignInForm() {
                   aria-invalid={isInvalid}
                   placeholder="john.doe@acme.com"
                   autoComplete="email"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm text-[#1d1d1f] placeholder:text-[#86868b] focus:bg-white focus:border-[#0071e3] transition-all"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
@@ -188,8 +194,13 @@ function ClientSignInForm() {
             const isInvalid =
               field.state.meta.isTouched && !field.state.meta.isValid;
             return (
-              <Field data-invalid={isInvalid}>
-                <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+              <Field data-invalid={isInvalid} className="space-y-1.5">
+                <FieldLabel
+                  htmlFor={field.name}
+                  className="text-xs font-semibold text-[#1d1d1f]"
+                >
+                  Password
+                </FieldLabel>
                 <Input
                   id={field.name}
                   name={field.name}
@@ -199,6 +210,8 @@ function ClientSignInForm() {
                   onChange={(e) => field.handleChange(e.target.value)}
                   aria-invalid={isInvalid}
                   autoComplete="current-password"
+                  placeholder="Enter password"
+                  className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm text-[#1d1d1f] placeholder:text-[#86868b] focus:bg-white focus:border-[#0071e3] transition-all"
                 />
                 {isInvalid && <FieldError errors={field.state.meta.errors} />}
               </Field>
@@ -208,22 +221,22 @@ function ClientSignInForm() {
       </FieldGroup>
       <LoaderButton
         loading={signInMutation.isPending}
-        className="w-full"
+        className="w-full h-12 rounded-full bg-[#0071e3] text-sm font-semibold text-white shadow-sm transition-all duration-200 hover:bg-[#0077ed] hover:scale-[1.01] active:scale-[0.99]"
         type="submit"
       >
         Sign in securely
       </LoaderButton>
-      <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-sm text-foreground/55">
+      <div className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-xs text-[#86868b]">
         <Link
           to="/forgot-password"
-          className="font-medium text-[color:var(--cyber-gold-soft)] underline underline-offset-4 hover:text-[color:var(--cyber-gold)]"
+          className="font-medium text-[#0071e3] hover:text-[#0077ed] hover:underline transition-colors"
         >
           Forgot password?
         </Link>
         {isSaleorStorefront ? null : (
           <Link
             to="/resend-verification"
-            className="font-medium text-[color:var(--cyber-gold-soft)] underline underline-offset-4 hover:text-[color:var(--cyber-gold)]"
+            className="font-medium text-[#0071e3] hover:text-[#0077ed] hover:underline transition-colors"
           >
             Resend verification
           </Link>
@@ -240,29 +253,45 @@ function SignInFormSkeleton() {
 
   return (
     <form className="space-y-4" aria-busy="true">
-      <FieldGroup>
-        <Field>
-          <FieldLabel htmlFor={usernameId}>E-Mail</FieldLabel>
+      <FieldGroup className="space-y-4">
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={usernameId}
+            className="text-xs font-semibold text-[#1d1d1f]"
+          >
+            E-Mail
+          </FieldLabel>
           <Input
             id={usernameId}
             name="username"
             placeholder="john.doe@acme.com"
             autoComplete="email"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm"
           />
         </Field>
-        <Field>
-          <FieldLabel htmlFor={passwordId}>Password</FieldLabel>
+        <Field className="space-y-1.5">
+          <FieldLabel
+            htmlFor={passwordId}
+            className="text-xs font-semibold text-[#1d1d1f]"
+          >
+            Password
+          </FieldLabel>
           <Input
             id={passwordId}
             name="password"
             type="password"
             autoComplete="current-password"
             disabled
+            className="h-12 rounded-xl bg-[#f5f5f7] border border-black/[0.06] text-sm"
           />
         </Field>
       </FieldGroup>
-      <LoaderButton disabled className="w-full" type="submit">
+      <LoaderButton
+        disabled
+        className="w-full h-12 rounded-full bg-[#0071e3] text-sm font-semibold text-white shadow-sm opacity-50"
+        type="submit"
+      >
         Sign in
       </LoaderButton>
     </form>

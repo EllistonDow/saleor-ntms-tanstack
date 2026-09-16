@@ -20,9 +20,9 @@ export function CheckoutSteps() {
   return (
     <nav
       aria-label="Checkout progress"
-      className="relative min-w-0 overflow-hidden rounded-2xl border border-[color:var(--cyber-gold)]/14 bg-card/90 p-3 shadow-[0_18px_55px_rgba(0,0,0,.12)] backdrop-blur-xl"
+      className="relative min-w-0 overflow-hidden rounded-[2rem] border border-black/5 bg-white p-3 sm:p-4 shadow-[0_4px_24px_rgba(0,0,0,0.03)]"
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--cyber-gold)]/75 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color:var(--apple-blue)]/75 to-transparent" />
       <ol className="grid max-w-full grid-cols-2 gap-2 sm:grid-cols-4">
         {steps.map((step, index) => {
           const isConfirmation = !!confirmationMatch;
@@ -34,16 +34,16 @@ export function CheckoutSteps() {
               key={`step-${step.identifier}`}
               className={cn({
                 "z-10 flex min-w-0 items-center gap-3 rounded-xl border px-3 py-3 transition": true,
-                "border-[color:var(--cyber-gold)]/12 bg-background/70 text-foreground/55":
+                "border-black/5 bg-[#f5f5f7] text-[#86868b]":
                   !isDone && !isActive,
-                "border-[color:var(--cyber-gold)]/25 bg-[color:var(--cyber-gold)]/10 text-[color:var(--cyber-gold-soft)]":
+                "border-[#0071e3]/20 bg-[#0071e3]/[0.06] text-[#0071e3]":
                   isDone,
-                "border-[color:var(--cyber-gold)]/35 bg-[color:var(--cyber-gold)]/14 text-foreground shadow-[0_12px_28px_rgba(0,0,0,.08)]":
+                "border-[#0071e3] bg-[#0071e3]/10 text-[#1d1d1f] shadow-sm ring-2 ring-[#0071e3]/20":
                   isActive,
               })}
               aria-current={isActive ? "step" : undefined}
             >
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/14 bg-background/65">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-black/5 bg-white shadow-xs">
                 {isDone && <CircleCheck className="h-4 w-4" />}
                 {isActive && <CircleDot className="h-4 w-4" />}
                 {!isActive && !isDone && <Circle className="h-4 w-4" />}

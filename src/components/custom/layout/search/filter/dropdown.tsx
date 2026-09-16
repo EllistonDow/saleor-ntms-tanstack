@@ -60,7 +60,7 @@ export default function FilterItemDropdown({
         aria-expanded={openSelect}
         data-state={openSelect ? "open" : "closed"}
         className={cn(
-          "flex w-full items-center justify-between rounded-lg border border-[color:var(--cyber-gold)]/18 bg-background/65 py-2.5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--cyber-gold)]/50",
+          "flex w-full items-center justify-between rounded-lg border border-black/10/18 bg-background/65 py-2.5 text-sm text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#0071e3]/50",
           compact ? "gap-1.5 px-2.5" : "gap-2 px-3",
         )}
       >
@@ -91,7 +91,7 @@ export default function FilterItemDropdown({
             }
           }}
           className={cn(
-            "absolute z-40 max-h-[min(60vh,28rem)] w-full overflow-auto rounded-2xl border border-[color:var(--cyber-gold)]/15 bg-card/94 p-3 shadow-[0_18px_55px_rgba(0,0,0,.24)] backdrop-blur-2xl",
+            "absolute z-40 max-h-[min(60vh,28rem)] w-full overflow-auto rounded-2xl border border-black/5 bg-card/94 p-3 shadow-[0_18px_55px_rgba(0,0,0,.24)] backdrop-blur-2xl",
             placement === "top" ? "bottom-full mb-2" : "top-full mt-2",
           )}
         >

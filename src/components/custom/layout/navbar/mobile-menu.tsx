@@ -49,7 +49,7 @@ export default function MobileMenu({
         type="button"
         onClick={openMobileMenu}
         aria-label="Open mobile menu"
-        className="flex h-11 w-11 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/18 bg-background/68 text-foreground shadow-[inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl transition-all hover:border-[color:var(--cyber-gold)]/60 hover:text-[color:var(--cyber-gold-soft)] md:hidden dark:bg-black/35 dark:text-white"
+        className="flex h-11 w-11 items-center justify-center rounded-2xl border border-black/5 bg-white text-[#1d1d1f] shadow-[0_2px_8px_rgba(0,0,0,0.04)] transition-all hover:bg-[#f5f5f7] hover:text-[#0071e3] md:hidden"
       >
         <Menu className="h-4 w-4" />
       </button>
@@ -59,7 +59,7 @@ export default function MobileMenu({
           side="left"
           showCloseButton={false}
           overlayClassName="fixed inset-0 bg-black/55 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0"
-          className="fixed inset-y-0 left-0 z-50 flex h-full w-full flex-col gap-0 border-r border-[color:var(--cyber-gold)]/18 bg-card/96 pb-6 shadow-[0_30px_90px_rgba(0,0,0,.34)] backdrop-blur-2xl transition-all duration-300 ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left sm:max-w-sm"
+          className="fixed inset-y-0 left-0 z-50 flex h-full w-full flex-col gap-0 border-r border-black/5 bg-white/95 pb-6 shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop-blur-2xl transition-all duration-300 ease-in-out data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-left data-[state=closed]:slide-out-to-left sm:max-w-sm"
         >
           {/* Hidden title for accessibility */}
           <SheetTitle className="sr-only">Mobile Menu</SheetTitle>
@@ -68,7 +68,7 @@ export default function MobileMenu({
           </SheetDescription>
 
           <div className="flex h-full flex-col overflow-hidden p-4">
-            <div className="mb-5 flex items-center justify-between gap-3 border-b border-[color:var(--cyber-gold)]/10 pb-4">
+            <div className="mb-5 flex items-center justify-between gap-3 border-b border-black/5 pb-4">
               <div className="flex min-w-0 items-center gap-3">
                 <LogoSquare />
                 <div className="min-w-0">
@@ -83,7 +83,7 @@ export default function MobileMenu({
               <SheetClose asChild>
                 <button
                   type="button"
-                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg border border-[color:var(--cyber-gold)]/18 text-foreground transition-all hover:border-[color:var(--cyber-gold)]/60 hover:text-[color:var(--cyber-gold-soft)] dark:text-white"
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-black/5 bg-[#f5f5f7] text-[#1d1d1f] transition-all hover:bg-black/5 hover:text-[#0071e3]"
                   aria-label="Close mobile menu"
                 >
                   <X className="h-5 w-5" />
@@ -97,8 +97,8 @@ export default function MobileMenu({
               </Suspense>
             </div>
 
-            <div className="mb-5 rounded-2xl border border-[color:var(--cyber-gold)]/12 bg-background/45 p-3">
-              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--cyber-gold-soft)]">
+            <div className="mb-5 rounded-3xl border border-black/5 bg-[#f5f5f7] p-4">
+              <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#0071e3]">
                 Quick shop
               </p>
               <div className="mt-3 grid grid-cols-3 gap-2">
@@ -108,7 +108,7 @@ export default function MobileMenu({
                     to="/collections/$collection"
                     params={{ collection: item.slug }}
                     onClick={closeMobileMenu}
-                    className="min-w-0 rounded-xl border border-[color:var(--cyber-gold)]/12 bg-card/70 px-2 py-2 text-center text-xs font-semibold text-foreground/70 transition hover:border-[color:var(--cyber-gold)]/30 hover:text-[color:var(--cyber-gold-soft)]"
+                    className="min-w-0 rounded-2xl border border-black/5 bg-white px-2 py-2.5 text-center text-xs font-medium text-[#1d1d1f] shadow-sm transition hover:bg-[#f5f5f7] hover:text-[#0071e3]"
                   >
                     <span className="block truncate">{item.label}</span>
                   </Link>
@@ -125,13 +125,13 @@ export default function MobileMenu({
                       params={{ collection: item.slug }}
                       preload="intent"
                       onClick={closeMobileMenu}
-                      className="group flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-3 text-base text-foreground transition-colors hover:border-[color:var(--cyber-gold)]/16 hover:bg-[color:var(--cyber-gold)]/8 hover:text-[color:var(--cyber-gold-soft)] dark:text-white"
+                      className="group flex items-center justify-between gap-3 rounded-xl border border-transparent px-3 py-3 text-base text-foreground transition-colors hover:border-black/10/16 hover:bg-black/5 hover:text-[#0071e3] dark:text-white"
                     >
                       <span className="inline-flex min-w-0 items-center gap-2">
-                        <BadgeCheck className="h-4 w-4 shrink-0 text-[color:var(--cyber-gold-soft)]/80" />
+                        <BadgeCheck className="h-4 w-4 shrink-0 text-[#0071e3]/80" />
                         <span className="truncate">{item.name}</span>
                       </span>
-                      <ArrowRight className="h-4 w-4 shrink-0 text-foreground/35 transition group-hover:translate-x-0.5 group-hover:text-[color:var(--cyber-gold-soft)]" />
+                      <ArrowRight className="h-4 w-4 shrink-0 text-foreground/35 transition group-hover:translate-x-0.5 group-hover:text-[#0071e3]" />
                     </Link>
                   </li>
                 ))}

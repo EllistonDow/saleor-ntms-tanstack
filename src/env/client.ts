@@ -13,7 +13,7 @@ export const clientEnv = createEnv({
     VITE_SEARCH_INDEXING: z.enum(["enabled", "disabled"]).default("disabled"),
     VITE_STRIPE_PUBLISHABLE_KEY: z.string().optional(),
     VITE_APP_BUILD_VERSION: z.string().optional(),
-    VITE_STOREFRONT_BACKEND: z.enum(["vendure", "saleor"]).default("vendure"),
+    VITE_STOREFRONT_BACKEND: z.enum(["vendure", "saleor"]).default("saleor"),
   },
   runtimeEnv: import.meta.env,
   emptyStringAsUndefined: true,
